@@ -10,3 +10,4 @@ numpy==2.4.3
 plotly==7.0.0
 joblib==1.6.0
 torch==2.14.0
+firebase-admin==7.5.0

@@ -119,11 +119,15 @@ def render_submit_complaint_page():
                 user_cat_val = optional_cat if optional_cat != "Automatic AI Selection" else None
                 user_loc_val = optional_loc.strip() if optional_loc and optional_loc.strip() else None
                 
+                from utils.auth import get_current_user
+                current_actor = get_current_user()
+
                 with st.spinner("Running SENTINEL NLP Analysis..."):
                     try:
                         # Process with clean separation of text, location, and user category
                         res = process_complaint(
                             text=complaint_text,
+                            actor=current_actor,
                             store_in_db=True,
                             duplicate_threshold=DEFAULT_DUPLICATE_THRESHOLD,
                             user_location=user_loc_val,
@@ -309,14 +313,27 @@ def render_submission_result_view(result: dict):
     st.markdown("#### Executive Summary")
     st.info(result["summary"])
     
+    from utils.auth import get_current_user
+    current_user = get_current_user()
+    is_admin = current_user.is_admin if current_user else False
+
     dup = result.get("duplicate", {})
     dup_type = dup.get("duplicate_type", "none")
-    if dup_type == "active_duplicate":
-        st.warning(f"Active Duplicate Alert: Highly similar to Open Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nMatched Complaint: \"{dup.get('matched_text')}\"")
-    elif dup_type == "related_historical":
-        st.info(f"Related Historical Incident: Matches previously resolved Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nHistorical Record: \"{dup.get('matched_text')}\"")
+    
+    if not is_admin:
+        # STUDENT VIEW: Strict privacy enforcement (Zero other student metadata or text leaked)
+        if result.get("student_dup_notice"):
+            st.warning(f"Notice: {result['student_dup_notice']}")
+        else:
+            st.success("Unique Incident: No duplicate complaints detected in database.")
     else:
-        st.success("Unique Incident: No duplicate complaints detected in database.")
+        # ADMIN VIEW: Full operational intelligence
+        if dup_type == "active_duplicate":
+            st.warning(f"Active Duplicate Alert: Highly similar to Open Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nMatched Complaint: \"{dup.get('matched_text')}\"")
+        elif dup_type == "related_historical":
+            st.info(f"Related Historical Incident: Matches previously resolved Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nHistorical Record: \"{dup.get('matched_text')}\"")
+        else:
+            st.success("Unique Incident: No duplicate complaints detected in database.")
         
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
     
@@ -327,7 +344,9 @@ def render_submission_result_view(result: dict):
             st.rerun()
             
     with btn_col2:
-        if st.button("Go to Dashboard", use_container_width=True):
+        next_label = "Go to My Complaints" if not is_admin else "Go to Complaint Queue"
+        next_route = "My Complaints" if not is_admin else "Complaint Queue"
+        if st.button(next_label, use_container_width=True):
             st.session_state["last_submission_result"] = None
-            st.session_state["nav_page"] = "Dashboard"
+            st.session_state["nav_page"] = next_route
             st.rerun()

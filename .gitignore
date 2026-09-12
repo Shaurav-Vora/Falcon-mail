@@ -24,3 +24,10 @@ desktop.ini
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Firebase & Secrets (Server-Side Only)
+serviceAccountKey.json
+.streamlit/secrets.toml
+.env
+*.pem
+*.p12

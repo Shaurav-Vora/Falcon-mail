@@ -1,65 +1,78 @@
 {
   "category_model": {
-    "algorithm": "TF-IDF + LogisticRegression(C=2.5, class_weight='balanced')",
-    "dataset_hash": "3de7f257229b0997ae28f6a051d2903e17ed6fd82575d075fa7aaba30928875c",
-    "dataset_size": 510,
-    "train_size": 406,
-    "test_size": 104,
-    "train_template_groups": 176,
-    "test_template_groups": 44,
+    "algorithm": "Word+Char FeatureUnion + Logistic Regression",
+    "models_compared": {
+      "Word TF-IDF + LR": {
+        "acc": 0.2966,
+        "macro_f1": 0.3126,
+        "wt_f1": 0.2957
+      },
+      "Word+Char FeatureUnion + LR": {
+        "acc": 0.3136,
+        "macro_f1": 0.3254,
+        "wt_f1": 0.3163
+      },
+      "Word+Char FeatureUnion + SVC": {
+        "acc": 0.2542,
+        "macro_f1": 0.2757,
+        "wt_f1": 0.2508
+      }
+    },
+    "dataset_hash": "12bdca1f13093bb51f0d89c531dd29faec3fe627285ec2fd4527cc2738186241",
+    "dataset_size": 585,
+    "train_size": 467,
+    "test_size": 118,
+    "train_template_groups": 204,
+    "test_template_groups": 51,
     "group_leakage_detected": false,
     "random_seed": 42,
     "python_version": "3.14.3",
     "sklearn_version": "1.9.1",
-    "timestamp": "2026-09-12T14:36:30.829470",
+    "timestamp": "2026-09-12T15:14:31.534293",
     "metrics": {
-      "accuracy": 0.2981,
-      "macro_precision": 0.3454,
-      "macro_recall": 0.3595,
-      "macro_f1": 0.3241,
-      "weighted_precision": 0.3569,
-      "weighted_recall": 0.2981,
-      "weighted_f1": 0.2915
+      "accuracy": 0.3136,
+      "macro_f1": 0.3254,
+      "weighted_f1": 0.3163
     }
   },
   "urgency_model": {
     "algorithm": "TF-IDF + Logistic Regression",
-    "selection_reason": "Logistic Regression achieved superior safety-weighted score (0.2919 vs 0.2110) with Macro F1: 0.3157 and Critical Recall: 0.0%.",
+    "selection_reason": "Logistic Regression achieved superior safety-weighted score (0.3434) with Macro F1: 0.3679, Critical Recall: 21.4%, and High Recall: 30.0%.",
     "models_compared": {
       "Logistic Regression": {
-        "accuracy": 0.4038,
-        "macro_f1": 0.3157,
-        "weighted_f1": 0.3911,
-        "critical_recall": 0.0,
-        "high_recall": 0.4828,
-        "safety_score": 0.2919
+        "accuracy": 0.4153,
+        "macro_f1": 0.3679,
+        "weighted_f1": 0.4115,
+        "critical_recall": 0.2143,
+        "high_recall": 0.3,
+        "safety_score": 0.3434
       },
       "Random Forest": {
-        "accuracy": 0.3654,
-        "macro_f1": 0.2525,
-        "weighted_f1": 0.3206,
+        "accuracy": 0.3729,
+        "macro_f1": 0.2494,
+        "weighted_f1": 0.3027,
         "critical_recall": 0.0,
-        "high_recall": 0.1379,
-        "safety_score": 0.211
+        "high_recall": 0.1667,
+        "safety_score": 0.2072
       }
     },
-    "dataset_hash": "3de7f257229b0997ae28f6a051d2903e17ed6fd82575d075fa7aaba30928875c",
-    "dataset_size": 510,
-    "train_size": 406,
-    "test_size": 104,
-    "train_template_groups": 176,
-    "test_template_groups": 44,
+    "dataset_hash": "12bdca1f13093bb51f0d89c531dd29faec3fe627285ec2fd4527cc2738186241",
+    "dataset_size": 585,
+    "train_size": 467,
+    "test_size": 118,
+    "train_template_groups": 204,
+    "test_template_groups": 51,
     "group_leakage_detected": false,
     "random_seed": 42,
     "python_version": "3.14.3",
     "sklearn_version": "1.9.1",
-    "timestamp": "2026-09-12T14:37:03.162206",
+    "timestamp": "2026-09-12T15:13:52.780826",
     "metrics": {
-      "accuracy": 0.4038,
-      "macro_f1": 0.3157,
-      "weighted_f1": 0.3911,
-      "critical_recall": 0.0,
-      "high_recall": 0.4828
+      "accuracy": 0.4153,
+      "macro_f1": 0.3679,
+      "weighted_f1": 0.4115,
+      "critical_recall": 0.2143,
+      "high_recall": 0.3
     }
   }
 }

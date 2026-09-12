@@ -9,6 +9,8 @@ import sklearn
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, accuracy_score, precision_recall_fscore_support, confusion_matrix
@@ -102,8 +104,24 @@ def train_urgency_classifier():
     lr_crit_rec = lr_report.get('Critical', {}).get('recall', 0.0)
     lr_high_rec = lr_report.get('High', {}).get('recall', 0.0)
     
-    # Candidate 2: TF-IDF + Random Forest Classifier
-    print("Evaluating Candidate 2: Random Forest Classifier...")
+    # Candidate 2: TF-IDF + Calibrated LinearSVC
+    print("Evaluating Candidate 2: Calibrated LinearSVC...")
+    svc_pipeline = Pipeline([
+        ('tfidf', TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True)),
+        ('clf', CalibratedClassifierCV(LinearSVC(C=1.0, class_weight='balanced', random_state=RANDOM_SEED)))
+    ])
+    svc_pipeline.fit(X_train, y_train)
+    svc_preds = svc_pipeline.predict(X_test)
+    
+    svc_acc = accuracy_score(y_test, svc_preds)
+    svc_macro_p, svc_macro_r, svc_macro_f1, _ = precision_recall_fscore_support(y_test, svc_preds, average='macro', zero_division=0)
+    svc_wt_p, svc_wt_r, svc_wt_f1, _ = precision_recall_fscore_support(y_test, svc_preds, average='weighted', zero_division=0)
+    svc_report = classification_report(y_test, svc_preds, output_dict=True, zero_division=0)
+    svc_crit_rec = svc_report.get('Critical', {}).get('recall', 0.0)
+    svc_high_rec = svc_report.get('High', {}).get('recall', 0.0)
+
+    # Candidate 3: TF-IDF + Random Forest Classifier
+    print("Evaluating Candidate 3: Random Forest Classifier...")
     rf_pipeline = Pipeline([
         ('tfidf', TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True)),
         ('clf', RandomForestClassifier(n_estimators=150, class_weight='balanced', random_state=RANDOM_SEED))
@@ -120,40 +138,27 @@ def train_urgency_classifier():
     rf_high_rec = rf_report.get('High', {}).get('recall', 0.0)
     
     print("\n--- Model Comparison Summary ---")
-    print(f"Logistic Regression -> Acc: {lr_acc*100:.2f}% | Macro F1: {lr_macro_f1:.4f} | Wt F1: {lr_wt_f1:.4f} | Crit Rec: {lr_crit_rec*100:.1f}% | High Rec: {lr_high_rec*100:.1f}%")
-    print(f"Random Forest       -> Acc: {rf_acc*100:.2f}% | Macro F1: {rf_macro_f1:.4f} | Wt F1: {rf_wt_f1:.4f} | Crit Rec: {rf_crit_rec*100:.1f}% | High Rec: {rf_high_rec*100:.1f}%")
+    print(f"1. Logistic Regression -> Acc: {lr_acc*100:.2f}% | Macro F1: {lr_macro_f1:.4f} | Wt F1: {lr_wt_f1:.4f} | Crit Rec: {lr_crit_rec*100:.1f}% | High Rec: {lr_high_rec*100:.1f}%")
+    print(f"2. Calibrated LinearSVC -> Acc: {svc_acc*100:.2f}% | Macro F1: {svc_macro_f1:.4f} | Wt F1: {svc_wt_f1:.4f} | Crit Rec: {svc_crit_rec*100:.1f}% | High Rec: {svc_high_rec*100:.1f}%")
+    print(f"3. Random Forest       -> Acc: {rf_acc*100:.2f}% | Macro F1: {rf_macro_f1:.4f} | Wt F1: {rf_wt_f1:.4f} | Crit Rec: {rf_crit_rec*100:.1f}% | High Rec: {rf_high_rec*100:.1f}%")
     
     # Model Selection Logic (Weighted priority on Macro F1 and Critical/High safety recall)
-    # Score calculation: macro_f1 * 0.4 + wt_f1 * 0.3 + critical_recall * 0.2 + high_recall * 0.1
     lr_safety_score = (lr_macro_f1 * 0.4) + (lr_wt_f1 * 0.3) + (lr_crit_rec * 0.2) + (lr_high_rec * 0.1)
+    svc_safety_score = (svc_macro_f1 * 0.4) + (svc_wt_f1 * 0.3) + (svc_crit_rec * 0.2) + (svc_high_rec * 0.1)
     rf_safety_score = (rf_macro_f1 * 0.4) + (rf_wt_f1 * 0.3) + (rf_crit_rec * 0.2) + (rf_high_rec * 0.1)
     
-    if lr_safety_score >= rf_safety_score:
-        best_pipeline = lr_pipeline
-        best_name = "Logistic Regression"
-        best_acc = lr_acc
-        best_macro_f1 = lr_macro_f1
-        best_wt_f1 = lr_wt_f1
-        best_preds = lr_preds
-        best_crit_rec = lr_crit_rec
-        best_high_rec = lr_high_rec
-        selection_reason = (
-            f"Logistic Regression achieved superior safety-weighted score ({lr_safety_score:.4f} vs {rf_safety_score:.4f}) "
-            f"with Macro F1: {lr_macro_f1:.4f} and Critical Recall: {lr_crit_rec*100:.1f}%."
-        )
-    else:
-        best_pipeline = rf_pipeline
-        best_name = "Random Forest"
-        best_acc = rf_acc
-        best_macro_f1 = rf_macro_f1
-        best_wt_f1 = rf_wt_f1
-        best_preds = rf_preds
-        best_crit_rec = rf_crit_rec
-        best_high_rec = rf_high_rec
-        selection_reason = (
-            f"Random Forest achieved superior safety-weighted score ({rf_safety_score:.4f} vs {lr_safety_score:.4f}) "
-            f"with Macro F1: {rf_macro_f1:.4f} and Critical Recall: {rf_crit_rec*100:.1f}%."
-        )
+    candidates = [
+        ("Logistic Regression", lr_pipeline, lr_acc, lr_macro_f1, lr_wt_f1, lr_preds, lr_crit_rec, lr_high_rec, lr_safety_score),
+        ("Calibrated LinearSVC", svc_pipeline, svc_acc, svc_macro_f1, svc_wt_f1, svc_preds, svc_crit_rec, svc_high_rec, svc_safety_score),
+        ("Random Forest", rf_pipeline, rf_acc, rf_macro_f1, rf_wt_f1, rf_preds, rf_crit_rec, rf_high_rec, rf_safety_score),
+    ]
+    candidates.sort(key=lambda c: c[8], reverse=True)
+    best_name, best_pipeline, best_acc, best_macro_f1, best_wt_f1, best_preds, best_crit_rec, best_high_rec, best_safety_score = candidates[0]
+    
+    selection_reason = (
+        f"{best_name} achieved superior safety-weighted score ({best_safety_score:.4f}) "
+        f"with Macro F1: {best_macro_f1:.4f}, Critical Recall: {best_crit_rec*100:.1f}%, and High Recall: {best_high_rec*100:.1f}%."
+    )
         
     print(f"\n>>> Selected Model: {best_name}")
     print(f"Selection Reason: {selection_reason}\n")

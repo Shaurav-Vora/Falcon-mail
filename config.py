@@ -11,7 +11,18 @@ os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
 os.makedirs(DATABASE_DIR, exist_ok=True)
 
-# Database Path
+# Storage Backend Configuration
+# "firestore" (default cloud source of truth) | "sqlite" (isolated local dev & tests only)
+SENTINEL_STORAGE_BACKEND = os.environ.get("SENTINEL_STORAGE_BACKEND", "firestore")
+
+# Institutional Email Restrictions (configurable list of allowed student email domains)
+ALLOWED_STUDENT_EMAIL_DOMAINS = ["manipal.edu", "learner.manipal.edu", "student.manipal.edu"]
+
+# Firebase Credentials & Settings
+FIREBASE_SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "serviceAccountKey.json")
+FIREBASE_SECRETS_PATH = os.path.join(BASE_DIR, ".streamlit", "secrets.toml")
+
+# Database Path (for isolated SQLite tests and offline development)
 DB_PATH = os.path.join(DATABASE_DIR, "sentinel.db")
 
 # Reproducibility Central Seed
@@ -29,8 +40,8 @@ URGENCY_MODEL_PATH = os.path.join(MODELS_DIR, "urgency_classifier.pkl")
 SPACY_MODEL_NAME = "en_core_web_sm"
 SENTENCE_TRANSFORMER_MODEL = "all-MiniLM-L6-v2"
 
-# Duplicate Detection Settings (Selected validation threshold based on 60 labeled pairs: 0.65, F1: 0.8727)
-DEFAULT_DUPLICATE_THRESHOLD = 0.65
+# Duplicate Detection Settings (Selected validation threshold based on 60 labeled pairs: 0.60, F1: 0.9123, 0 FP, 83.9% Recall)
+DEFAULT_DUPLICATE_THRESHOLD = 0.60
 
 # Complaint Categories
 CATEGORIES = [

@@ -81,7 +81,7 @@ def check_duplicate_complaint(
     best_same_loc = False
     
     for item in existing_complaints:
-        existing_vector = item.get("embedding")
+        existing_vector = item.get("embedding") if item.get("embedding") is not None else item.get("dense_embedding")
         if existing_vector is None:
             continue
             

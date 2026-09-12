@@ -1,33 +1,135 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
+"""
+SENTINEL - Student Home Page
+Personal landing page for authenticated students.
+
+SECURITY & PRIVACY DIRECTIVE:
+1. Student home displays ONLY the student's personal complaints and metrics.
+2. Campus-wide complaints, counts, and other students' data are NEVER exposed.
+"""
+
 import html
-from utils.ui import render_global_header
+import streamlit as st
+from database.database import get_repository
 from nlp.pipeline import process_complaint
-from database.database import get_all_complaints
+from utils.auth import get_current_user
+from utils.ui import render_global_header
+
 
 def render_home_page():
-    """Render Page 1: Home View with real-time NLP analysis and database metrics."""
+    """Render Student Home View with personal metrics and quick complaint submission."""
+    user = get_current_user()
+    if not user:
+        st.warning("Please sign in to access SENTINEL.")
+        return
+
     render_global_header("Home")
-    
+
     # 1. HERO BANNER
     st.markdown(
-        """
+        f"""
         <div class="hero-banner">
-            <div class="hero-title">Welcome to <span>SENTINEL</span></div>
-            <div class="hero-subtitle">Report campus issues quickly and intelligently.</div>
-            <div class="hero-supporting">Your voice matters. A safer, better campus for everyone.</div>
+            <div class="hero-title">Welcome back, <span>{html.escape(user.full_name)}</span></div>
+            <div class="hero-subtitle">Report campus issues quickly and track your resolutions in real time.</div>
+            <div class="hero-supporting">Student ID: {html.escape(user.student_id or 'N/A')} | {html.escape(user.programme or 'MAHE Dubai')}</div>
             <div class="hero-watermark">
-                Inspired by a<br>brighter tomorrow.
+                For a better campus,<br>together.
             </div>
         </div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
-    
-    # 2. MAIN SECTION: 2 BALANCED COLUMNS
+
+    try:
+        repo = get_repository()
+        stats = repo.get_dashboard_stats(actor=user)
+        my_complaints = repo.get_student_complaints(user.uid, actor=user)
+    except Exception as e:
+        st.error(f"Cloud connection error: {e}")
+        stats = {"total": 0, "open": 0, "in_progress": 0, "resolved": 0}
+        my_complaints = []
+
+    # 2. PERSONAL METRICS KPI ROW
+    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+    with col_s1:
+        st.markdown(
+            f"""
+            <div class="stat-card">
+                <div class="stat-icon-box stat-icon-orange">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F15A24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">My Total Submitted</div>
+                    <div class="stat-value">{stats.get('total', 0)}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col_s2:
+        st.markdown(
+            f"""
+            <div class="stat-card">
+                <div class="stat-icon-box stat-icon-blue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">My Open Incidents</div>
+                    <div class="stat-value">{stats.get('open', 0)}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col_s3:
+        st.markdown(
+            f"""
+            <div class="stat-card">
+                <div class="stat-icon-box stat-icon-amber">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="2" x2="12" y2="6"></line>
+                        <line x1="12" y1="18" x2="12" y2="22"></line>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value">{stats.get('in_progress', 0)}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col_s4:
+        st.markdown(
+            f"""
+            <div class="stat-card">
+                <div class="stat-icon-box stat-icon-green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">My Resolved</div>
+                    <div class="stat-value">{stats.get('resolved', 0)}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # 3. MAIN SECTION: QUICK SUBMIT + REAL-TIME AI INSIGHT
     col_left, col_right = st.columns([1.15, 0.85], gap="large")
-    
+
     with col_left:
         st.markdown(
             """
@@ -38,19 +140,18 @@ def render_home_page():
                 Describe your issue in detail. Our NLP engine will analyze, route, and assess urgency in real time.
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
-        
+
         with st.form("home_quick_complaint_form", clear_on_submit=False):
             input_text = st.text_area(
                 "Complaint Description",
-                height=150,
+                height=140,
                 placeholder="E.g., Air conditioner not working in Room 204...",
-                label_visibility="collapsed"
+                label_visibility="collapsed",
             )
-            
-            st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
-            submit_btn = st.form_submit_button("Analyze & Submit Incident", use_container_width=True)
+            st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+            submit_btn = st.form_submit_button("Analyze & Submit Incident", use_container_width=True, type="primary")
 
         if submit_btn:
             if not input_text or not input_text.strip():
@@ -58,9 +159,14 @@ def render_home_page():
             else:
                 with st.spinner("Processing complaint through SENTINEL NLP pipeline..."):
                     try:
-                        analysis_result = process_complaint(input_text, store_in_db=True)
+                        analysis_result = process_complaint(
+                            text=input_text,
+                            actor=user,
+                            repo=repo,
+                            store_in_db=True,
+                        )
                         st.session_state["latest_analysis"] = analysis_result
-                        st.success(f"Complaint #{analysis_result['complaint_id']} submitted and saved successfully!")
+                        st.success(f"Complaint #{analysis_result.get('complaint_id')} submitted successfully!")
                         st.rerun()
                     except Exception as e:
                         st.error(f"Error processing complaint: {str(e)}")
@@ -75,15 +181,15 @@ def render_home_page():
                 Live multi-task NLP analysis generated by SENTINEL models.
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
-        
+
         latest = st.session_state.get("latest_analysis")
-        
+
         if not latest:
             st.markdown(
                 """
-                <div style="background: #FFFFFF; border: 1.5px dashed #CBD5E1; border-radius: 14px; padding: 2.8rem 1.5rem; text-align: center; color: #64748B;">
+                <div style="background: #FFFFFF; border: 1.5px dashed #CBD5E1; border-radius: 14px; padding: 2.5rem 1.5rem; text-align: center; color: #64748B;">
                     <div style="display: flex; justify-content: center; margin-bottom: 0.6rem;">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -91,213 +197,58 @@ def render_home_page():
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
                     </div>
-                    <div style="font-weight: 700; font-size: 0.98rem; color: #17233C;">Submit a complaint to see AI analysis</div>
-                    <div style="font-size: 0.82rem; color: #64748B; margin-top: 0.3rem;">Category, priority, location, and summary will appear here.</div>
+                    <div style="font-weight: 700; font-size: 0.98rem; color: #17233C;">Submit a complaint to view AI analysis</div>
+                    <div style="font-size: 0.82rem; color: #64748B; margin-top: 0.3rem;">Category, priority, location, and routing recommendations will appear here.</div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
         else:
-            urgency = html.escape(str(latest.get("urgency", "Medium")))
-            urg_class = {
-                "Critical": "badge-critical",
-                "High": "badge-high",
-                "Medium": "badge-medium",
-                "Low": "badge-low"
-            }.get(urgency, "badge-low")
-            
-            raw_cat = html.escape(str(latest.get("category", "General")))
-            raw_loc = html.escape(str(latest.get("location") or latest.get("entities", {}).get("location", "Not specified")))
-            raw_sum = html.escape(str(latest.get("summary", "No summary available.")))
-            
-            dup = latest.get("duplicate", {})
-            dup_type = dup.get("duplicate_type", "none")
-            if dup_type == "active_duplicate":
-                dup_str = f"Active duplicate detected of #{dup.get('matched_id')} ({dup.get('similarity', 0)*100:.1f}% match)"
-            elif dup_type == "related_historical":
-                dup_str = f"Related historical incident #{dup.get('matched_id')} ({dup.get('similarity', 0)*100:.1f}% match)"
-            else:
-                dup_str = "Unique incident (No duplicate detected)"
-            
-            rule_badge = ""
-            if latest.get("rule_elevated"):
-                rule_badge = f"""
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-                    <span style="font-size: 0.82rem; font-weight: 600; color: #64748B;">Safety Rule Override</span>
-                    <span style="background-color: #FEF2F2; color: #DC2626; font-weight: 600; font-size: 0.78rem; padding: 0.2rem 0.5rem; border-radius: 4px;">Yes ({html.escape(str(latest.get('rule_trigger', '')))})</span>
-                </div>
-                """
-                
+            cat = latest.get("category", "Other")
+            urg = latest.get("urgency", "Medium")
+            dept = latest.get("department", "General Services")
+            loc = latest.get("location", "Campus")
+
             st.markdown(
                 f"""
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.25rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-                        <span style="font-size: 0.82rem; font-weight: 600; color: #64748B;">Category</span>
-                        <span style="background-color: #FFF3ED; color: #F15A24; font-weight: 700; font-size: 0.85rem; padding: 0.2rem 0.6rem; border-radius: 6px;">{raw_cat}</span>
+                <div class="card-container" style="border-left: 4px solid {'#ef4444' if urg == 'Critical' else '#f59e0b'};">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 700; color: #0f172a;">{latest.get('title', 'Analysis Result')}</span>
+                        <span class="badge urgency-{urg.lower()}">{urg}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-                        <span style="font-size: 0.82rem; font-weight: 600; color: #64748B;">Priority</span>
-                        <span class="badge {urg_class}">{urgency}</span>
-                    </div>
-                    {rule_badge}
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-                        <span style="font-size: 0.82rem; font-weight: 600; color: #64748B;">Location</span>
-                        <span style="background-color: #EFF6FF; color: #2563EB; font-weight: 600; font-size: 0.82rem; padding: 0.2rem 0.6rem; border-radius: 6px;">{raw_loc}</span>
-                    </div>
-                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #F1F5F9;">
-                        <div style="font-size: 0.72rem; font-weight: 700; color: #64748B; margin-bottom: 0.2rem; text-transform: uppercase;">SUMMARY</div>
-                        <div style="font-size: 0.85rem; color: #17233C; line-height: 1.4;">{raw_sum}</div>
-                    </div>
-                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #F1F5F9; font-size: 0.78rem; color: #64748B;">
-                        <strong>Duplicate Status:</strong> {html.escape(dup_str)}
+                    <p style="font-size: 0.85rem; color: #475569; margin: 0.25rem 0;">{latest.get('summary', '')}</p>
+                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.2rem;">
+                        <span>Category: <b>{cat}</b> ({latest.get('category_confidence', 1.0)*100:.1f}%)</span>
+                        <span>Routing: <b>{dept}</b></span>
+                        <span>Location: <b>{loc}</b></span>
                     </div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
 
-    st.markdown("<div style='margin-bottom: 1.75rem;'></div>", unsafe_allow_html=True)
-    
-    # 3. 4 KPI STAT CARDS (REAL SQLITE DB QUERIES, MONOCHROME LINE ICONS)
-    all_complaints = get_all_complaints()
-    df = pd.DataFrame(all_complaints) if all_complaints else pd.DataFrame()
-    
-    total_count = len(df)
-    high_priority_count = len(df[df['urgency'].isin(['High', 'Critical'])]) if not df.empty else 0
-    resolved_count = len(df[df['status'] == 'Resolved']) if not df.empty else 0
-    duplicates_count = len(df[df['is_duplicate'] == 1]) if not df.empty else 0
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
-    
-    with col_s1:
-        st.markdown(
-            f"""
-            <div class="stat-card">
-                <div class="stat-icon-box stat-icon-orange">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F15A24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
+    # 4. MY RECENT COMPLAINTS TABLE (Personal records only)
+    st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #17233C; margin-bottom: 0.5rem;'>My Recent Submissions</div>", unsafe_allow_html=True)
+    if not my_complaints:
+        st.info("You haven't submitted any complaints yet.")
+    else:
+        recent = my_complaints[:5]
+        for c in recent:
+            cid = c.get("complaint_id", "N/A")
+            status = c.get("status", "Open")
+            created = str(c.get("created_at", ""))[:16].replace("T", " ")
+            st.markdown(
+                f"""
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.8rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 0.4rem;">
+                    <div>
+                        <span style="font-family: monospace; font-weight: 700; color: #475569;">#{cid}</span>
+                        <span style="margin-left: 0.5rem; color: #0f172a; font-weight: 600;">{c.get('title', 'Untitled')}</span>
+                        <span style="margin-left: 0.5rem; color: #94a3b8; font-size: 0.78rem;">{created}</span>
+                    </div>
+                    <span class="badge status-{status.lower().replace(' ', '-')}">{status}</span>
                 </div>
-                <div class="stat-content">
-                    <div class="stat-label">Total Complaints</div>
-                    <div class="stat-value">{total_count}</div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
-    with col_s2:
-        st.markdown(
-            f"""
-            <div class="stat-card">
-                <div class="stat-icon-box stat-icon-red">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">High Priority</div>
-                    <div class="stat-value">{high_priority_count}</div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col_s3:
-        st.markdown(
-            f"""
-            <div class="stat-card">
-                <div class="stat-icon-box stat-icon-green">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Resolved</div>
-                    <div class="stat-value">{resolved_count}</div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col_s4:
-        st.markdown(
-            f"""
-            <div class="stat-card">
-                <div class="stat-icon-box stat-icon-amber">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Duplicates</div>
-                    <div class="stat-value">{duplicates_count}</div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.markdown("<div style='margin-bottom: 1.75rem;'></div>", unsafe_allow_html=True)
-    
-    # 4. RECENT COMPLAINTS & STATUS DONUT CHART GRID
-    grid_left, grid_right = st.columns([1.25, 0.75], gap="large")
-    
-    with grid_left:
-        st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #17233C; margin-bottom: 0.75rem;'>Recent Complaints</div>", unsafe_allow_html=True)
-        
-        if df.empty:
-            st.info("No complaints submitted yet.")
-        else:
-            recent_df = df.head(5)[['id', 'complaint_text', 'category', 'urgency', 'status', 'created_at']].copy()
-            recent_df.columns = ['#', 'Complaint', 'Category', 'Priority', 'Status', 'Date']
-            recent_df['Date'] = recent_df['Date'].astype(str).str.slice(0, 10)
-            
-            st.dataframe(
-                recent_df,
-                use_container_width=True,
-                hide_index=True,
-                column_config={
-                    "#": st.column_config.NumberColumn("ID", width="small"),
-                    "Complaint": st.column_config.TextColumn("Complaint", width="large"),
-                    "Category": st.column_config.TextColumn("Category", width="medium"),
-                    "Priority": st.column_config.TextColumn("Priority", width="small"),
-                    "Status": st.column_config.TextColumn("Status", width="small"),
-                    "Date": st.column_config.TextColumn("Date", width="small"),
-                }
+                """,
+                unsafe_allow_html=True,
             )
-
-    with grid_right:
-        st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #17233C; margin-bottom: 0.75rem;'>Status Overview</div>", unsafe_allow_html=True)
-        
-        if df.empty:
-            st.info("No data for donut chart yet.")
-        else:
-            status_counts = df['status'].value_counts().reset_index()
-            status_counts.columns = ['Status', 'Count']
-            
-            fig = px.pie(
-                status_counts,
-                values='Count',
-                names='Status',
-                hole=0.55,
-                color_discrete_sequence=['#16A34A', '#3B82F6', '#F59E0B', '#EF4444']
-            )
-            fig.update_layout(
-                margin=dict(t=0, b=0, l=0, r=0),
-                height=220,
-                showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)
-            )
-            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

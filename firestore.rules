@@ -1,0 +1,79 @@
+rules_version = '2';
+
+// ==============================================================================
+// SENTINEL - Cloud Firestore Security Rules (Defense-in-Depth)
+//
+// CRITICAL SECURITY ARCHITECTURE NOTE:
+// SENTINEL is a server-side Streamlit Python application that interacts with
+// Cloud Firestore using the firebase-admin SDK with private service account
+// credentials. In the Firebase security model, all calls made by the Admin SDK
+// bypass Firestore Security Rules automatically.
+//
+// Therefore:
+// 1. Primary role-based access control (RBAC), data isolation, and field
+//    validations are implemented SERVER-SIDE in Python repository methods.
+// 2. These Firestore Security Rules serve as a strict DEFENSE-IN-DEPTH layer
+//    to protect data if any direct client SDK or web interface is ever connected.
+// 3. Under no circumstances is "allow read, write: if true;" used.
+// ==============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // User profiles: users/{uid}
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      // Only users can create their own profile initially as student; admins can manage
+      allow create: if isAuthenticated() && isOwner(userId) && request.resource.data.role == "student";
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Complaints collection: complaints/{complaintId}
+    match /complaints/{complaintId} {
+      // Students can only read complaints where they are the reporter; Admins can read all
+      allow read: if isAuthenticated() && (resource.data.reporter_uid == request.auth.uid || isAdmin());
+      
+      // Authenticated students can submit a complaint with their own UID attached
+      allow create: if isAuthenticated() && request.resource.data.reporter_uid == request.auth.uid;
+      
+      // Only Admins can update status, assign staff, or add resolution notes
+      allow update, delete: if isAdmin();
+
+      // Audit events subcollection: complaints/{complaintId}/events/{eventId}
+      match /events/{eventId} {
+        allow read: if isAuthenticated() && (get(/databases/$(database)/documents/complaints/$(complaintId)).data.reporter_uid == request.auth.uid || isAdmin());
+        allow create: if isAdmin();
+        allow update, delete: if false; // Audit trail is strictly immutable
+      }
+    }
+
+    // Notifications collection: notifications/{notificationId}
+    match /notifications/{notificationId} {
+      // Students can only read and mark as read their own notifications
+      allow read: if isAuthenticated() && resource.data.recipient_uid == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.recipient_uid == request.auth.uid 
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow create: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    // Default deny for all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
