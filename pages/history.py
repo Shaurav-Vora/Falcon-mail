@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import html
+import textwrap
 from utils.ui import render_global_header
 from database.database import get_all_complaints, update_complaint_status
 from config import CATEGORIES, URGENCY_LEVELS
@@ -175,11 +176,12 @@ def render_history_page():
     filtered_df = df.copy()
     
     if search_query:
-        query_str = str(search_query).lower()
+        query_str = str(search_query)
         filtered_df = filtered_df[
-            filtered_df['complaint_text'].str.lower().str.contains(query_str, na=False) |
-            filtered_df['id'].astype(str).str.contains(query_str, na=False) |
-            filtered_df['location'].str.lower().str.contains(query_str, na=False)
+            filtered_df['complaint_text'].astype(str).str.contains(query_str, case=False, regex=False, na=False) |
+            filtered_df['summary'].astype(str).str.contains(query_str, case=False, regex=False, na=False) |
+            filtered_df['id'].astype(str).str.contains(query_str, case=False, regex=False, na=False) |
+            filtered_df['location'].astype(str).str.contains(query_str, case=False, regex=False, na=False)
         ]
         
     if status_filter != "All Statuses":
@@ -288,8 +290,13 @@ def render_history_page():
         
         cat_conf = float(selected_record.get('category_confidence', 0.0) or 0.0) * 100
         urg_conf = float(selected_record.get('urgency_confidence', 0.0) or 0.0) * 100
-        cat_conf_str = f"Confidence: {cat_conf:.1f}%" if cat_conf > 0 else "Confidence: Assessed"
-        urg_conf_str = f"Confidence: {urg_conf:.1f}%" if urg_conf > 0 else "Confidence: Assessed"
+        rule_elevated = bool(selected_record.get('rule_elevated', 0))
+        
+        cat_conf_str = f"ML Confidence: {cat_conf:.1f}%" if cat_conf > 0 else "Assessed by ML"
+        if rule_elevated:
+            urg_conf_str = f"Safety Override (ML: {urg_conf:.1f}%)"
+        else:
+            urg_conf_str = f"ML Confidence: {urg_conf:.1f}%" if urg_conf > 0 else "Assessed by ML"
         
         urg_color = "#EF4444" if raw_urgency in ["Critical", "High"] else ("#F59E0B" if raw_urgency == "Medium" else "#16A34A")
         
@@ -298,77 +305,71 @@ def render_history_page():
         dup_text = f"Yes (Matched #{dup_of})" if is_dup and dup_of else ("Yes (Potential Duplicate)" if is_dup else "None (Unique Complaint)")
         dup_color = "#D97706" if is_dup else "#16A34A"
 
-        detail_card_html = f"""
-        <div class="sentinel-card-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #F1F5F9; padding-bottom: 0.75rem;">
-                <div>
-                    <span style="font-size: 1.15rem; font-weight: 800; color: #17233C;">Complaint #{rec_id}</span>
-                    <span style="margin-left: 0.75rem; font-size: 0.82rem; color: #64748B;">Submitted on {rec_date}</span>
-                </div>
-                <div>
-                    <span class="badge {status_cls}">{rec_status}</span>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 1rem;">
-                <div style="font-weight: 700; font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.35rem;">ORIGINAL COMPLAINT TEXT</div>
-                <div style="font-size: 0.92rem; color: #17233C; background: #F8FAFC; padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid #E2E8F0; line-height: 1.5;">
-                    "{raw_complaint_text}"
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 0.85rem;">
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
-                    <div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">CATEGORY</div>
-                    <div style="font-weight: 700; color: #F15A24; font-size: 0.95rem; margin-top: 0.2rem;">{raw_category}</div>
-                    <div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">{cat_conf_str}</div>
-                </div>
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
-                    <div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">PRIORITY / URGENCY</div>
-                    <div style="font-weight: 700; color: {urg_color}; font-size: 0.95rem; margin-top: 0.2rem;">{raw_urgency}</div>
-                    <div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">{urg_conf_str}</div>
-                </div>
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
-                    <div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">LOCATION</div>
-                    <div style="font-weight: 700; color: #3B82F6; font-size: 0.95rem; margin-top: 0.2rem;">{raw_location}</div>
-                    <div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">Extracted by NLP</div>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; margin-bottom: 0.85rem;">
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
-                    <div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">RECOMMENDED DEPARTMENT</div>
-                    <div style="font-size: 0.92rem; font-weight: 600; color: #17233C; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                            <line x1="9" y1="22" x2="9" y2="2"></line>
-                            <line x1="15" y1="22" x2="15" y2="2"></line>
-                        </svg>
-                        <span>{raw_department}</span>
-                    </div>
-                </div>
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
-                    <div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">DUPLICATE MATCH</div>
-                    <div style="font-size: 0.92rem; font-weight: 600; color: {dup_color}; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{dup_color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                        </svg>
-                        <span>{html.escape(dup_text)}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="background: #FFF3ED; border: 1px solid #FED7C2; border-radius: 10px; padding: 0.85rem 1rem;">
-                <div style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 0.72rem; color: #C2410C; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.25rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    <span>AI GENERATED SUMMARY</span>
-                </div>
-                <div style="font-size: 0.92rem; color: #17233C; font-weight: 500; line-height: 1.45;">{raw_summary}</div>
-            </div>
-        </div>
-        """
-        
+        detail_card_html = f"""<div class="sentinel-card-container">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #F1F5F9; padding-bottom: 0.75rem;">
+<div>
+<span style="font-size: 1.15rem; font-weight: 800; color: #17233C;">Complaint #{rec_id}</span>
+<span style="margin-left: 0.75rem; font-size: 0.82rem; color: #64748B;">Submitted on {rec_date}</span>
+</div>
+<div>
+<span class="badge {status_cls}">{rec_status}</span>
+</div>
+</div>
+<div style="margin-bottom: 1rem;">
+<div style="font-weight: 700; font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.35rem;">ORIGINAL COMPLAINT TEXT</div>
+<div style="font-size: 0.92rem; color: #17233C; background: #F8FAFC; padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid #E2E8F0; line-height: 1.5;">
+"{raw_complaint_text}"
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 0.85rem;">
+<div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
+<div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">CATEGORY</div>
+<div style="font-weight: 700; color: #F15A24; font-size: 0.95rem; margin-top: 0.2rem;">{raw_category}</div>
+<div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">{cat_conf_str}</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
+<div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">PRIORITY / URGENCY</div>
+<div style="font-weight: 700; color: {urg_color}; font-size: 0.95rem; margin-top: 0.2rem;">{raw_urgency}</div>
+<div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">{urg_conf_str}</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
+<div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">LOCATION</div>
+<div style="font-weight: 700; color: #3B82F6; font-size: 0.95rem; margin-top: 0.2rem;">{raw_location}</div>
+<div style="font-size: 0.74rem; color: #94A3B8; margin-top: 0.15rem;">Extracted by NLP</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; margin-bottom: 0.85rem;">
+<div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
+<div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">RECOMMENDED DEPARTMENT</div>
+<div style="font-size: 0.92rem; font-weight: 600; color: #17233C; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+<line x1="9" y1="22" x2="9" y2="2"></line>
+<line x1="15" y1="22" x2="15" y2="2"></line>
+</svg>
+<span>{raw_department}</span>
+</div>
+</div>
+<div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem;">
+<div style="font-weight: 700; font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em;">DUPLICATE MATCH</div>
+<div style="font-size: 0.92rem; font-weight: 600; color: {dup_color}; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{dup_color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+<span>{html.escape(dup_text)}</span>
+</div>
+</div>
+</div>
+<div style="background: #FFF3ED; border: 1px solid #FED7C2; border-radius: 10px; padding: 0.85rem 1rem;">
+<div style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 0.72rem; color: #C2410C; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.25rem;">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+<span>AI GENERATED SUMMARY</span>
+</div>
+<div style="font-size: 0.92rem; color: #17233C; font-weight: 500; line-height: 1.45;">{raw_summary}</div>
+</div>
+</div>"""
+
         st.markdown(detail_card_html, unsafe_allow_html=True)

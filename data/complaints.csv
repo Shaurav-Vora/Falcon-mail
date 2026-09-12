@@ -1,440 +1,511 @@
-text,category,urgency
-Someone spotted a stray dog behaving aggressively near the playground and exam starts in 20 minutes.,Safety,Medium
-Attendance record showing false absence for yesterday's lecture.,Academic,Medium
-Night shuttle frequency is too low for students leaving library late and someone almost fell.,Transport,Low
-Lab desk drawer lock in Biology Lab is stuck and cannot open during peak lecture hours.,Maintenance,Low
-Dormitory security deposit refund has not been processed post-graduation reported multiple times already.,Administration,Medium
-Midterm exam timetable has overlapping schedules for Computer Science subjects please fix this immediately.,Academic,High
-Outdoor garden tap broken and wasting gallons of fresh water.,Plumbing,Medium
-Request for course drop hasn't been processed by dean office for 2 weeks.,Academic,Medium
-Lost prescription eyeglasses in case near Block A staircase please fix this immediately.,Other,Low
-Exhaust fan wire short circuited in cafeteria kitchen it has been broken for three weeks.,Electrical,High
-Unable to reset my student portal password due to SMS gateway timeout reported multiple times already.,IT,Low
-Textbooks required for Physics 101 are out of stock in the library.,Academic,Low
-VPN access for remote research servers is throwing authorization errors reported multiple times already.,IT,High
-Ceiling fan in Room 205 is making loud wobbling noise and shaking near Lecture Hall 102.,Electrical,Medium
-Electric vehicle charging station near Block D is out of service in Computer Lab 3.,Transport,Low
-Lab manual for Microprocessors course has outdated exercise instructions.,Academic,Low
-Requesting permission to organize blood donation camp in student center reported multiple times already.,Other,Low
-Found unclaimed prescription jacket in Auditorium seat 12.,Other,Low
-Professor was absent for 30 minutes without prior notice for Math lecture.,Academic,Medium
-Used coffee cups left scattered on library study tables.,Cleanliness,Low
-Cannot access the university online library database from off-campus network.,IT,Medium
-Hot water system in student dorm showers is completely cold.,Plumbing,Low
-Ceiling panel near the faculty lounge is sagging and about to fall down.,Maintenance,High
-Lost prescription eyeglasses in case near Block A staircase.,Other,Low
-Certificate verification portal is rejecting valid graduation documents.,Administration,High
-Vending machine in Block A ate coins without dispensing snack.,Facilities,Low
-Cannot access course materials on portal and exam starts in 2 hours.,Academic,High
-The computer monitors in Graphics Lab 1 are showing distorted colors near Lecture Hall 102.,IT,Low
-Leaking pipe in server room ceiling threatens electronics during peak lecture hours.,Plumbing,Critical
-Security guard was absent from the East Gate post during night hours.,Safety,Medium
-Project supervisor assignments have not been published for senior thesis and someone almost fell.,Academic,Low
-Campus shuttle bus route 2 arrived 40 minutes late this morning it has been broken for three weeks.,Transport,Medium
-Light bulbs in Room 302 are flickering continuously causing eye strain.,Electrical,Low
-Staircase steps in science Block floor 3 are covered in mud dirt in Room 305.,Cleanliness,Low
-Trash cans near Block A entrance are overflowing with food food waste causing major inconvenience to students.,Cleanliness,Low
-Course syllabus for Data Structures has not been uploaded to portal.,Academic,Low
-Smartboard in Room 402 is not responding to touch input since yesterday morning.,IT,Medium
-Late fee penalty charged even though payment was completed before deadline.,Administration,High
-The automatic glass sliding door at the entrance is stuck half open.,Maintenance,Medium
-Desks and chairs in Room 102 are damaged and unstable for students please fix this immediately.,Maintenance,Low
-Cockroaches seen roaming around inside the hostel dining hall and someone almost fell.,Cleanliness,High
-Auditorium air conditioning system is blowing warm air.,Facilities,Medium
-Cloud storage drive for final year project submission is unaccessible and exam starts in 20 minutes.,IT,High
-Classroom capacity is 30 but 50 students registered for Machine Learning.,Academic,Medium
-Janitor left dirty mop and bucket blocking the corridor pathway.,Cleanliness,Low
-Whiteboard in Room 205 has fallen off its wall mounting.,Maintenance,Low
-Water heater in residential quarter blew pipe gasket.,Plumbing,High
-Prerequisite requirement block preventing registration for elective course and exam starts in 20 minutes.,Academic,Medium
-Faculty evaluation form submission deadline is not working on student portal.,Academic,Medium
-Dustbin in Computer Lab 1 has not been emptied for three days it has been broken for three weeks.,Cleanliness,Low
-Black mold spots visible on bathroom walls in dorm building 2 it has been broken for three weeks.,Cleanliness,Medium
-Student ID card scanner at the library entrance is failing to read cards.,IT,High
-Restroom floor is flooded with dirty water and slippery soap residue.,Cleanliness,High
-Study room in library has broken chairs and no working power outlets.,Facilities,Low
-The Wi-Fi network keeps disconnecting every few minutes in Computer Lab 3.,IT,Medium
-HDMI cable attached to the podium in Room 210 is damaged and snapped.,IT,Low
-Tree branch fell and is hanging precariously over the main pedestrian path reported multiple times already.,Safety,High
-Cannot access course materials on portal and exam starts in 2 hours for the past two days.,Academic,High
-Gas leak smell detected near the chemistry laboratory storage area.,Safety,Critical
-Final exam hall allocation lists have conflicting room assignments since this afternoon.,Academic,High
-Mosquitoes breeding in stagnant puddle near the hostel garden area.,Cleanliness,High
-Student ID card issuance counter is closed during working hours.,Administration,Low
-Student learning portal is not loading enrolled subjects before tomorrow's final exam causing major inconvenience to students.,Academic,High
-Ceiling fan in Room 205 is making loud wobbling noise and shaking it has been broken for three weeks.,Electrical,Medium
-Speeding vehicle seen inside campus pedestrian zone near cafeteria causing major inconvenience to students.,Safety,Medium
-Outdoor garden tap broken and wasting gallons of fresh water since this afternoon.,Plumbing,Medium
-The digital signage display in the main lobby is stuck on boot loop.,IT,Low
-Shower drain in hostel room 304 is blocked causing water pooling.,Plumbing,Medium
-Noisy construction work outside library during examination hours since yesterday morning.,Other,Medium
-Campus parking lot B is overcrowded with unauthorized private vehicles.,Transport,Low
-Benches in the campus courtyard are rusted and broken.,Maintenance,Low
-Power outage in Block B wing left all classrooms without electricity in the Sports Complex.,Electrical,High
-Janitor left dirty mop and bucket blocking the corridor pathway reported multiple times already.,Cleanliness,Low
-Fire alarm sensor is continuously beeping and false alarming in Block B in Dormitory Block B.,Safety,Medium
-Washroom sink pipe in Block A 2nd floor is burst and spraying water.,Plumbing,High
-Night shuttle frequency is too low for students leaving library late.,Transport,Low
-Panic button inside the elevator is not responding when pressed it has been broken for three weeks.,Safety,Critical
-Unable to reset my student portal password due to SMS gateway timeout.,IT,Low
-Partition wall in Seminar Hall 1 is damaged.,Maintenance,Low
-Lab assignment deadline was extended without notifying all student sections.,Academic,Low
-Tile flooring in the central corridor is broken causing tripping hazard it has been broken for three weeks.,Maintenance,Medium
-University transport app is not updating live GPS location of buses.,Transport,Low
-Water tank on roof of Block C is overflowing down the building facade causing major inconvenience to students.,Plumbing,Medium
-A student slipped on oil spill near the mechanical workshop entrance.,Safety,High
-Outdoor basketball court floodlights are turned off at night.,Facilities,Low
-Cloud storage drive for final year project submission is unaccessible.,IT,High
-The computer monitors in Graphics Lab 1 are showing distorted colors.,IT,Low
-Speeding vehicle seen inside campus pedestrian zone near cafeteria.,Safety,Medium
-Dark pathway behind the sports complex has no street lights working since this afternoon.,Safety,High
-Grade transcript generated on portal has incorrect letter marks for Semester 4 since yesterday morning.,Academic,High
-Desks and chairs in Room 102 are damaged and unstable for students.,Maintenance,Low
-Project supervisor assignments have not been published for senior thesis.,Academic,Low
-No teaching assistant assigned for the weekly programming lab sessions reported multiple times already.,Academic,Low
-Wall switch board in chemistry lab is loose and hot to touch causing major inconvenience to students.,Electrical,High
-Official transcript request status stuck on pending for 15 days.,Administration,Medium
-Air conditioner compressor wire caught fire outside Block D wall near the main cafeteria.,Electrical,Critical
-Lost silver laptop charger left in Lecture Hall 3 after 2 PM class causing major inconvenience to students.,Other,Low
-Black mold spots visible on bathroom walls in dorm building 2.,Cleanliness,Medium
-Circuit breaker tripped in Physics Lab 2 shutting off experimental equipment near Lecture Hall 102.,Electrical,Medium
-Extension cord provided in seminar room has burnt insulation.,Electrical,High
-Lab manual for Microprocessors course has outdated exercise instructions during peak lecture hours.,Academic,Low
-The printer in the student center ran out of paper and toner.,IT,Low
-Roof tiles near the chapel building are loose after the storm.,Maintenance,Medium
-Rusty brown tap water coming out of drinking fountain near Block B near the main cafeteria.,Plumbing,High
-Found set of keys with blue keychain on bench near cafeteria reported multiple times already.,Other,Low
-Restroom floor is flooded with dirty water and slippery soap residue and someone almost fell.,Cleanliness,High
-Toilet bowl in male restroom Room 102 is clogged and overflowing since yesterday morning.,Plumbing,High
-VPN access for remote research servers is throwing authorization errors.,IT,High
-Extension cord provided in seminar room has burnt insulation causing major inconvenience to students.,Electrical,High
-Evening shuttle service was cancelled without any prior announcement.,Transport,Medium
-Long queues at financial services window due to only 1 counter open please fix this immediately.,Administration,Low
-All computers in Lab 204 are frozen and displaying a blue screen error.,IT,High
-Submitting assignments on the student portal gives HTTP 500 server error.,IT,High
-Electrical wall socket in Room 104 sparked when plugging in laptop at the Student Center.,Electrical,High
-Unauthorized person without ID badge found wandering around student dorms.,Safety,High
-Auditorium air conditioning system is blowing warm air and someone almost fell.,Facilities,Medium
-Bare live copper electrical wires exposed in hallway near Room 105 near the main cafeteria.,Safety,Critical
-Tree branch fell and is hanging precariously over the main pedestrian path.,Safety,High
-Student shuttle bus driver was driving rashly near the campus gate.,Transport,High
-Unauthorized person without ID badge found wandering around student dorms causing major inconvenience to students.,Safety,High
-Cannot access the university online library database from off-campus network for the past two days.,IT,Medium
-Elevator in the Administration building is making grinding noise and jerking.,Maintenance,High
-Student lounge sofa cushions are torn and filthy.,Facilities,Low
-Water cooler on 3rd floor near Room 301 is dispensing hot water in the Chemistry Building.,Facilities,Low
-A student slipped on oil spill near the mechanical workshop entrance during peak lecture hours.,Safety,High
-The door lock in Room 304 is broken and the door won't latch properly.,Maintenance,Medium
-Campus e-learning portal crashed right during the online assignment deadline.,IT,High
-Washroom sink pipe in Block A 2nd floor is burst and spraying water for the past two days.,Plumbing,High
-UPS battery backup in computer server room is emitting loud alarm beep causing major inconvenience to students.,Electrical,High
-Course registration clearance hold not removed despite clearing dues.,Administration,High
-Handicapped parking spaces near main building occupied by illegal cars it has been broken for three weeks.,Transport,Medium
-Water is leaking from the ceiling near cafeteria floor is very slippery since yesterday morning.,Plumbing,High
-Traffic congestion at main gate entry due to broken automated boom barrier.,Transport,Medium
-Bicycle sharing dock near library has no working bikes available.,Transport,Low
-Drain pipe under library washroom sink is disconnected and leaking onto floor since yesterday morning.,Plumbing,Medium
-The desktop PC in Room 108 will not power on at all near the main cafeteria.,IT,Low
-University helpdesk phone lines are constantly busy and unanswered during peak lecture hours.,Administration,Low
-Campus parking lot B is overcrowded with unauthorized private vehicles since yesterday morning.,Transport,Low
-Microwave oven in faculty lunchroom is sparking and smoking please fix this immediately.,Facilities,High
-The projector in Lecture Hall A is flickering and won't display the slides causing major inconvenience to students.,IT,Low
-Light bulbs in Room 302 are flickering continuously causing eye strain in Dormitory Block B.,Electrical,Low
-Restroom near the main cafeteria has not been cleaned since yesterday.,Cleanliness,Medium
-Parking permit fee charged twice on my university account balance and someone almost fell.,Administration,Medium
-HDMI cable attached to the podium in Room 210 is damaged and snapped and exam starts in 20 minutes.,IT,Low
-Drinking water fountain filter indicator shows red dirty water warning since yesterday morning.,Facilities,High
-Air conditioner compressor wire caught fire outside Block D wall during peak lecture hours.,Electrical,Critical
-Campus shuttle bus route 2 arrived 40 minutes late this morning.,Transport,Medium
-Power outage in Block B wing left all classrooms without electricity causing major inconvenience to students.,Electrical,High
-Cafeteria tables are covered in greasy food stains and spilled drinks.,Cleanliness,Medium
-The printer in the student center ran out of paper and toner it has been broken for three weeks.,IT,Low
-Main electrical distribution box in basement is leaking sparks.,Electrical,Critical
-Drain pipe under library washroom sink is disconnected and leaking onto floor.,Plumbing,Medium
-Prerequisite requirement block preventing registration for elective course.,Academic,Medium
-Water cooler on 3rd floor near Room 301 is dispensing hot water it has been broken for three weeks.,Facilities,Low
-Toilet bowl in male restroom Room 102 is clogged and overflowing.,Plumbing,High
-Grade transcript generated on portal has incorrect letter marks for Semester 4.,Academic,High
-No water pressure coming out of taps in chemical engineering lab please fix this immediately.,Plumbing,Medium
-Hot water system in student dorm showers is completely cold it has been broken for three weeks.,Plumbing,Low
-Electric vehicle charging station near Block D is out of service.,Transport,Low
-Ceiling panel near the faculty lounge is sagging and about to fall down since yesterday morning.,Maintenance,High
-There is smoke coming from an electrical panel near Block A ground floor near Block A.,Safety,Critical
-The Wi-Fi network keeps disconnecting every few minutes in Computer Lab 3 since yesterday morning.,IT,Medium
-Blinds in Room 410 are broken and stuck in down position at the Student Center.,Maintenance,Low
-Discipline committee letter sent with wrong student roll number since this afternoon.,Administration,Medium
-Inquiry regarding lost and found office opening timings.,Other,Low
-Main water supply pipe near central garden burst open forming huge puddle and exam starts in 20 minutes.,Plumbing,High
-No water supply in the washrooms of Block B 2nd floor near Block A.,Facilities,High
-Window glass in Block C second floor corridor is cracked and loose near Block A.,Maintenance,Medium
-Tile flooring in the central corridor is broken causing tripping hazard.,Maintenance,Medium
-Drinking water fountain filter indicator shows red dirty water warning.,Facilities,High
-Hostel allotment list has errors in room numbers since yesterday morning.,Administration,Medium
-Door handle of the girls rest room on 3rd floor came off completely during peak lecture hours.,Maintenance,Low
-Re-evaluation application form link is missing on the academic portal it has been broken for three weeks.,Academic,Medium
-Mosquitoes breeding in stagnant puddle near the hostel garden area and exam starts in 20 minutes.,Cleanliness,High
-Fire alarm sensor is continuously beeping and false alarming in Block B.,Safety,Medium
-Air conditioning inside university bus number 5 is broken.,Transport,Low
-Network port in Professor Miller's office is physically broken causing major inconvenience to students.,IT,Low
-The desktop PC in Room 108 will not power on at all since yesterday morning.,IT,Low
-Smartboard in Room 402 is not responding to touch input.,IT,Medium
-Scholarship disbursement check has not been deposited into student account it has been broken for three weeks.,Administration,High
-Vending machine in Block A ate coins without dispensing snack in Room 305.,Facilities,Low
-Electrical wall socket in Room 104 sparked when plugging in laptop.,Electrical,High
-Disinfected smell missing and biohazard waste box open in medical clinic.,Cleanliness,High
-Flush tank mechanism in girls bathroom floor 1 is broken and constantly running.,Plumbing,Low
-The desktop PC in Room 108 will not power on at all.,IT,Low
-Chemical spill of unknown liquid reported in Organic Chemistry Lab 3 in Computer Lab 3.,Safety,Critical
-University helpdesk phone lines are constantly busy and unanswered.,Administration,Low
-Final exam hall allocation lists have conflicting room assignments.,Academic,High
-The automatic glass sliding door at the entrance is stuck half open it has been broken for three weeks.,Maintenance,Medium
-CCTV security camera near the girl hostel entrance is disconnected and someone almost fell.,Safety,High
-Exhaust fan wire short circuited in cafeteria kitchen.,Electrical,High
-Washroom sink pipe in Block A 2nd floor is burst and spraying water near the main cafeteria.,Plumbing,High
-Light fixtures in ground floor corridor are dead and pitch dark for the past two days.,Electrical,Medium
-Restroom near the main cafeteria has not been cleaned since yesterday and exam starts in 20 minutes.,Cleanliness,Medium
-Lockers in the sports complex male changing room have rusted latches during peak lecture hours.,Facilities,Low
-Students are unable to log into the portal from the Library terminals and exam starts in 20 minutes.,IT,Medium
-Loud music played late at night from adjacent hostel building.,Other,Low
-Office hours schedule of Professor Davis is never updated.,Academic,Low
-The door lock in Room 304 is broken and the door won't latch properly causing major inconvenience to students.,Maintenance,Medium
-Wall switch board in chemistry lab is loose and hot to touch.,Electrical,High
-Cafeteria tables are covered in greasy food stains and spilled drinks since this afternoon.,Cleanliness,Medium
-Staircase steps in science Block floor 3 are covered in mud dirt.,Cleanliness,Low
-The projector in Lecture Hall A is flickering and won't display the slides.,IT,Low
-Long queues at financial services window due to only 1 counter open.,Administration,Low
-Student learning portal is not loading enrolled subjects before tomorrow's final exam.,Academic,High
-Balcony railing on 4th floor Block C is loose and unsafe please fix this immediately.,Safety,Critical
-Handicapped parking spaces near main building occupied by illegal cars.,Transport,Medium
-Medical insurance card was not delivered to international students reported multiple times already.,Administration,Medium
-Discipline committee letter sent with wrong student roll number.,Administration,Medium
-Pigeon droppings present on corridor windows and desks in Block C.,Cleanliness,Low
-Air conditioning inside university bus number 5 is broken it has been broken for three weeks.,Transport,Low
-Staircase steps in science Block floor 3 are covered in mud dirt it has been broken for three weeks.,Cleanliness,Low
-NOC document for internship application is pending approval for 3 weeks.,Administration,Medium
-Vending machine in Block A ate coins without dispensing snack it has been broken for three weeks.,Facilities,Low
-"My learning platform is not showing my courses and I have an exam tomorrow, please fix it urgently.",Academic,High
-The computer lab mouse and keyboard in desk 14 are missing.,IT,Low
-Blinds in Room 410 are broken and stuck in down position.,Maintenance,Low
-Dust and cobwebs accumulated all over the ceiling of Room 204.,Cleanliness,Low
-Driver of Bus 3 was using mobile phone while driving with students.,Transport,High
-The main door of the Chemistry department is jammed shut for the past two days.,Maintenance,Medium
-Internet speed in the male dormitory is extremely slow since yesterday since yesterday morning.,IT,Low
-Sewer odor coming out of floor drain in ground floor corridor.,Plumbing,Medium
-Balcony railing on 4th floor Block C is loose and unsafe.,Safety,Critical
-Overhead projector lamp exploded in Physics Lab 102 and someone almost fell.,IT,Medium
-Late fee penalty charged even though payment was completed before deadline and someone almost fell.,Administration,High
-Annual fee breakdown receipt missing itemized laboratory charges during peak lecture hours.,Administration,Low
-Rusty brown tap water coming out of drinking fountain near Block B since this afternoon.,Plumbing,High
-Fire extinguisher in the Chemistry lab is missing from its wall bracket causing major inconvenience to students.,Safety,High
-Found unclaimed prescription jacket in Auditorium seat 12 reported multiple times already.,Other,Low
-Desks and chairs in Room 102 are damaged and unstable for students near the food court.,Maintenance,Low
-No water supply in the washrooms of Block B 2nd floor.,Facilities,High
-Foul smell coming from garbage dump behind the student canteen.,Cleanliness,Medium
-Bicycle sharing dock near library has no working bikes available it has been broken for three weeks.,Transport,Low
-Dustbin in Computer Lab 1 has not been emptied for three days in Computer Lab 3.,Cleanliness,Low
-HDMI cable attached to the podium in Room 210 is damaged and snapped in Room 305.,IT,Low
-The computer lab mouse and keyboard in desk 14 are missing please fix this immediately.,IT,Low
-Re-evaluation application form link is missing on the academic portal.,Academic,Medium
-Trash cans near Block A entrance are overflowing with food food waste in Room 204.,Cleanliness,Low
-The computer monitors in Graphics Lab 1 are showing distorted colors causing major inconvenience to students.,IT,Low
-Exhaust fan in the chemistry laboratory is making loud screeching noise since yesterday morning.,Maintenance,Medium
-Pigeon droppings present on corridor windows and desks in Block C causing major inconvenience to students.,Cleanliness,Low
-Window shutter in the library study room cannot be opened or closed since this afternoon.,Maintenance,Low
-Balcony railing on 4th floor Block C is loose and unsafe near the food court.,Safety,Critical
-Student shuttle bus driver was driving rashly near the campus gate and exam starts in 20 minutes.,Transport,High
-Leaking pipe in server room ceiling threatens electronics.,Plumbing,Critical
-Blinds in Room 410 are broken and stuck in down position since yesterday morning.,Maintenance,Low
-Lab assignment deadline was extended without notifying all student sections in the Chemistry Building.,Academic,Low
-Office hours schedule of Professor Davis is never updated during peak lecture hours.,Academic,Low
-Lab assignment deadline was extended without notifying all student sections reported multiple times already.,Academic,Low
-Gymnasium weight equipment cable is frayed and snapped during workout.,Facilities,High
-Exhaust fan in the chemistry laboratory is making loud screeching noise.,Maintenance,Medium
-Network port in Professor Miller's office is physically broken.,IT,Low
-Faculty evaluation form submission deadline is not working on student portal please fix this immediately.,Academic,Medium
-Water tank on roof of Block C is overflowing down the building facade.,Plumbing,Medium
-Attendance record showing false absence for yesterday's lecture causing major inconvenience to students.,Academic,Medium
-Construction debris with sharp rusty nails left exposed on walkway since this afternoon.,Safety,High
-Not enough seating capacity on morning shuttle for off-campus hostelers.,Transport,Medium
-Rusty brown tap water coming out of drinking fountain near Block B.,Plumbing,High
-Swimming pool water appears cloudy and unhygienic for the past two days.,Facilities,High
-Lab manual for Microprocessors course has outdated exercise instructions in Dormitory Block B.,Academic,Low
-Water tank on roof of Block C is overflowing down the building facade in Room 305.,Plumbing,Medium
-Water heater in residential quarter blew pipe gasket and someone almost fell.,Plumbing,High
-Official transcript request status stuck on pending for 15 days and someone almost fell.,Administration,Medium
-Window glass in Block C second floor corridor is cracked and loose please fix this immediately.,Maintenance,Medium
-Security guard was absent from the East Gate post during night hours and exam starts in 20 minutes.,Safety,Medium
-Voltage fluctuation damaged monitor screen in Room 401.,Electrical,Medium
-Microwave oven in faculty lunchroom is sparking and smoking.,Facilities,High
-The Wi-Fi network keeps disconnecting every few minutes in Computer Lab 3 in Room 204.,IT,Medium
-Roof tiles near the chapel building are loose after the storm for the past two days.,Maintenance,Medium
-The door lock in Room 304 is broken and the door won't latch properly in Room 305.,Maintenance,Medium
-Bus stop shed roof is leaking water during rainy days.,Transport,Low
-Shuttle bus door closing mechanism caught student backpack.,Transport,High
-The biometric attendance scanner at the main entrance is offline for the past two days.,IT,High
-Gymnasium weight equipment cable is frayed and snapped during workout and someone almost fell.,Facilities,High
-Student cafeteria indoor seating area is overcrowded and lacks ventilation causing major inconvenience to students.,Facilities,Low
-Water cooler on 3rd floor near Room 301 is dispensing hot water.,Facilities,Low
-Outdoor streetlight pole base near library has exposed active wiring since yesterday morning.,Electrical,Critical
-Annual fee breakdown receipt missing itemized laboratory charges.,Administration,Low
-University transport app is not updating live GPS location of buses please fix this immediately.,Transport,Low
-Library study cubicle lamps are burnt out and dim.,Facilities,Low
-Admin office staff was unhelpful and refused to clear clearance slip for the past two days.,Administration,Low
-Metal shutter of the cafeteria storage room is off its track.,Maintenance,Medium
-Emergency backup lights failed to turn on during campus blackout during peak lecture hours.,Electrical,High
-Panic button inside the elevator is not responding when pressed.,Safety,Critical
-Smoke detector in Room 201 has been covered with plastic wrap near the main entrance gate.,Safety,High
-Lecture recording links on course page are corrupted and won't play.,Academic,Low
-Whiteboard in Room 205 has fallen off its wall mounting and exam starts in 20 minutes.,Maintenance,Low
-Lost black leather wallet containing student ID near library entrance.,Other,Low
-Circuit breaker tripped in Physics Lab 2 shutting off experimental equipment.,Electrical,Medium
-The campus wireless signal is completely dead in the science building basement.,IT,Medium
-Window shutter in the library study room cannot be opened or closed.,Maintenance,Low
-Air conditioning in Lecture Hall 2 stopped working and it is extremely hot inside.,Maintenance,Medium
-Light fixtures in ground floor corridor are dead and pitch dark.,Electrical,Medium
-Trash cans near Block A entrance are overflowing with food food waste.,Cleanliness,Low
-Pigeon droppings present on corridor windows and desks in Block C in the Chemistry Building.,Cleanliness,Low
-Traffic congestion at main gate entry due to broken automated boom barrier and exam starts in 20 minutes.,Transport,Medium
-Submitting assignments on the student portal gives HTTP 500 server error during peak lecture hours.,IT,High
-Scholarship disbursement check has not been deposited into student account.,Administration,High
-Dark pathway behind the sports complex has no street lights working.,Safety,High
-Staircase handrail near Block B exit is loose and wobbly please fix this immediately.,Maintenance,Medium
-Light bulbs in Room 302 are flickering continuously causing eye strain causing major inconvenience to students.,Electrical,Low
-Not enough seating capacity on morning shuttle for off-campus hostelers for the past two days.,Transport,Medium
-Main water supply pipe near central garden burst open forming huge puddle.,Plumbing,High
-Door handle of the girls rest room on 3rd floor came off completely.,Maintenance,Low
-Electric vehicle charging station near Block D is out of service reported multiple times already.,Transport,Low
-Campus e-learning portal crashed right during the online assignment deadline reported multiple times already.,IT,High
-Smoke detector in Room 201 has been covered with plastic wrap and exam starts in 20 minutes.,Safety,High
-Benches in the campus courtyard are rusted and broken please fix this immediately.,Maintenance,Low
-Sanitary napkin dispenser in girls restroom is empty and jammed for the past two days.,Facilities,Medium
-Internet speed in the male dormitory is extremely slow since yesterday.,IT,Low
-Lab desk drawer lock in Biology Lab is stuck and cannot open near the main cafeteria.,Maintenance,Low
-Circuit breaker tripped in Physics Lab 2 shutting off experimental equipment please fix this immediately.,Electrical,Medium
-Parking permit fee charged twice on my university account balance.,Administration,Medium
-Overhead projector lamp exploded in Physics Lab 102 in Dormitory Block B.,IT,Medium
-Foul smell coming from garbage dump behind the student canteen since yesterday morning.,Cleanliness,Medium
-Software license for MATLAB expired on all machines in Engineering Lab 2 during peak lecture hours.,IT,Medium
-Water is leaking from the ceiling near cafeteria floor is very slippery.,Plumbing,High
-Admin office staff was unhelpful and refused to clear clearance slip.,Administration,Low
-Course syllabus for Data Structures has not been uploaded to portal reported multiple times already.,Academic,Low
-Audio speakers in Room 305 are distorting sound during lectures it has been broken for three weeks.,IT,Low
-Glass bottle shattered across the main walking pathway near cafeteria.,Safety,Medium
-There is smoke coming from an electrical panel near Block A ground floor.,Safety,Critical
-Staircase handrail near Block B exit is loose and wobbly.,Maintenance,Medium
-Chemical spill of unknown liquid reported in Organic Chemistry Lab 3 please fix this immediately.,Safety,Critical
-All computers in Lab 204 are frozen and displaying a blue screen error causing major inconvenience to students.,IT,High
-Electrical wall socket in Room 104 sparked when plugging in laptop and exam starts in 20 minutes.,Electrical,High
-Window glass in Block C second floor corridor is cracked and loose.,Maintenance,Medium
-Flush tank mechanism in girls bathroom floor 1 is broken and constantly running causing major inconvenience to students.,Plumbing,Low
-The digital signage display in the main lobby is stuck on boot loop and someone almost fell.,IT,Low
-There is smoke coming from an electrical panel near Block A ground floor and exam starts in 20 minutes.,Safety,Critical
-"My learning platform is not showing my courses and I have an exam tomorrow, please fix it urgently for the past two days.",Academic,High
-UPS battery backup in computer server room is emitting loud alarm beep.,Electrical,High
-Dust and cobwebs accumulated all over the ceiling of Room 204 near Block A.,Cleanliness,Low
-Sanitary napkin dispenser in girls restroom is empty and jammed.,Facilities,Medium
-Construction debris with sharp rusty nails left exposed on walkway.,Safety,High
-Lockers in the sports complex male changing room have rusted latches.,Facilities,Low
-Student cafeteria indoor seating area is overcrowded and lacks ventilation.,Facilities,Low
-Microphone sound in Auditorium B is corrupted with heavy static noise.,IT,Low
-Certificate verification portal is rejecting valid graduation documents since yesterday morning.,Administration,High
-Smoke detector in Room 201 has been covered with plastic wrap.,Safety,High
-Classroom capacity is 30 but 50 students registered for Machine Learning since this afternoon.,Academic,Medium
-Audio speakers in Room 305 are distorting sound during lectures.,IT,Low
-Power outage in Block B wing left all classrooms without electricity.,Electrical,High
-Corridor walls in Block A have peeling paint and plaster debris on floor.,Maintenance,Low
-Main electrical distribution box in basement is leaking sparks for the past two days.,Electrical,Critical
-Badminton court floor mats are torn and causing slippery footing please fix this immediately.,Facilities,Medium
-Audio speakers in Room 305 are distorting sound during lectures near the main cafeteria.,IT,Low
-Glass bottle shattered across the main walking pathway near cafeteria and someone almost fell.,Safety,Medium
-Disinfected smell missing and biohazard waste box open in medical clinic since this afternoon.,Cleanliness,High
-Bus stop shed roof is leaking water during rainy days and exam starts in 20 minutes.,Transport,Low
-Elevator in the Administration building is making grinding noise and jerking reported multiple times already.,Maintenance,High
-Microphone sound in Auditorium B is corrupted with heavy static noise for the past two days.,IT,Low
-The campus wireless signal is completely dead in the science building basement it has been broken for three weeks.,IT,Medium
-Textbooks required for Physics 101 are out of stock in the library causing major inconvenience to students.,Academic,Low
-Voltage fluctuation damaged monitor screen in Room 401 since yesterday morning.,Electrical,Medium
-Corridor walls in Block A have peeling paint and plaster debris on floor and exam starts in 20 minutes.,Maintenance,Low
-Lost black leather wallet containing student ID near library entrance since this afternoon.,Other,Low
-Voltage fluctuation damaged monitor screen in Room 401 in Block C 2nd floor.,Electrical,Medium
-Request for course drop hasn't been processed by dean office for 2 weeks and someone almost fell.,Academic,Medium
-Study room in library has broken chairs and no working power outlets and exam starts in 20 minutes.,Facilities,Low
-Unidentified suspicious package left unattended near the main entrance please fix this immediately.,Safety,Critical
-All computers in Lab 204 are frozen and displaying a blue screen error in Computer Lab 3.,IT,High
-Outdoor streetlight pole base near library has exposed active wiring.,Electrical,Critical
-Lab desk drawer lock in Biology Lab is stuck and cannot open.,Maintenance,Low
-Student ID card scanner at the library entrance is failing to read cards it has been broken for three weeks.,IT,High
-Noisy construction work outside library during examination hours.,Other,Medium
-Degree certificate name spelling is wrong on official transcript draft and exam starts in 20 minutes.,Academic,High
-Partition wall in Seminar Hall 1 is damaged causing major inconvenience to students.,Maintenance,Low
-Dormitory security deposit refund has not been processed post-graduation.,Administration,Medium
-Unidentified suspicious package left unattended near the main entrance.,Safety,Critical
-Students are unable to log into the portal from the Library terminals.,IT,Medium
-Sewer odor coming out of floor drain in ground floor corridor during peak lecture hours.,Plumbing,Medium
-Emergency exit door in Block C is padlocked shut from inside.,Safety,Critical
-No teaching assistant assigned for the weekly programming lab sessions.,Academic,Low
-Smartboard in Room 402 is not responding to touch input in the Chemistry Building.,IT,Medium
-The main door of the Chemistry department is jammed shut.,Maintenance,Medium
-Emergency exit door in Block C is padlocked shut from inside since yesterday morning.,Safety,Critical
-Student lounge sofa cushions are torn and filthy please fix this immediately.,Facilities,Low
-Refund process for duplicate fee payment taking more than four weeks.,Administration,Medium
-Evening shuttle service was cancelled without any prior announcement since yesterday morning.,Transport,Medium
-Chemical spill of unknown liquid reported in Organic Chemistry Lab 3.,Safety,Critical
-Driver of Bus 3 was using mobile phone while driving with students and exam starts in 20 minutes.,Transport,High
-Emergency exit door in Block C is padlocked shut from inside at the Student Center.,Safety,Critical
-Staircase handrail near Block B exit is loose and wobbly in the Chemistry Building.,Maintenance,Medium
-Software license for MATLAB expired on all machines in Engineering Lab 2.,IT,Medium
-Student ID card issuance counter is closed during working hours causing major inconvenience to students.,Administration,Low
-Degree certificate name spelling is wrong on official transcript draft.,Academic,High
-Gas leak smell detected near the chemistry laboratory storage area since yesterday morning.,Safety,Critical
-Emergency backup lights failed to turn on during campus blackout.,Electrical,High
-Bus pass counter staff misbehaved with students waiting in line reported multiple times already.,Administration,Low
-Campus cat was injured near parking lot and needs veterinary help since yesterday morning.,Other,Medium
-Swimming pool water appears cloudy and unhygienic.,Facilities,High
-Lecture recording links on course page are corrupted and won't play causing major inconvenience to students.,Academic,Low
-Shower drain in hostel room 304 is blocked causing water pooling it has been broken for three weeks.,Plumbing,Medium
-NOC document for internship application is pending approval for 3 weeks since yesterday morning.,Administration,Medium
-Whiteboard in Room 205 has fallen off its wall mounting in Room 305.,Maintenance,Low
-Bare live copper electrical wires exposed in hallway near Room 105.,Safety,Critical
-Outdoor basketball court floodlights are turned off at night since this afternoon.,Facilities,Low
-Someone spotted a stray dog behaving aggressively near the playground.,Safety,Medium
-No water pressure coming out of taps in chemical engineering lab.,Plumbing,Medium
-Campus cat was injured near parking lot and needs veterinary help.,Other,Medium
-Loud music played late at night from adjacent hostel building since this afternoon.,Other,Low
-Found set of keys with blue keychain on bench near cafeteria.,Other,Low
-Air conditioner compressor wire caught fire outside Block D wall.,Electrical,Critical
-CCTV security camera near the girl hostel entrance is disconnected.,Safety,High
-Fire extinguisher in the Chemistry lab is missing from its wall bracket.,Safety,High
-Parking ticket machine is taking money but not issuing parking ticket for the past two days.,Transport,Low
-Air conditioning in Lecture Hall 2 stopped working and it is extremely hot inside since yesterday morning.,Maintenance,Medium
-Corridor walls in Block A have peeling paint and plaster debris on floor near the food court.,Maintenance,Low
-Overhead projector lamp exploded in Physics Lab 102.,IT,Medium
-Refund process for duplicate fee payment taking more than four weeks reported multiple times already.,Administration,Medium
-Ceiling fan in Room 205 is making loud wobbling noise and shaking.,Electrical,Medium
-Fire alarm sensor is continuously beeping and false alarming in Block B it has been broken for three weeks.,Safety,Medium
-Requesting permission to organize blood donation camp in student center.,Other,Low
-Used coffee cups left scattered on library study tables during peak lecture hours.,Cleanliness,Low
-Professor was absent for 30 minutes without prior notice for Math lecture and exam starts in 20 minutes.,Academic,Medium
-Toilet bowl in male restroom Room 102 is clogged and overflowing in Room 204.,Plumbing,High
-Shuttle bus door closing mechanism caught student backpack since this afternoon.,Transport,High
-Metal shutter of the cafeteria storage room is off its track since yesterday morning.,Maintenance,Medium
-Library quiet study area is noisy and staff is not enforcing silence it has been broken for three weeks.,Academic,Low
-Cockroaches seen roaming around inside the hostel dining hall.,Cleanliness,High
-Badminton court floor mats are torn and causing slippery footing.,Facilities,Medium
-Dustbin in Computer Lab 1 has not been emptied for three days.,Cleanliness,Low
-Library study cubicle lamps are burnt out and dim it has been broken for three weeks.,Facilities,Low
-Hostel allotment list has errors in room numbers.,Administration,Medium
-Dust and cobwebs accumulated all over the ceiling of Room 204 since yesterday morning.,Cleanliness,Low
-Library quiet study area is noisy and staff is not enforcing silence.,Academic,Low
-Course registration clearance hold not removed despite clearing dues since this afternoon.,Administration,High
-Software license for MATLAB expired on all machines in Engineering Lab 2 in Room 204.,IT,Medium
-Parking ticket machine is taking money but not issuing parking ticket.,Transport,Low
-Inquiry regarding lost and found office opening timings for the past two days.,Other,Low
-The biometric attendance scanner at the main entrance is offline.,IT,High
-Lost silver laptop charger left in Lecture Hall 3 after 2 PM class.,Other,Low
-Midterm exam timetable has overlapping schedules for Computer Science subjects.,Academic,High
-Bus pass counter staff misbehaved with students waiting in line.,Administration,Low
-Bare live copper electrical wires exposed in hallway near Room 105 please fix this immediately.,Safety,Critical
-No water supply in the washrooms of Block B 2nd floor it has been broken for three weeks.,Facilities,High
-Lost prescription eyeglasses in case near Block A staircase at the Student Center.,Other,Low
-Medical insurance card was not delivered to international students.,Administration,Medium
+text,category,urgency,template_group_id
+Student club requesting approval to host blood donation drive in the activity center.,Other,Low,T_OTH_006
+Boiler pressure valve in residential block ruptured spewing hot steam causing inconvenience to students and staff.,Plumbing,High,T_PLM_011
+Lost silver laptop charger left behind in Lecture Hall 3 after the 2 PM session causing inconvenience to students and staff.,Other,Low,T_OTH_003
+Waste drainage pipe under library washbasin is uncoupled and leaking reported earlier today.,Plumbing,Medium,T_PLM_005
+Carpet in the seminar room has a persistent damp musty smell reported earlier today.,Cleanliness,Low,T_CLN_016
+The door lock in Room 304 has been broken and the door cannot latch shut.,Maintenance,Medium,T_MNT_001
+Common room furniture upholstery is shredded and dirty.,Facilities,Low,T_FAC_016
+The main entry door of the Chemistry department is jammed shut noticed by several students.,Maintenance,Medium,T_MNT_009
+Drone flown unauthorized over student dormitory recreational area.,Other,Medium,T_OTH_018
+Stench of rotting garbage emanating from dumpsters behind the student canteen which is affecting normal activities.,Cleanliness,Medium,T_CLN_006
+Electric water geyser in sports locker room blew its internal fuse which is affecting normal activities.,Electrical,Medium,T_ELC_017
+Student health insurance card was not delivered to international freshmen.,Administration,Medium,T_ADM_012
+Pedestrian pathway behind the sports arena has no functioning street lighting at night several people have pointed this out.,Safety,High,T_SAF_005
+Campus parking lot B is congested due to non-permitted external commercial vehicles affecting people in the area.,Transport,Low,T_TRN_005
+Lecture hall capacity is 40 seats but 65 students are enrolled in the course causing inconvenience to students and staff.,Academic,Medium,T_ACD_010
+Outdoor seating benches in the courtyard have broken wooden slats.,Maintenance,Low,T_MNT_016
+Lockers in the biology laboratory cannot be locked securely.,Facilities,Low,T_FAC_017
+Shuttle bus headlamp is dead on the driver side during night service since yesterday morning.,Transport,High,T_TRN_016
+Heavy dust and cobwebs hanging from the ceiling corners in Room 204.,Cleanliness,Low,T_CLN_004
+Staircase handrail near Block B emergency exit is loose and unstable.,Maintenance,Medium,T_MNT_007
+Drone flown unauthorized over student dormitory recreational area causing inconvenience to students and staff.,Other,Medium,T_OTH_018
+All computers in Lab 204 have been frozen and displaying a blue screen crash error.,IT,High,T_IT_004
+Campus parking lot B has been congested due to non-permitted external commercial vehicles.,Transport,Low,T_TRN_005
+Air conditioning outdoor compressor cable caught fire outside Block D.,Electrical,Critical,T_ELC_014
+Water is leaking from ceiling tiles near cafeteria and floor is slippery.,Plumbing,High,T_PLM_001
+Sewer gases backing up through drainage grates in ground floor corridor since yesterday morning.,Plumbing,Medium,T_PLM_012
+Lecture hall capacity is 40 seats but 65 students are enrolled in the course.,Academic,Medium,T_ACD_010
+Ethernet network port in faculty office 215 has been physically loose and broken.,IT,Low,T_IT_012
+Boiler pressure valve in residential block ruptured spewing hot steam.,Plumbing,High,T_PLM_011
+Corridor wall plaster in Block A has been peeling and dropping debris on the floor.,Maintenance,Low,T_MNT_014
+Fluorescent ceiling tubes in Room 302 are flickering violently causing headaches causing inconvenience to students and staff.,Electrical,Low,T_ELC_002
+CCTV security camera covering the female dormitory entrance is damaged affecting people in the area.,Safety,High,T_SAF_012
+Discarded beverage containers and food wrappers strewn across library desks for the past two days.,Cleanliness,Low,T_CLN_014
+Whiteboard in Room 205 detached from the wall bracket.,Maintenance,Low,T_MNT_008
+No Objection Certificate document for mandatory internship visa is pending approval for weeks reported earlier today.,Administration,Medium,T_ADM_007
+Hand sanitizer dispensers throughout the science block have been completely dry.,Facilities,Low,T_FAC_018
+Graffiti scrawled on hallway walls in Block D second floor.,Cleanliness,Low,T_CLN_017
+Partition divider in Seminar Hall 1 is unsteady and rattling since yesterday morning.,Maintenance,Low,T_MNT_019
+Late payment penalty fee levied despite proof of payment before deadline date.,Administration,High,T_ADM_011
+Midterm examination timetable has scheduled two core subjects at the exact same hour.,Academic,High,T_ACD_002
+Graduation clearance portal is rejecting attested valid degree documentation causing inconvenience to students and staff.,Administration,High,T_ADM_014
+Main electrical distribution panel in basement is producing visible arcing sparks.,Electrical,Critical,T_ELC_010
+Elevator in the Administration building is making grinding noises and jerking abruptly causing inconvenience to students and staff.,Maintenance,High,T_MNT_004
+Students are unable to log into the portal from the Library terminals.,IT,Medium,T_IT_002
+Underground main water supply conduit burst forming a deep trench near courtyard.,Plumbing,High,T_PLM_008
+Pigeon droppings accumulated across windowsills and desks in Block C.,Cleanliness,Low,T_CLN_003
+Exhaust ventilation fan in the workshop is screeching loudly.,Maintenance,Medium,T_MNT_012
+Bus timetable posted on campus board contradicts the digital schedule.,Transport,Low,T_TRN_020
+No Objection Certificate document for mandatory internship visa is pending approval for weeks.,Administration,Medium,T_ADM_007
+Lost black leather wallet containing student identity card and bank cards near library since yesterday morning.,Other,Low,T_OTH_001
+Prerequisite waiver has not been processed on the portal blocking graduation registration.,Academic,High,T_ACD_014
+The main entry door of the Chemistry department has been jammed shut.,Maintenance,Medium,T_MNT_009
+Gymnasium pulley cable snapped during a workout posing severe hazard.,Facilities,High,T_FAC_005
+Overhead water pipe dripping directly above computer server racks.,Plumbing,Critical,T_PLM_013
+Requesting information on guest parking passes for visiting family members which is affecting normal activities.,Other,Low,T_OTH_013
+Water has been leaking from ceiling tiles near cafeteria and floor has been slippery.,Plumbing,High,T_PLM_001
+The campus wireless signal has been completely dead in the science building basement.,IT,Medium,T_IT_013
+Window blinds in Room 410 are jammed in the lowered position this has been ongoing since last week.,Maintenance,Low,T_MNT_010
+Corridor motion sensors for automatic lights are defective affecting people in the area.,Electrical,Low,T_ELC_018
+Faculty feedback evaluation form link is throwing a session timeout error reported earlier today.,Academic,Medium,T_ACD_008
+Desks and chairs in Room 102 have wobbly legs and damaged surfaces.,Maintenance,Low,T_MNT_006
+The Wi-Fi network keeps disconnecting every few minutes in Computer Lab 3.,IT,Medium,T_IT_001
+Exhaust ventilation fan in the workshop has been screeching loudly.,Maintenance,Medium,T_MNT_012
+Internet speed in the male dormitory has been sluggish since yesterday causing inconvenience to students and staff.,IT,Low,T_IT_005
+Transport pass renewal counter clerk behaved discourteously to queuing students.,Administration,Low,T_ADM_016
+Microphone sound system in Auditorium B has been corrupted with heavy static noise.,IT,Low,T_IT_009
+Common room furniture upholstery is shredded and dirty this has been ongoing since last week.,Facilities,Low,T_FAC_016
+Window blinds in Room 410 are jammed in the lowered position.,Maintenance,Low,T_MNT_010
+Insufficient seating on morning shuttle forcing students to stand in the aisle observed during the morning class.,Transport,Medium,T_TRN_004
+Staircase handrail near Block B emergency exit has been loose and unstable.,Maintenance,Medium,T_MNT_007
+Lost silver laptop charger left behind in Lecture Hall 3 after the 2 PM session.,Other,Low,T_OTH_003
+Squash court door glass panel has been loose and vibrating on impact.,Facilities,Medium,T_FAC_020
+Campus e-learning portal crashed right during the online assignment submission window.,IT,High,T_IT_008
+Driver bypassed scheduled student stop leaving ten students stranded.,Transport,Medium,T_TRN_018
+Security guard post at the East Gate was left completely unmanned overnight.,Safety,Medium,T_SAF_009
+Underground main water supply conduit burst forming a deep trench near courtyard several people have pointed this out.,Plumbing,High,T_PLM_008
+Campus parking lot B is congested due to non-permitted external commercial vehicles.,Transport,Low,T_TRN_005
+VPN authentication server is rejecting valid student credentials.,IT,High,T_IT_016
+Sink tap in faculty kitchenette is dripping constantly and won't turn off which is affecting normal activities.,Plumbing,Low,T_PLM_016
+HDMI cable attached to the teaching podium in Room 210 has been torn.,IT,Low,T_IT_018
+Central auditorium ventilation system is blowing hot dusty air observed during the morning class.,Facilities,Medium,T_FAC_007
+Tuition fee refund request for duplicate transaction is delayed over four weeks.,Administration,Medium,T_ADM_001
+Recycling receptacles in Computer Lab 1 have not been emptied for days noticed by several students.,Cleanliness,Low,T_CLN_011
+Heavy main entrance gate hinges are squeaking and sticking reported earlier today.,Maintenance,Low,T_MNT_020
+Driver bypassed scheduled student stop leaving ten students stranded noticed by several students.,Transport,Medium,T_TRN_018
+Balcony protective railing on 4th floor Block C is structurally compromised.,Safety,Critical,T_SAF_020
+Midterm examination timetable has scheduled two core subjects at the exact same hour since yesterday morning.,Academic,High,T_ACD_002
+Shower floor drain in hostel room 304 is blocked with pooling stagnant water causing inconvenience to students and staff.,Plumbing,Medium,T_PLM_010
+Prerequisite waiver has not been processed on the portal blocking graduation registration noticed by several students.,Academic,High,T_ACD_014
+Desks and chairs in Room 102 have wobbly legs and damaged surfaces affecting people in the area.,Maintenance,Low,T_MNT_006
+Air conditioning inside university commuter bus 5 is defective which is affecting normal activities.,Transport,Low,T_TRN_003
+Indoor sports court synthetic flooring has torn seams creating trip hazards.,Facilities,Medium,T_FAC_006
+Auditorium stage lighting panel emitting burnt plastic smell during rehearsal.,Electrical,High,T_ELC_016
+Inquiry regarding procedure for campus locker deposit return affecting people in the area.,Other,Low,T_OTH_016
+Central auditorium ventilation system has been blowing hot dusty air.,Facilities,Medium,T_FAC_007
+Found student umbrella near the main entrance turnstiles after morning rain causing inconvenience to students and staff.,Other,Low,T_OTH_012
+Academic advisor has not responded to elective course approval request for two weeks affecting people in the area.,Academic,Medium,T_ACD_013
+Rotting fruit left uncollected beneath trees in front garden creating stench.,Cleanliness,Low,T_CLN_019
+CCTV security camera covering the female dormitory entrance has been damaged.,Safety,High,T_SAF_012
+Pigeon droppings accumulated across windowsills and desks in Block C which is affecting normal activities.,Cleanliness,Low,T_CLN_003
+Hot water heater system in student residential hostel is completely cold several people have pointed this out.,Plumbing,Low,T_PLM_006
+No teaching assistant has been assigned to support weekly programming tutorial batches observed during the morning class.,Academic,Low,T_ACD_011
+Metal lockers in the sports pavilion have jammed rusted padlocks.,Facilities,Low,T_FAC_011
+Stairwell landings in Science Block floor 3 are covered in mud and litter affecting people in the area.,Cleanliness,Low,T_CLN_007
+Found unclaimed dark winter jacket draped over seat 14 in Auditorium A which is affecting normal activities.,Other,Low,T_OTH_008
+Unidentified person without visitor badge wandering inside student dormitories affecting people in the area.,Safety,High,T_SAF_014
+Stray kittens found sheltered inside the outdoor electrical equipment shed noticed by several students.,Other,Medium,T_OTH_014
+Accessible disabled parking spaces near reception are routinely blocked by unauthorized cars.,Transport,Medium,T_TRN_015
+Flush cistern mechanism in girls restroom floor 1 running continuously which is affecting normal activities.,Plumbing,Low,T_PLM_007
+Cockroaches and insects observed crawling inside hostel food preparation area.,Cleanliness,High,T_CLN_009
+Automatic sliding glass door at the main entrance is stuck half-open noticed by several students.,Maintenance,Medium,T_MNT_013
+The main entry door of the Chemistry department is jammed shut.,Maintenance,Medium,T_MNT_009
+Shower floor drain in hostel room 304 has been blocked with pooling stagnant water.,Plumbing,Medium,T_PLM_010
+Smartboard in Room 402 is unresponsive to touch input and digital pen.,IT,Medium,T_IT_007
+Application status for official transcript issuance has been stuck on pending for weeks.,Administration,Medium,T_ADM_004
+Shuttle bus headlamp is dead on the driver side during night service.,Transport,High,T_TRN_016
+UPS battery storage cabinet in server room has been emitting high-pitched warning sirens.,Electrical,High,T_ELC_007
+Campus e-learning portal crashed right during the online assignment submission window which is affecting normal activities.,IT,High,T_IT_008
+Overhead water pipe dripping directly above computer server racks reported earlier today.,Plumbing,Critical,T_PLM_013
+Waste bins near Block A entrance are overflowing with rotting food scraps.,Cleanliness,Low,T_CLN_002
+Window pane in Block C second floor corridor is cracked and loose.,Maintenance,Medium,T_MNT_002
+Squash court door glass panel is loose and vibrating on impact.,Facilities,Medium,T_FAC_020
+Inquiry regarding procedure for campus locker deposit return.,Other,Low,T_OTH_016
+Immigration visa renewal documents not processed before expiry date noticed by several students.,Administration,High,T_ADM_020
+Exhaust fan electrical cabling short-circuited inside cafeteria kitchen noticed by several students.,Electrical,High,T_ELC_012
+Campus swimming pool water is murky green and smells heavily foul.,Facilities,High,T_FAC_010
+Water pressure in dormitory showers dropped to a trickle.,Plumbing,Low,T_PLM_020
+Zero water pressure discharging from faucets in chemical engineering lab.,Plumbing,Medium,T_PLM_004
+General inquiry regarding the working hours of the campus lost and found repository observed during the morning class.,Other,Low,T_OTH_010
+The desktop computer in Room 108 will not power on at all.,IT,Low,T_IT_011
+Janitorial equipment and dirty wash bucket left obstructing corridor doorway.,Cleanliness,Low,T_CLN_015
+Submitting final assignments on the portal produces an internal server 500 error.,IT,High,T_IT_017
+Construction debris with exposed sharp rusty nails left open along walkway.,Safety,High,T_SAF_016
+Outdoor transformer unit in courtyard making loud buzzing humming sound.,Electrical,High,T_ELC_019
+Outdoor basketball court floodlights fail to ignite after sunset reported earlier today.,Facilities,Low,T_FAC_013
+Pungent gas leak smell detected near the chemical storage depot.,Safety,Critical,T_SAF_010
+Central heating in dormitory blocks during cold weather has been non-functional.,Facilities,High,T_FAC_019
+The campus wireless signal is completely dead in the science building basement.,IT,Medium,T_IT_013
+Emergency exit door in Block C has been padlocked shut preventing evacuation.,Safety,Critical,T_SAF_003
+My learning portal has been not displaying registered subjects and exam starts tomorrow morning.,Academic,High,T_ACD_001
+No Objection Certificate document for mandatory internship visa has been pending approval for weeks.,Administration,Medium,T_ADM_007
+Wall socket switch plate has been cracked in dormitory room 112.,Electrical,Low,T_ELC_020
+Window pane in Block C second floor corridor is cracked and loose which is affecting normal activities.,Maintenance,Medium,T_MNT_002
+Bus automated pneumatic door jammed shut trapping passenger backpack which is affecting normal activities.,Transport,High,T_TRN_012
+Cannot access the university online research database from off-campus VPN affecting people in the area.,IT,Medium,T_IT_010
+Smartboard in Room 402 has been unresponsive to touch input and digital pen.,IT,Medium,T_IT_007
+Recorded lecture video links on the portal are broken and return 404.,Academic,Low,T_ACD_016
+Ceiling panel near the faculty lounge is sagging heavily and about to fall several people have pointed this out.,Maintenance,High,T_MNT_005
+Emergency evacuation lighting units failed to activate during power cut.,Electrical,High,T_ELC_011
+Switchboard faceplate in chemistry laboratory has been scorched and warm to the touch.,Electrical,High,T_ELC_008
+Outdoor seating benches in the courtyard have broken wooden slats since yesterday morning.,Maintenance,Low,T_MNT_016
+Stray kittens found sheltered inside the outdoor electrical equipment shed.,Other,Medium,T_OTH_014
+Cockroaches and insects observed crawling inside hostel food preparation area noticed by several students.,Cleanliness,High,T_CLN_009
+Cannot access the university online research database from off-campus VPN.,IT,Medium,T_IT_010
+Fee breakdown receipt statement omits laboratory fee component.,Administration,Low,T_ADM_017
+Bus automated pneumatic door jammed shut trapping passenger backpack.,Transport,High,T_TRN_012
+Disciplinary review notification was issued with mismatched student registration number for the past two days.,Administration,Medium,T_ADM_006
+The projector in Lecture Hall A is flickering and won't display slides clearly observed during the morning class.,IT,Low,T_IT_003
+Pedestrian pathway behind the sports arena has no functioning street lighting at night.,Safety,High,T_SAF_005
+HDMI cable attached to the teaching podium in Room 210 is torn affecting people in the area.,IT,Low,T_IT_018
+Switchboard faceplate in chemistry laboratory is scorched and warm to the touch.,Electrical,High,T_ELC_008
+Smartboard in Room 402 is unresponsive to touch input and digital pen since yesterday morning.,IT,Medium,T_IT_007
+Found a bunch of keys with a blue lanyard on the wooden bench outside cafeteria.,Other,Low,T_OTH_002
+Sink tap in faculty kitchenette has been dripping constantly and won't turn off.,Plumbing,Low,T_PLM_016
+Students are unable to log into the portal from the Library terminals for the past two days.,IT,Medium,T_IT_002
+Hostel security caution deposit refund has not been released post-checkout.,Administration,Medium,T_ADM_015
+Lost prescription eyewear inside a black protective case near Block A stairwell.,Other,Low,T_OTH_007
+Air conditioning in Lecture Hall 2 stopped working and the room is overheating this has been ongoing since last week.,Maintenance,Medium,T_MNT_003
+Fire extinguisher in the Chemistry lab has been missing from its designated wall mount.,Safety,High,T_SAF_002
+Common room furniture upholstery has been shredded and dirty.,Facilities,Low,T_FAC_016
+Gymnasium pulley cable snapped during a workout posing severe hazard several people have pointed this out.,Facilities,High,T_FAC_005
+Ethernet network port in faculty office 215 is physically loose and broken for the past two days.,IT,Low,T_IT_012
+Spelling error in student name printed on degree certificate verification draft this has been ongoing since last week.,Academic,High,T_ACD_019
+Urinal auto-flush sensor defective resulting in stagnant waste.,Plumbing,Medium,T_PLM_018
+The desktop computer in Room 108 will not power on at all this has been ongoing since last week.,IT,Low,T_IT_011
+All computers in Lab 204 are frozen and displaying a blue screen crash error.,IT,High,T_IT_004
+Gutter downspout cracked and pouring rainwater against laboratory foundation.,Plumbing,Medium,T_PLM_017
+Fire extinguisher in the Chemistry lab is missing from its designated wall mount.,Safety,High,T_SAF_002
+Student ID card scanner at the main library turnstile is failing to read cards causing inconvenience to students and staff.,IT,High,T_IT_015
+Course syllabus and reference material for Data Structures have not been uploaded this has been ongoing since last week.,Academic,Low,T_ACD_003
+An injured campus cat near the staff car park requires immediate veterinary care.,Other,Medium,T_OTH_004
+Hazardous chemical spill of unidentified liquid reported in Chemistry Lab 3.,Safety,Critical,T_SAF_006
+Aggressive stray dog entered the campus perimeter near the sports ground.,Safety,Medium,T_SAF_004
+No teaching assistant has been assigned to support weekly programming tutorial batches.,Academic,Low,T_ACD_011
+Assignment submission deadline was abruptly changed without email notification observed during the morning class.,Academic,Medium,T_ACD_020
+Sanitary vending machine in female facility is empty and jammed since yesterday morning.,Facilities,Medium,T_FAC_014
+Smoke detector in dormitory Room 201 has been tampered with and covered.,Safety,High,T_SAF_018
+Urinal drains in ground floor male restroom blocked and emitting stench.,Cleanliness,High,T_CLN_020
+Toilet bowl in male restroom Room 102 is clogged and overflowing onto floor observed during the morning class.,Plumbing,High,T_PLM_003
+Application status for official transcript issuance has been stuck on pending for weeks for the past two days.,Administration,Medium,T_ADM_004
+Water filter indicator lamp on drinking fountain turns red indicating dirty water observed during the morning class.,Facilities,High,T_FAC_015
+Black mildew patches spreading across shower stalls in dorm building 2 which is affecting normal activities.,Cleanliness,Medium,T_CLN_013
+Outdoor landscape watering valve stuck wide open wasting water.,Plumbing,Medium,T_PLM_014
+Construction debris with exposed sharp rusty nails left open along walkway since yesterday morning.,Safety,High,T_SAF_016
+Requesting information on guest parking passes for visiting family members.,Other,Low,T_OTH_013
+Ceiling panel near the faculty lounge has been sagging heavily and about to fall.,Maintenance,High,T_MNT_005
+Traffic bottleneck at main campus gate due to malfunctioning automated boom barrier.,Transport,Medium,T_TRN_010
+Faculty feedback evaluation form link has been throwing a session timeout error.,Academic,Medium,T_ACD_008
+Commercial advertising posters pasted across notice boards without permission several people have pointed this out.,Other,Low,T_OTH_017
+Electrical wall receptacle in Room 104 sparked and produced smoke when plugging in charger for the past two days.,Electrical,High,T_ELC_003
+Air conditioning inside university commuter bus 5 has been defective.,Transport,Low,T_TRN_003
+Assignment submission deadline was abruptly changed without email notification.,Academic,Medium,T_ACD_020
+Bus shelter canopy has been leaking water heavily during rainy weather.,Transport,Low,T_TRN_007
+Fire extinguisher in the Chemistry lab is missing from its designated wall mount affecting people in the area.,Safety,High,T_SAF_002
+Excessively loud amplified music played late at night from adjacent hostel wing causing inconvenience to students and staff.,Other,Low,T_OTH_009
+Smoke detector in dormitory Room 201 has been tampered with and covered causing inconvenience to students and staff.,Safety,High,T_SAF_018
+Door handle of the rest room on the 3rd floor came off completely reported earlier today.,Maintenance,Low,T_MNT_015
+My learning portal is not displaying registered subjects and exam starts tomorrow morning causing inconvenience to students and staff.,Academic,High,T_ACD_001
+Hostel security caution deposit refund has not been released post-checkout several people have pointed this out.,Administration,Medium,T_ADM_015
+Corridor motion sensors for automatic lights are defective.,Electrical,Low,T_ELC_018
+Exhaust ventilation fan in the workshop is screeching loudly observed during the morning class.,Maintenance,Medium,T_MNT_012
+Accessible disabled parking spaces near reception are routinely blocked by unauthorized cars for the past two days.,Transport,Medium,T_TRN_015
+Laboratory manual for Microprocessors contains outdated and conflicting circuit diagrams noticed by several students.,Academic,Low,T_ACD_007
+Recommended textbooks for Engineering Physics are out of stock in the campus library reported earlier today.,Academic,Low,T_ACD_006
+Only one cashier counter is operating at student finance resulting in massive queues causing inconvenience to students and staff.,Administration,Low,T_ADM_002
+Immigration visa renewal documents not processed before expiry date.,Administration,High,T_ADM_020
+Whiteboard in Room 205 detached from the wall bracket for the past two days.,Maintenance,Low,T_MNT_008
+Microwave oven in the cafeteria dining area has been sparking inside.,Facilities,High,T_FAC_012
+University general inquiry telephone lines are permanently engaged without voicemail.,Administration,Low,T_ADM_013
+Noisy structural drilling outside library during mid-semester examination hours for the past two days.,Other,Medium,T_OTH_005
+Hazardous chemical spill of unidentified liquid reported in Chemistry Lab 3 which is affecting normal activities.,Safety,Critical,T_SAF_006
+Complete water supply disruption in washrooms of Block B second floor.,Facilities,High,T_FAC_001
+Vending machine in Block A swallowed card payment without dispensing item which is affecting normal activities.,Facilities,Low,T_FAC_008
+Water is leaking from ceiling tiles near cafeteria and floor is slippery which is affecting normal activities.,Plumbing,High,T_PLM_001
+Stagnant rainwater puddle in hostel courtyard breeding mosquitoes which is affecting normal activities.,Cleanliness,High,T_CLN_012
+Heavy duty extension cord in seminar auditorium has frayed burnt rubber insulation several people have pointed this out.,Electrical,High,T_ELC_013
+Financial hold on portal preventing exam hall ticket download after paying dues noticed by several students.,Administration,High,T_ADM_018
+Fluorescent ceiling tubes in Room 302 are flickering violently causing headaches.,Electrical,Low,T_ELC_002
+Noisy structural drilling outside library during mid-semester examination hours.,Other,Medium,T_OTH_005
+Outdoor lamppost base near library pathway has exposed energized wires since yesterday morning.,Electrical,Critical,T_ELC_006
+Bicycle lane along the campus perimeter is blocked by maintenance machinery noticed by several students.,Transport,Low,T_TRN_017
+Student ID card scanner at the main library turnstile is failing to read cards.,IT,High,T_IT_015
+Tuition fee refund request for duplicate transaction is delayed over four weeks which is affecting normal activities.,Administration,Medium,T_ADM_001
+Shattered glass shards scattered across the main walkway near the cafeteria causing inconvenience to students and staff.,Safety,Medium,T_SAF_015
+Hand wash liquid soap dispensers in central restrooms are all empty.,Cleanliness,Medium,T_CLN_018
+Bus shelter canopy is leaking water heavily during rainy weather.,Transport,Low,T_TRN_007
+Study cubicles in the library have defective desks and dead electrical sockets this has been ongoing since last week.,Facilities,Low,T_FAC_002
+Drinking water dispenser on 3rd floor is dispensing unchilled warm water.,Facilities,Low,T_FAC_003
+Air conditioning in Lecture Hall 2 stopped working and the room is overheating.,Maintenance,Medium,T_MNT_003
+Emergency exit door in Block C is padlocked shut preventing evacuation.,Safety,Critical,T_SAF_003
+Corridor wall plaster in Block A is peeling and dropping debris on the floor causing inconvenience to students and staff.,Maintenance,Low,T_MNT_014
+Parking payment kiosk took cash note but did not dispense an exit validation ticket several people have pointed this out.,Transport,Low,T_TRN_013
+The projector in Lecture Hall A has been flickering and won't display slides clearly.,IT,Low,T_IT_003
+Carpet in the seminar room has a persistent damp musty smell.,Cleanliness,Low,T_CLN_016
+Washroom floor is flooded with contaminated water and slippery soap lather causing inconvenience to students and staff.,Cleanliness,High,T_CLN_008
+UPS battery storage cabinet in server room is emitting high-pitched warning sirens since yesterday morning.,Electrical,High,T_ELC_007
+Instructor was absent without notice for the scheduled 9 AM mathematics lecture.,Academic,Medium,T_ACD_004
+Balcony protective railing on 4th floor Block C has been structurally compromised.,Safety,Critical,T_SAF_020
+Final exam hall seating arrangement list shows conflicting room numbers for students.,Academic,High,T_ACD_012
+Wall socket switch plate is cracked in dormitory room 112 causing inconvenience to students and staff.,Electrical,Low,T_ELC_020
+Senior thesis advisor allocations have still not been published which is affecting normal activities.,Academic,Low,T_ACD_015
+Complete water supply disruption in washrooms of Block B second floor since yesterday morning.,Facilities,High,T_FAC_001
+Internet speed in the male dormitory has been sluggish since yesterday.,IT,Low,T_IT_005
+Ceiling fan in Room 205 has been wobbling dangerously and making grinding metallic sounds.,Electrical,Medium,T_ELC_005
+Heavy main entrance gate hinges are squeaking and sticking.,Maintenance,Low,T_MNT_020
+Floor tiles in the central corridor are cracked creating an uneven surface reported earlier today.,Maintenance,Medium,T_MNT_011
+Student ID card scanner at the main library turnstile has been failing to read cards.,IT,High,T_IT_015
+Water filter indicator lamp on drinking fountain turns red indicating dirty water.,Facilities,High,T_FAC_015
+Only one cashier counter is operating at student finance resulting in massive queues.,Administration,Low,T_ADM_002
+Traffic bottleneck at main campus gate due to malfunctioning automated boom barrier causing inconvenience to students and staff.,Transport,Medium,T_TRN_010
+Emergency stop panic button inside the central elevator does not trigger.,Safety,Critical,T_SAF_019
+Main electrical distribution panel in basement is producing visible arcing sparks which is affecting normal activities.,Electrical,Critical,T_ELC_010
+Emergency stop panic button inside the central elevator does not trigger observed during the morning class.,Safety,Critical,T_SAF_019
+Microwave oven in the cafeteria dining area is sparking inside.,Facilities,High,T_FAC_012
+Drinking water dispenser on 3rd floor is dispensing unchilled warm water this has been ongoing since last week.,Facilities,Low,T_FAC_003
+Bare live electrical wires exposed on the hallway wall near Room 105 this has been ongoing since last week.,Safety,Critical,T_SAF_008
+Rotting fruit left uncollected beneath trees in front garden creating stench since yesterday morning.,Cleanliness,Low,T_CLN_019
+Metal shutter of the cafeteria supply room is off its alignment track since yesterday morning.,Maintenance,Medium,T_MNT_017
+Large tree branch fractured and hanging precariously over student walkway for the past two days.,Safety,High,T_SAF_017
+Campus shuttle bus route 2 arrived 45 minutes late during morning pickup.,Transport,Medium,T_TRN_001
+Bicycle lane along the campus perimeter is blocked by maintenance machinery.,Transport,Low,T_TRN_017
+Metal shutter of the cafeteria supply room has been off its alignment track.,Maintenance,Medium,T_MNT_017
+Medical clinic biohazard waste container left unsealed in common reception reported earlier today.,Cleanliness,High,T_CLN_010
+Bare live electrical wires exposed on the hallway wall near Room 105.,Safety,Critical,T_SAF_008
+Senior thesis advisor allocations have still not been published.,Academic,Low,T_ACD_015
+Student identity card counter remains shut during official advertised office hours reported earlier today.,Administration,Low,T_ADM_003
+Insufficient seating on morning shuttle forcing students to stand in the aisle.,Transport,Medium,T_TRN_004
+Metal lockers in the sports pavilion have jammed rusted padlocks which is affecting normal activities.,Facilities,Low,T_FAC_011
+Electric water geyser in sports locker room blew its internal fuse.,Electrical,Medium,T_ELC_017
+Recycling receptacles in Computer Lab 1 have not been emptied for days.,Cleanliness,Low,T_CLN_011
+Reading desk overhead lamps in library quiet zone have burned out.,Facilities,Low,T_FAC_009
+Emergency evacuation lighting units failed to activate during power cut noticed by several students.,Electrical,High,T_ELC_011
+Electrical wall receptacle in Room 104 sparked and produced smoke when plugging in charger.,Electrical,High,T_ELC_003
+Security guard post at the East Gate was left completely unmanned overnight since yesterday morning.,Safety,Medium,T_SAF_009
+General inquiry regarding the working hours of the campus lost and found repository.,Other,Low,T_OTH_010
+University general inquiry telephone lines are permanently engaged without voicemail reported earlier today.,Administration,Low,T_ADM_013
+Washroom supply pipe in Block A 2nd floor ruptured spraying pressurized water.,Plumbing,High,T_PLM_002
+Late payment penalty fee levied despite proof of payment before deadline date causing inconvenience to students and staff.,Administration,High,T_ADM_011
+Oil slick on the workshop floor caused a student to slip and fall heavily observed during the morning class.,Safety,High,T_SAF_011
+Toilet bowl in male restroom Room 102 is clogged and overflowing onto floor.,Plumbing,High,T_PLM_003
+Found unclaimed dark winter jacket draped over seat 14 in Auditorium A.,Other,Low,T_OTH_008
+Squash court door glass panel is loose and vibrating on impact observed during the morning class.,Facilities,Medium,T_FAC_020
+Main circuit breaker tripped in Physics Lab 2 shutting off delicate lab sensors.,Electrical,Medium,T_ELC_004
+Air conditioning outdoor compressor cable caught fire outside Block D which is affecting normal activities.,Electrical,Critical,T_ELC_014
+Black mildew patches spreading across shower stalls in dorm building 2.,Cleanliness,Medium,T_CLN_013
+Indoor sports court synthetic flooring has torn seams creating trip hazards which is affecting normal activities.,Facilities,Medium,T_FAC_006
+Student cafeteria indoor dining hall is poorly ventilated and stifling hot affecting people in the area.,Facilities,Low,T_FAC_004
+Hand wash liquid soap dispensers in central restrooms have been all empty.,Cleanliness,Medium,T_CLN_018
+Stench of rotting garbage emanating from dumpsters behind the student canteen.,Cleanliness,Medium,T_CLN_006
+Emergency exit door in Block C is padlocked shut preventing evacuation observed during the morning class.,Safety,Critical,T_SAF_003
+Academic advisor has not responded to elective course approval request for two weeks.,Academic,Medium,T_ACD_013
+An injured campus cat near the staff car park requires immediate veterinary care since yesterday morning.,Other,Medium,T_OTH_004
+Washroom floor has been flooded with contaminated water and slippery soap lather.,Cleanliness,High,T_CLN_008
+Restroom near the main cafeteria has not been cleaned since yesterday morning.,Cleanliness,Medium,T_CLN_001
+Lost scientific calculator left on desk 12 in the engineering design room several people have pointed this out.,Other,Low,T_OTH_011
+Exhaust fan electrical cabling short-circuited inside cafeteria kitchen.,Electrical,High,T_ELC_012
+Financial hold on portal preventing exam hall ticket download after paying dues.,Administration,High,T_ADM_018
+Overhead water storage tank on Block C roof is overflowing down the exterior wall.,Plumbing,Medium,T_PLM_015
+Sanitary vending machine in female facility is empty and jammed.,Facilities,Medium,T_FAC_014
+Laboratory manual for Microprocessors contains outdated and conflicting circuit diagrams.,Academic,Low,T_ACD_007
+Unidentified person without visitor badge wandering inside student dormitories.,Safety,High,T_SAF_014
+Tuition fee refund request for duplicate transaction has been delayed over four weeks.,Administration,Medium,T_ADM_001
+University transport mobile application has been failing to transmit live GPS location.,Transport,Low,T_TRN_008
+Fee breakdown receipt statement omits laboratory fee component several people have pointed this out.,Administration,Low,T_ADM_017
+Aggressive stray dog entered the campus perimeter near the sports ground for the past two days.,Safety,Medium,T_SAF_004
+Unattended suspicious package left abandoned near the main entrance lobby.,Safety,Critical,T_SAF_007
+Medical clinic biohazard waste container left unsealed in common reception.,Cleanliness,High,T_CLN_010
+Graduation clearance portal is rejecting attested valid degree documentation.,Administration,High,T_ADM_014
+Overhead lighting fixtures in ground floor corridor are dead leaving area dark.,Electrical,Medium,T_ELC_015
+Hot water heater system in student residential hostel has been completely cold.,Plumbing,Low,T_PLM_006
+Pungent gas leak smell detected near the chemical storage depot which is affecting normal activities.,Safety,Critical,T_SAF_010
+Bus timetable posted on campus board contradicts the digital schedule affecting people in the area.,Transport,Low,T_TRN_020
+Zero water pressure discharging from faucets in chemical engineering lab this has been ongoing since last week.,Plumbing,Medium,T_PLM_004
+There has been thick smoke coming from an electrical panel near Block A ground floor.,Safety,Critical,T_SAF_001
+Urinal drains in ground floor male restroom blocked and emitting stench reported earlier today.,Cleanliness,High,T_CLN_020
+Central heating in dormitory blocks during cold weather is non-functional for the past two days.,Facilities,High,T_FAC_019
+Fire alarm sensor in Block B is sounding continuous false alarms.,Safety,Medium,T_SAF_013
+Graffiti scrawled on hallway walls in Block D second floor several people have pointed this out.,Cleanliness,Low,T_CLN_017
+HDMI cable attached to the teaching podium in Room 210 is torn.,IT,Low,T_IT_018
+Lost black leather wallet containing student identity card and bank cards near library.,Other,Low,T_OTH_001
+Ceiling panel near the faculty lounge is sagging heavily and about to fall.,Maintenance,High,T_MNT_005
+Severe exhaust fumes leaking into the passenger cabin of bus 4 this has been ongoing since last week.,Transport,High,T_TRN_019
+Automatic sliding glass door at the main entrance is stuck half-open.,Maintenance,Medium,T_MNT_013
+Shuttle bus driver was operating vehicle recklessly near the pedestrian crossing which is affecting normal activities.,Transport,High,T_TRN_002
+Recorded lecture video links on the portal are broken and return 404 causing inconvenience to students and staff.,Academic,Low,T_ACD_016
+UPS battery storage cabinet in server room is emitting high-pitched warning sirens.,Electrical,High,T_ELC_007
+Instructor was absent without notice for the scheduled 9 AM mathematics lecture observed during the morning class.,Academic,Medium,T_ACD_004
+The printer in the student center ran out of toner and paper.,IT,Low,T_IT_006
+Software license for MATLAB expired on all machines in Engineering Lab 2 since yesterday morning.,IT,Medium,T_IT_014
+Ethernet network port in faculty office 215 is physically loose and broken.,IT,Low,T_IT_012
+Attendance record is falsely marking me absent for yesterday's lab session reported earlier today.,Academic,Medium,T_ACD_009
+Large tree branch fractured and hanging precariously over student walkway.,Safety,High,T_SAF_017
+Heavy duty extension cord in seminar auditorium has frayed burnt rubber insulation.,Electrical,High,T_ELC_013
+Lost silver wristwatch in the gymnasium changing room several people have pointed this out.,Other,Low,T_OTH_019
+Student health insurance card was not delivered to international freshmen affecting people in the area.,Administration,Medium,T_ADM_012
+Metal shutter of the cafeteria supply room is off its alignment track.,Maintenance,Medium,T_MNT_017
+Cloud storage drive for final year project repository is inaccessible which is affecting normal activities.,IT,High,T_IT_020
+Campus shuttle bus route 2 arrived 45 minutes late during morning pickup causing inconvenience to students and staff.,Transport,Medium,T_TRN_001
+Severe voltage fluctuations in Room 401 caused equipment monitors to reset since yesterday morning.,Electrical,Medium,T_ELC_009
+Ceiling fan in Room 205 is wobbling dangerously and making grinding metallic sounds.,Electrical,Medium,T_ELC_005
+Final exam hall seating arrangement list shows conflicting room numbers for students since yesterday morning.,Academic,High,T_ACD_012
+VPN authentication server has been rejecting valid student credentials.,IT,High,T_IT_016
+Brown discolored sediment-laden tap water coming out of drinking fountain since yesterday morning.,Plumbing,High,T_PLM_009
+Switchboard faceplate in chemistry laboratory is scorched and warm to the touch several people have pointed this out.,Electrical,High,T_ELC_008
+Academic scholarship stipend disbursement check has not cleared into student bank account causing inconvenience to students and staff.,Administration,High,T_ADM_005
+Severe exhaust fumes leaking into the passenger cabin of bus 4.,Transport,High,T_TRN_019
+Bus shelter canopy is leaking water heavily during rainy weather affecting people in the area.,Transport,Low,T_TRN_007
+Wall socket switch plate is cracked in dormitory room 112.,Electrical,Low,T_ELC_020
+The projector in Lecture Hall A is flickering and won't display slides clearly.,IT,Low,T_IT_003
+University transport mobile application is failing to transmit live GPS location.,Transport,Low,T_TRN_008
+Overhead water storage tank on Block C roof is overflowing down the exterior wall affecting people in the area.,Plumbing,Medium,T_PLM_015
+Partition divider in Seminar Hall 1 is unsteady and rattling.,Maintenance,Low,T_MNT_019
+Graduation clearance portal has been rejecting attested valid degree documentation.,Administration,High,T_ADM_014
+Feedback regarding food options and dietary variety in campus food stalls.,Other,Low,T_OTH_020
+Administration helpdesk staff was uncooperative regarding clearance sign-off this has been ongoing since last week.,Administration,Low,T_ADM_008
+Hot water heater system in student residential hostel is completely cold.,Plumbing,Low,T_PLM_006
+Attendance record has been falsely marking me absent for yesterday's lab session.,Academic,Medium,T_ACD_009
+Roof shingles near the auditorium terrace are loose after strong winds.,Maintenance,Medium,T_MNT_018
+Drinking water dispenser on 3rd floor has been dispensing unchilled warm water.,Facilities,Low,T_FAC_003
+Hostel accommodation allocation list contains duplicated room numbers observed during the morning class.,Administration,Medium,T_ADM_009
+Air conditioning in Lecture Hall 2 stopped working and the room has been overheating.,Maintenance,Medium,T_MNT_003
+The biometric attendance scanner at the main gate entrance is completely offline.,IT,High,T_IT_019
+The campus wireless signal is completely dead in the science building basement for the past two days.,IT,Medium,T_IT_013
+Parking payment kiosk took cash note but did not dispense an exit validation ticket.,Transport,Low,T_TRN_013
+Hand sanitizer dispensers throughout the science block are completely dry.,Facilities,Low,T_FAC_018
+Only one cashier counter has been operating at student finance resulting in massive queues.,Administration,Low,T_ADM_002
+Outdoor landscape watering valve stuck wide open wasting water for the past two days.,Plumbing,Medium,T_PLM_014
+Regarding the campus facilities: The desktop computer in Room 108 will not power on at all.,IT,Low,T_IT_011
+Severe voltage fluctuations in Room 401 caused equipment monitors to reset.,Electrical,Medium,T_ELC_009
+Transport pass renewal counter clerk behaved discourteously to queuing students this has been ongoing since last week.,Administration,Low,T_ADM_016
+Late night scheduled shuttle service was cancelled without prior broadcast reported earlier today.,Transport,Medium,T_TRN_009
+Power outage in Block B west wing plunged classrooms into total darkness.,Electrical,High,T_ELC_001
+Study cubicles in the library have defective desks and dead electrical sockets.,Facilities,Low,T_FAC_002
+Recommended textbooks for Engineering Physics are out of stock in the campus library.,Academic,Low,T_ACD_006
+Waste drainage pipe under library washbasin is uncoupled and leaking.,Plumbing,Medium,T_PLM_005
+Shattered glass shards scattered across the main walkway near the cafeteria.,Safety,Medium,T_SAF_015
+Elevator in the Administration building is making grinding noises and jerking abruptly.,Maintenance,High,T_MNT_004
+Fire alarm sensor in Block B has been sounding continuous false alarms.,Safety,Medium,T_SAF_013
+Oil slick on the workshop floor caused a student to slip and fall heavily.,Safety,High,T_SAF_011
+Excessively loud amplified music played late at night from adjacent hostel wing.,Other,Low,T_OTH_009
+All computers in Lab 204 are frozen and displaying a blue screen crash error causing inconvenience to students and staff.,IT,High,T_IT_004
+Lockers in the biology laboratory cannot be locked securely noticed by several students.,Facilities,Low,T_FAC_017
+Found a bunch of keys with a blue lanyard on the wooden bench outside cafeteria for the past two days.,Other,Low,T_OTH_002
+Elevator in the Administration building has been making grinding noises and jerking abruptly.,Maintenance,High,T_MNT_004
+Central auditorium ventilation system is blowing hot dusty air.,Facilities,Medium,T_FAC_007
+Regarding the campus facilities: The printer in the student center ran out of toner and paper.,IT,Low,T_IT_006
+Course syllabus and reference material for Data Structures have not been uploaded.,Academic,Low,T_ACD_003
+VPN authentication server is rejecting valid student credentials causing inconvenience to students and staff.,IT,High,T_IT_016
+Power outage in Block B west wing plunged classrooms into total darkness observed during the morning class.,Electrical,High,T_ELC_001
+Water pressure in dormitory showers dropped to a trickle for the past two days.,Plumbing,Low,T_PLM_020
+Overhead lighting fixtures in ground floor corridor are dead leaving area dark noticed by several students.,Electrical,Medium,T_ELC_015
+Campus parking permit fee was debited twice from my university billing account.,Administration,Medium,T_ADM_010
+Bicycle lane along the campus perimeter has been blocked by maintenance machinery.,Transport,Low,T_TRN_017
+Student club requesting approval to host blood donation drive in the activity center reported earlier today.,Other,Low,T_OTH_006
+Flush cistern mechanism in girls restroom floor 1 running continuously.,Plumbing,Low,T_PLM_007
+Restroom near the main cafeteria has not been cleaned since yesterday morning which is affecting normal activities.,Cleanliness,Medium,T_CLN_001
+Transcript delivery address was recorded incorrectly by the registrar desk observed during the morning class.,Administration,Medium,T_ADM_019
+Disciplinary review notification was issued with mismatched student registration number.,Administration,Medium,T_ADM_006
+Administration helpdesk staff was uncooperative regarding clearance sign-off.,Administration,Low,T_ADM_008
+Student cafeteria indoor dining hall has been poorly ventilated and stifling hot.,Facilities,Low,T_FAC_004
+Lost blue student backpack containing textbooks near the sports ground bleachers affecting people in the area.,Other,Low,T_OTH_015
+Campus bicycle sharing station near the library has zero functional bicycles.,Transport,Low,T_TRN_006
+Lost blue student backpack containing textbooks near the sports ground bleachers.,Other,Low,T_OTH_015
+Drinking water cooler pipe leaking puddle onto wooden library floor causing inconvenience to students and staff.,Plumbing,Medium,T_PLM_019
+Vending machine in Block A swallowed card payment without dispensing item.,Facilities,Low,T_FAC_008
+Washroom floor is flooded with contaminated water and slippery soap lather.,Cleanliness,High,T_CLN_008
+Shuttle driver was texting on phone while operating loaded bus on campus road.,Transport,High,T_TRN_014
+Student identity card counter remains shut during official advertised office hours.,Administration,Low,T_ADM_003
+Official grade transcript generated on portal contains incorrect marks for Semester 3 several people have pointed this out.,Academic,High,T_ACD_005
+Submitting final assignments on the portal produces an internal server 500 error which is affecting normal activities.,IT,High,T_IT_017
+Campus parking permit fee was debited twice from my university billing account since yesterday morning.,Administration,Medium,T_ADM_010
+Main electrical distribution panel in basement has been producing visible arcing sparks.,Electrical,Critical,T_ELC_010
+Noise levels from adjacent corridor disrupt study in the quiet library zone several people have pointed this out.,Academic,Low,T_ACD_018
+Campus swimming pool water has been murky green and smells heavily foul.,Facilities,High,T_FAC_010
+Late night scheduled shuttle service was cancelled without prior broadcast.,Transport,Medium,T_TRN_009
+There is thick smoke coming from an electrical panel near Block A ground floor.,Safety,Critical,T_SAF_001
+The door lock in Room 304 is broken and the door cannot latch shut.,Maintenance,Medium,T_MNT_001
+Outdoor lamppost base near library pathway has exposed energized wires.,Electrical,Critical,T_ELC_006
+The Wi-Fi network keeps disconnecting every few minutes in Computer Lab 3 since yesterday morning.,IT,Medium,T_IT_001
+Sewer gases backing up through drainage grates in ground floor corridor.,Plumbing,Medium,T_PLM_012
+Found student umbrella near the main entrance turnstiles after morning rain.,Other,Low,T_OTH_012
+The biometric attendance scanner at the main gate entrance has been completely offline.,IT,High,T_IT_019
+Outdoor transformer unit in courtyard making loud buzzing humming sound this has been ongoing since last week.,Electrical,High,T_ELC_019
+Floor tiles in the central corridor are cracked creating an uneven surface.,Maintenance,Medium,T_MNT_011
+Academic scholarship stipend disbursement check has not cleared into student bank account.,Administration,High,T_ADM_005
+Software license for MATLAB expired on all machines in Engineering Lab 2.,IT,Medium,T_IT_014
+Toilet bowl in male restroom Room 102 has been clogged and overflowing onto floor.,Plumbing,High,T_PLM_003
+Electric vehicle charging station near Block D displays an error code.,Transport,Low,T_TRN_011
+Washroom supply pipe in Block A 2nd floor ruptured spraying pressurized water causing inconvenience to students and staff.,Plumbing,High,T_PLM_002
+Janitorial equipment and dirty wash bucket left obstructing corridor doorway affecting people in the area.,Cleanliness,Low,T_CLN_015
+Door handle of the rest room on the 3rd floor came off completely.,Maintenance,Low,T_MNT_015
+Waste bins near Block A entrance are overflowing with rotting food scraps noticed by several students.,Cleanliness,Low,T_CLN_002
+Lost prescription eyewear inside a black protective case near Block A stairwell since yesterday morning.,Other,Low,T_OTH_007
+Cloud storage drive for final year project repository has been inaccessible.,IT,High,T_IT_020
+Dining tables in cafeteria are coated with sticky spills and food residue observed during the morning class.,Cleanliness,Medium,T_CLN_005
+Electric vehicle charging station near Block D displays an error code noticed by several students.,Transport,Low,T_TRN_011
+Shuttle bus driver was operating vehicle recklessly near the pedestrian crossing.,Transport,High,T_TRN_002
+The printer in the student center ran out of toner and paper noticed by several students.,IT,Low,T_IT_006
+Outdoor basketball court floodlights fail to ignite after sunset.,Facilities,Low,T_FAC_013
+Corridor wall plaster in Block A is peeling and dropping debris on the floor.,Maintenance,Low,T_MNT_014
+Ceiling fan in Room 205 is wobbling dangerously and making grinding metallic sounds affecting people in the area.,Electrical,Medium,T_ELC_005
+Accessible disabled parking spaces near reception have been routinely blocked by unauthorized cars.,Transport,Medium,T_TRN_015
+Faculty feedback evaluation form link is throwing a session timeout error.,Academic,Medium,T_ACD_008
+Hand sanitizer dispensers throughout the science block are completely dry several people have pointed this out.,Facilities,Low,T_FAC_018
+Commercial advertising posters pasted across notice boards without permission.,Other,Low,T_OTH_017
+Fire alarm sensor in Block B is sounding continuous false alarms reported earlier today.,Safety,Medium,T_SAF_013
+Reading desk overhead lamps in library quiet zone have burned out for the past two days.,Facilities,Low,T_FAC_009
+Lost scientific calculator left on desk 12 in the engineering design room.,Other,Low,T_OTH_011
+Sanitary vending machine in female facility has been empty and jammed.,Facilities,Medium,T_FAC_014
+Air conditioning inside university commuter bus 5 is defective.,Transport,Low,T_TRN_003
+The door lock in Room 304 is broken and the door cannot latch shut causing inconvenience to students and staff.,Maintenance,Medium,T_MNT_001
+Discarded beverage containers and food wrappers strewn across library desks.,Cleanliness,Low,T_CLN_014
+Cloud storage drive for final year project repository is inaccessible.,IT,High,T_IT_020
+Urinal auto-flush sensor defective resulting in stagnant waste affecting people in the area.,Plumbing,Medium,T_PLM_018
+Lecture hall capacity has been 40 seats but 65 students have been enrolled in the course.,Academic,Medium,T_ACD_010
+Shower floor drain in hostel room 304 is blocked with pooling stagnant water.,Plumbing,Medium,T_PLM_010
+Noise levels from adjacent corridor disrupt study in the quiet library zone.,Academic,Low,T_ACD_018
+Lost silver wristwatch in the gymnasium changing room.,Other,Low,T_OTH_019
+Gutter downspout cracked and pouring rainwater against laboratory foundation causing inconvenience to students and staff.,Plumbing,Medium,T_PLM_017
+Paper re-evaluation submission portal has closed ahead of the officially announced date.,Academic,High,T_ACD_017
+Attendance record is falsely marking me absent for yesterday's lab session.,Academic,Medium,T_ACD_009
+Window pane in Block C second floor corridor has been cracked and loose.,Maintenance,Medium,T_MNT_002
+The biometric attendance scanner at the main gate entrance is completely offline for the past two days.,IT,High,T_IT_019
+Dining tables in cafeteria are coated with sticky spills and food residue.,Cleanliness,Medium,T_CLN_005
+Transcript delivery address was recorded incorrectly by the registrar desk.,Administration,Medium,T_ADM_019
+Campus bicycle sharing station near the library has zero functional bicycles this has been ongoing since last week.,Transport,Low,T_TRN_006
+Microphone sound system in Auditorium B is corrupted with heavy static noise since yesterday morning.,IT,Low,T_IT_009
+Microwave oven in the cafeteria dining area is sparking inside observed during the morning class.,Facilities,High,T_FAC_012
+Sink tap in faculty kitchenette is dripping constantly and won't turn off.,Plumbing,Low,T_PLM_016
+Official grade transcript generated on portal contains incorrect marks for Semester 3.,Academic,High,T_ACD_005
+Shuttle bus headlamp has been dead on the driver side during night service.,Transport,High,T_TRN_016
+Brown discolored sediment-laden tap water coming out of drinking fountain.,Plumbing,High,T_PLM_009
+Spelling error in student name printed on degree certificate verification draft.,Academic,High,T_ACD_019
+Main circuit breaker tripped in Physics Lab 2 shutting off delicate lab sensors causing inconvenience to students and staff.,Electrical,Medium,T_ELC_004
+Student cafeteria indoor dining hall is poorly ventilated and stifling hot.,Facilities,Low,T_FAC_004
+Auditorium stage lighting panel emitting burnt plastic smell during rehearsal observed during the morning class.,Electrical,High,T_ELC_016
+Heavy dust and cobwebs hanging from the ceiling corners in Room 204 since yesterday morning.,Cleanliness,Low,T_CLN_004
+University transport mobile application is failing to transmit live GPS location this has been ongoing since last week.,Transport,Low,T_TRN_008
+Campus swimming pool water is murky green and smells heavily foul since yesterday morning.,Facilities,High,T_FAC_010
+Balcony protective railing on 4th floor Block C is structurally compromised since yesterday morning.,Safety,Critical,T_SAF_020
+CCTV security camera covering the female dormitory entrance is damaged.,Safety,High,T_SAF_012
+My learning portal is not displaying registered subjects and exam starts tomorrow morning.,Academic,High,T_ACD_001
+Stagnant rainwater puddle in hostel courtyard breeding mosquitoes.,Cleanliness,High,T_CLN_012
+Roof shingles near the auditorium terrace are loose after strong winds this has been ongoing since last week.,Maintenance,Medium,T_MNT_018
+Hand wash liquid soap dispensers in central restrooms are all empty for the past two days.,Cleanliness,Medium,T_CLN_018
+Automatic sliding glass door at the main entrance has been stuck half-open.,Maintenance,Medium,T_MNT_013
+Overhead water storage tank on Block C roof has been overflowing down the exterior wall.,Plumbing,Medium,T_PLM_015
+Central heating in dormitory blocks during cold weather is non-functional.,Facilities,High,T_FAC_019
+Hostel accommodation allocation list contains duplicated room numbers.,Administration,Medium,T_ADM_009
+Drinking water cooler pipe leaking puddle onto wooden library floor.,Plumbing,Medium,T_PLM_019
+Unattended suspicious package left abandoned near the main entrance lobby since yesterday morning.,Safety,Critical,T_SAF_007
+Feedback regarding food options and dietary variety in campus food stalls this has been ongoing since last week.,Other,Low,T_OTH_020
+Microphone sound system in Auditorium B is corrupted with heavy static noise.,IT,Low,T_IT_009
+Paper re-evaluation submission portal has closed ahead of the officially announced date noticed by several students.,Academic,High,T_ACD_017
+Staircase handrail near Block B emergency exit is loose and unstable observed during the morning class.,Maintenance,Medium,T_MNT_007
+There is thick smoke coming from an electrical panel near Block A ground floor reported earlier today.,Safety,Critical,T_SAF_001
+Shuttle driver was texting on phone while operating loaded bus on campus road since yesterday morning.,Transport,High,T_TRN_014
+Stairwell landings in Science Block floor 3 are covered in mud and litter.,Cleanliness,Low,T_CLN_007
+Waste drainage pipe under library washbasin has been uncoupled and leaking.,Plumbing,Medium,T_PLM_005
+Partition divider in Seminar Hall 1 has been unsteady and rattling.,Maintenance,Low,T_MNT_019

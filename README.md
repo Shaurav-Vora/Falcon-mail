@@ -1,132 +1,245 @@
-# 🛡️ SENTINEL – NLP-Based Complaint & Incident Intelligence System
+# SENTINEL – NLP-Based Complaint & Incident Intelligence System
 
-**SENTINEL** is an NLP-driven complaint and incident management system designed for university campuses (and adaptable to municipal, corporate, hospital, and school environments).
+**SENTINEL** is an end-to-end, locally executed Natural Language Processing (NLP) and Machine Learning (ML) system designed for intelligent university campus complaint triage, prioritization, and resolution management.
 
-The platform allows users to submit raw natural language complaint text, which is processed locally using machine learning and NLP techniques (scikit-learn, spaCy, Sentence Transformers) without relying on external cloud LLM APIs.
-
----
-
-## 🌟 Key Features
-
-1. **Text Preprocessing & Lemmatization**: Standard cleaning while preserving critical room numbers, building names, dates, times, and negation keywords.
-2. **Locally Trained Category Classification**: TF-IDF Vectorizer + Logistic Regression pipeline classifying complaints into 11 categories (*IT, Maintenance, Safety, Academic, Administration, Transport, Facilities, Cleanliness, Electrical, Plumbing, Other*).
-3. **Locally Trained Urgency Classification**: ML classifier predicting priority levels (*Low, Medium, High, Critical*) combined with a safety rule override layer for dangerous emergencies (*fire, smoke, electric shock*).
-4. **Entity & Information Extraction**: spaCy Named Entity Recognition combined with custom Matchers for room labels (*Room 204, Lab 3*), building names (*Block A*), dates, times, and main issue phrases.
-5. **Semantic Duplicate Complaint Detection**: Sentence-Transformers (`all-MiniLM-L6-v2`) generating 384-dimensional dense vector embeddings compared against existing database complaints via Cosine Similarity with configurable thresholds.
-6. **Structured Summarization**: Automated concise summary generation.
-7. **Automated Department Routing**: Maps complaint category to the responsible campus department.
-8. **SQLite Persistence**: Stores complaints, NLP analysis metadata, and binary BLOB vector embeddings.
-9. **Interactive Admin Dashboard & Plotly Analytics**: Real-time KPI metrics, filterable table, complaint status updating (*Open, In Progress, Resolved, Rejected*), and visual analytical charts.
+The platform processes raw, unstructured complaint text through an academic NLP pipeline: cleaning, categorizing into 11 campus domains, assessing urgency with safety rule overrides, extracting entities and locations, generating executive summaries, detecting duplicates via dense semantic embeddings, and routing incidents to appropriate departments.
 
 ---
 
-## 📊 Model & Component Architecture
+## 🏛️ System Architecture & Design Principles
 
-| Component | Architecture / Model | Source / Type |
-| :--- | :--- | :--- |
-| **Category Classification** | TF-IDF + Logistic Regression Pipeline | **Trained Locally by Us** |
-| **Urgency Detection** | TF-IDF + Logistic Regression / Random Forest | **Trained Locally by Us** |
-| **Safety Override** | Keyword Rule Elevation Layer (*fire, smoke, shock*) | **Custom Rule Logic** |
-| **Information Extraction** | spaCy `en_core_web_sm` NER + Regex Matcher | **Pretrained + Custom Rules** |
-| **Duplicate Detection** | Sentence Transformer (`all-MiniLM-L6-v2`) + Cosine Sim | **Pretrained Embedding Model** |
-| **Department Routing** | Category-to-Department Mapping | **Custom Rule Logic** |
-| **Summarization** | Structured Extractive Synthesis | **Custom Modular Logic** |
+```
+                              [ Raw Complaint Text ]
+                                        │
+                                        ▼
+                            [ Text Preprocessing ]
+                     (Tokenization, Stopwords, Negation)
+                                        │
+               ┌────────────────────────┼────────────────────────┐
+               ▼                        ▼                        ▼
+     [ Category Classifier ]  [ Urgency Classifier ]   [ Information Extraction ]
+      (TF-IDF + LogReg Pipeline) (TF-IDF + ML Model)   (spaCy NER + Regex)
+               │                        │                        │
+               │                        ▼                        ▼
+               │              [ Safety Rule Override ]     [ Location & Issue ]
+               │             (Emergency Keyword Layer)           │
+               │                        │                        │
+               └────────────────────────┼────────────────────────┘
+                                        │
+                                        ▼
+                          [ Semantic Embedding Engine ]
+                        (Sentence-Transformers MiniLM)
+                                        │
+                                        ▼
+                       [ Multi-Signal Duplicate Detection ]
+                    (Cosine Sim + Category/Location Bonus)
+                                        │
+                                        ▼
+                      [ Dynamic Structured Summarization ]
+                     (Extractive Domain-Routed Summary)
+                                        │
+                                        ▼
+                        [ SQLite Database Persistence ]
+                         (Complaints, Embeddings, Status)
+                                        │
+                                        ▼
+                        [ Streamlit Dashboard & Analytics ]
+```
 
 ---
 
-## 🔬 Academic ML Performance Summary
+## 🔍 Model Classification & Component Types
 
-- **Category Classifier Accuracy**: `83.91%` (Precision: `86.97%`, Recall: `83.91%`, F1-Score: `83.47%`)
-- **Urgency Classifier Accuracy**: `88.51%` (Precision: `89.47%`, Recall: `88.51%`, F1-Score: `88.31%`)
-- **Train / Test Split**: 80% Training / 20% Stratified Test Split (preventing data leakage by fitting TF-IDF strictly on training data).
+| Component | Architecture / Model | Origin / Type | External Cloud API |
+| :--- | :--- | :--- | :--- |
+| **Category Classification** | TF-IDF + Logistic Regression Pipeline | **Trained locally by us** | None (Local) |
+| **Urgency Classification** | TF-IDF + Logistic Regression (Selected over RF) | **Trained locally by us** | None (Local) |
+| **Safety Urgency Override** | Emergency / Time-Sensitive Keyword Rules | **Custom Deterministic Logic** | None (Local) |
+| **Entity & Location Extraction** | spaCy `en_core_web_sm` NER + Regex Matchers | **Pretrained Model + Custom Rules** | None (Local) |
+| **Semantic Embeddings** | Sentence-Transformers (`all-MiniLM-L6-v2`) | **Pretrained Open-Source** | None (Local) |
+| **Duplicate Incident Detection** | Cosine Sim + Composite Category/Location Signals | **Custom Multi-Signal Logic** | None (Local) |
+| **Department Routing** | Category-to-Department Mapping | **Custom Deterministic Logic** | None (Local) |
+| **Summarization** | Structured Extractive Synthesis | **Custom Modular Logic** | None (Local) |
+| **Data Persistence** | SQLite with BLOB vector embeddings | **Database Layer** | None (Local) |
+| **User Interface** | Streamlit + Plotly Visualizations | **Custom UI** | None (Local) |
+
+> **Academic Note**: SENTINEL operates **100% locally** without any dependency on external paid cloud APIs (OpenAI, Gemini, Claude, or Hugging Face cloud inference).
 
 ---
 
-## ⚙️ Installation & Running Guide
+## 🛡️ Preventing Data Leakage in Dataset Generation & Splitting
 
-### 1. Install Dependencies
+### The Problem in Naive Dataset Augmentation
+When synthetic datasets generate variations of base complaint templates, a random `train_test_split` creates severe **data leakage**: one variation of a template appears in training while a near-identical paraphrase appears in testing. This inflates accuracy artificially and masks true generalization.
+
+### The SENTINEL Solution
+1. **Explicit Template Groups**: Each base complaint is assigned a permanent `template_group_id` (e.g. `T_IT_001`, `T_SAF_005`).
+2. **Group-Aware Splitting**: Data splitting is executed strictly via `GroupShuffleSplit(groups=df['template_group_id'])`.
+3. **Formal Disjointness Verification**: Training scripts programmatically assert:
+   $$\text{train\_template\_groups} \cap \text{test\_template\_groups} = \emptyset$$
+   Variants of the same template group never appear in both splits.
+4. **Pipeline Encapsulation**: TF-IDF vocabulary and IDF weights are fitted **strictly on the training partition** using `sklearn.pipeline.Pipeline`, preventing vocabulary leakage.
+
+---
+
+## 📊 Evaluation & Empirical Results
+
+### 1. Complaint Category Classification
+- **Algorithm**: TF-IDF Vectorizer (`ngram_range=(1, 2)`, sublinear TF) + `LogisticRegression(C=2.5, class_weight='balanced')`
+- **Evaluation Partition**: Genuinely unseen template groups (104 samples across 44 disjoint groups)
+- **Accuracy**: `29.81%` (honest evaluation on completely novel phrasing across 11 classes; random chance = 9.09%)
+- **Macro Precision**: `34.54%` | **Macro Recall**: `35.95%` | **Macro F1**: `32.41%`
+- **Weighted Precision**: `35.69%` | **Weighted Recall**: `29.81%` | **Weighted F1**: `29.15%`
+
+### 2. Urgency Classification
+- **Algorithm Comparison**:
+  - *Logistic Regression*: Accuracy: `40.38%`, Macro F1: `0.3157`, Weighted F1: `0.3911`, High Recall: `48.3%`, Safety Score: `0.2919`
+  - *Random Forest*: Accuracy: `36.54%`, Macro F1: `0.2525`, Weighted F1: `0.3206`, High Recall: `13.8%`, Safety Score: `0.2110`
+- **Selected Model**: **Logistic Regression** (selected for superior safety-weighted recall and macro F1).
+- **Safety Rule Elevation**: Because pure statistical ML classifiers have limited training examples for rare critical emergencies (e.g. gas leaks, live wires), SENTINEL layers a deterministic safety rule override that elevates critical keywords to `Critical` or `High` while preserving the ML model's true statistical confidence transparently.
+
+### 3. Duplicate Detection Threshold Evaluation
+Evaluated against 60 labeled sentence pairs spanning duplicates, paraphrases, cross-category incidents, same-location/different-problem cases, and short queries:
+
+| Threshold | Precision | Recall | F1-Score | TP | FP | TN | FN |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 0.60 | 100.0% | 83.9% | 0.9123 | 26 | 0 | 29 | 5 |
+| **0.65** | **100.0%** | **77.4%** | **0.8727** | **24** | **0** | **29** | **7** |
+| 0.70 | 100.0% | 67.7% | 0.8077 | 21 | 0 | 29 | 10 |
+| 0.75 | 100.0% | 54.8% | 0.7083 | 17 | 0 | 29 | 14 |
+| 0.80 | 100.0% | 32.3% | 0.4878 | 10 | 0 | 29 | 21 |
+| 0.85 | 100.0% | 6.5% | 0.1212 | 2 | 0 | 29 | 29 |
+
+- **Selected Validation Threshold**: **0.65** (balances high precision, 0 false alarms, and 77.4% recall).
+- **Status-Aware Categorization**:
+  - Matched with `Open` or `In Progress` complaints $\rightarrow$ `active_duplicate`
+  - Matched with `Resolved` complaints $\rightarrow$ `related_historical`
+
+### 4. Generalization on Human-Written Unseen Holdout Set
+Tested on 26 manually authored campus complaints never seen during training or dataset generation:
+- **Category Generalization Accuracy**: `65.4%` (17 / 26 correct)
+- **Urgency Generalization Accuracy**: `50.0%` (13 / 26 correct)
+
+---
+
+## 📁 Repository Structure
+
+```
+NLP Project/
+├── assets/
+│   ├── manipal_logo.png           # Campus branding logo
+│   └── style.css                  # Design system CSS tokens & styles
+├── config.py                      # Central configuration, paths, constants, random seed
+├── data/
+│   ├── complaints.csv             # Labeled dataset with template_group_id (510 samples)
+│   ├── duplicate_eval_pairs.csv   # 60 labeled duplicate evaluation pairs
+│   └── unseen_test_cases.csv      # 26 hand-written holdout test cases
+├── database/
+│   ├── database.py                # SQLite layer with connection safety & test isolation
+│   └── sentinel.db                # Production/demo SQLite database
+├── models/
+│   ├── category_classifier.pkl    # Trained Category ML Pipeline
+│   ├── urgency_classifier.pkl     # Trained Urgency ML Pipeline
+│   └── training_metadata.json     # Audit trail of training parameters & metrics
+├── nlp/
+│   ├── classification.py          # Category inference module
+│   ├── duplicate_detection.py     # SentenceTransformer dense embeddings & composite duplicate logic
+│   ├── entity_extraction.py       # spaCy NER, campus location regex & problem pattern parsing
+│   ├── pipeline.py                # Master SENTINEL NLP orchestration pipeline
+│   ├── preprocessing.py           # Text cleaning, lemmatization & non-download spaCy loader
+│   ├── summarization.py           # Dynamic department-routed extractive summarization
+│   └── urgency.py                 # ML urgency prediction + Safety rule elevation
+├── pages/
+│   ├── dashboard.py               # Analytical charts & KPI metrics
+│   ├── history.py                 # Filterable incident table & status manager
+│   ├── home.py                    # Landing view with quick submission & live insight
+│   └── submit_complaint.py        # Detailed submission with chips, tips, and AI audit
+├── scripts/
+│   └── reset_demo_db.py           # Safe interactive database reset utility
+├── tests/
+│   └── smoke_test.py              # 13-point automated test suite with temporary DB isolation
+├── training/
+│   ├── dataset_generator.py       # Group-aware balanced dataset generator
+│   ├── evaluate.py                # Multi-component academic evaluation suite
+│   ├── train_category.py          # Category classifier training with GroupShuffleSplit
+│   └── train_urgency.py           # Urgency classifier training & model selection
+├── utils/
+│   ├── helpers.py                 # Department mapping helpers
+│   └── ui.py                      # Reusable UI components & persistent sidebar collapse
+├── app.py                         # Streamlit application entry point
+├── README.md                      # Comprehensive project documentation
+└── requirements.txt               # Pinned dependencies
+```
+
+---
+
+## 🚀 Setup & Execution Guide
+
+### 1. Prerequisites
+- Python `3.10` to `3.14`
+- Pip package manager
+
+### 2. Install Pinned Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Download spaCy English Language Model
+### 3. Install spaCy Language Model
 ```bash
 python -m spacy download en_core_web_sm
 ```
 
-### 3. Generate Dataset & Train Models
+### 4. Reproduce Dataset & Models
 ```bash
-# Generate synthetic dataset (data/complaints.csv)
+# 1. Generate clean dataset with template groups
 python training/dataset_generator.py
 
-# Train Category Classifier (models/category_classifier.pkl)
+# 2. Train category classifier
 python training/train_category.py
 
-# Train Urgency Classifier (models/urgency_classifier.pkl)
+# 3. Train urgency classifier (compares LR vs RF)
 python training/train_urgency.py
 
-# Run Academic Evaluation Report
+# 4. Run full academic evaluation (Category, Urgency, 60 Duplicate pairs, Unseen holdout)
 python training/evaluate.py
 ```
 
-### 4. Launch Streamlit Application
+### 5. Execute Automated Smoke Test Suite
+```bash
+# Verifies all 13 components using isolated temporary DB (zero production DB mutations)
+python tests/smoke_test.py
+```
+
+### 6. Launch Application
 ```bash
 streamlit run app.py
 ```
 
 ---
 
-## 🧪 Test Cases & Expected Outputs
+## 🎓 Viva Questions & Key Explanations
 
-### Test Case 1 (Safety / Critical - Rule Override)
-- **Input**: `"There is smoke coming from an electrical panel near Block A ground floor."`
-- **Expected Category**: `Safety` or `Electrical`
-- **Expected Urgency**: `Critical` (Triggered by safety rule override keyword *smoke*)
-- **Extracted Location**: `Block A`
+1. **How was data leakage prevented?**
+   In natural language generation with augmented templates, randomly splitting sentences causes near-identical phrases to appear in both train and test partitions. We solved this by tagging every base template with a `template_group_id` and splitting exclusively via `GroupShuffleSplit`. We programmatically proved zero overlap between training and testing group IDs.
 
-### Test Case 2 (IT / Medium)
-- **Input**: `"The Wi-Fi in Computer Lab 3 keeps disconnecting every few minutes."`
-- **Expected Category**: `IT`
-- **Expected Urgency**: `Medium`
-- **Extracted Location**: `Computer Lab 3`
+2. **Why does the urgency model use a hybrid ML + rule approach?**
+   Statistical ML classifiers rely on frequency. Life-threatening events (e.g., electrical fires, gas leaks) are inherently rare in campus incident logs. Relying purely on ML risks misclassifying a critical fire hazard as medium or low. SENTINEL pairs a statistical classifier for general incidents with an immediate safety override layer for critical life-safety triggers.
 
-### Test Case 3 (Cleanliness / Medium)
-- **Input**: `"Restroom near the main cafeteria has not been cleaned since yesterday."`
-- **Expected Category**: `Cleanliness`
-- **Expected Urgency**: `Medium`
-- **Extracted Location**: `Cafeteria`
+3. **Why is the rule override not reported as 100% confidence?**
+   A keyword rule trigger is a deterministic safety policy, not a calibrated statistical probability. Reporting 100% confidence would be mathematically misleading. SENTINEL reports the true ML model probability separately from the rule elevation flag.
 
-### Test Case 4 (IT / High - Time Sensitivity)
-- **Input**: `"The classroom projector in Room 304 is not working and our presentation starts in 20 minutes."`
-- **Expected Category**: `IT`
-- **Expected Urgency**: `High`
-- **Extracted Location**: `Room 304`
-
-### Test Case 5 (Duplicate Complaint Detection Pair)
-- **Complaint 1**: `"Water is leaking from the ceiling near the cafeteria and the floor is very slippery."`
-- **Complaint 2**: `"There is water all over the cafeteria floor because one of the pipes is leaking."`
-- **Expected Result**: Semantic similarity `~87.0%` (Flagged as **Duplicate Complaint**).
+4. **Why not use an external LLM API (like GPT-4 or Claude)?**
+   Universities and institutions handle private student and staff records. Local models guarantee zero data exfiltration, zero latency from network calls, zero cost per token, and deterministic reproducible behavior suitable for campus deployment.
 
 ---
 
-## 🎓 Viva & Project Presentation Guide
+## 🔮 Limitations & Future Work
 
-### 1. How does TF-IDF work?
-TF-IDF (*Term Frequency - Inverse Document Frequency*) converts raw text into numerical feature vectors.
-- **Term Frequency (TF)** measures how often a word appears in a specific complaint.
-- **Inverse Document Frequency (IDF)** penalizes common words (like *the, is, at*) that appear across many complaints, emphasizing unique domain words (like *projector, leaking, Wi-Fi*).
-
-### 2. How does Logistic Regression learn?
-Logistic Regression fits a linear decision boundary across TF-IDF feature space using the softmax/sigmoid function to output class probabilities for each category.
-
-### 3. What prevents Data Leakage in our ML pipeline?
-We use Scikit-Learn `Pipeline([('tfidf', TfidfVectorizer()), ('clf', LogisticRegression())])` combined with `train_test_split(stratify=y)`. Fitting TF-IDF only on `X_train` ensures vocabulary and document frequencies from `X_test` remain completely unseen until evaluation.
-
-### 4. How does Duplicate Detection work without exact keyword matching?
-We use Sentence Transformer model `all-MiniLM-L6-v2` to map complaint sentences into 384-dimensional dense vector space embeddings. Cosine similarity measures the angle between vectors, identifying semantic similarity even when different words are used (*e.g., "water leaking" vs "pipe spraying water"*).
+- **Multi-lingual Support**: Current models process English complaints; future versions can incorporate multilingual models (`paraphrase-multilingual-MiniLM-L12-v2`).
+- **File & Image Attachments**: True optical character recognition (OCR) and damage assessment via computer vision can be integrated in future phases.
+- **Automated Reopening Workflows**: Status lifecycle enforcement (e.g. reopenings requiring administrative notes).
 
 ---
 
 ## 👥 Authors
-University NLP Project Team – **SENTINEL**
->>>>>>> cd4cff8 (Initial commit: SENTINEL AI Complaint Intelligence Portal)
+SENTINEL Project Team – University NLP & ML Engineering Laboratory

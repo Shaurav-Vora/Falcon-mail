@@ -12,15 +12,17 @@ from config import SPACY_MODEL_NAME
 _nlp = None
 
 def get_spacy_nlp():
-    """Lazy load spaCy model."""
+    """Lazy load spaCy model without silent runtime network downloads."""
     global _nlp
     if _nlp is None:
         try:
             _nlp = spacy.load(SPACY_MODEL_NAME)
-        except Exception:
-            import spacy.cli
-            spacy.cli.download(SPACY_MODEL_NAME)
-            _nlp = spacy.load(SPACY_MODEL_NAME)
+        except Exception as e:
+            raise RuntimeError(
+                f"spaCy model '{SPACY_MODEL_NAME}' is not installed.\n"
+                f"Please run the following command in your terminal:\n"
+                f"python -m spacy download {SPACY_MODEL_NAME}"
+            ) from e
     return _nlp
 
 def preprocess_text(text: str) -> dict:

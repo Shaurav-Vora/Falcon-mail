@@ -1,0 +1,276 @@
+/* Import Professional Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #F8FAFC;
+    color: #17233C;
+}
+
+/* Hide Streamlit Default UI Elements and Detached Chevron */
+header[data-testid="stHeader"] { display: none !important; }
+footer { display: none !important; }
+[data-testid="stSidebarNav"] { display: none !important; }
+.stDeployButton { display: none !important; }
+#MainMenu { display: none !important; }
+button[data-testid="stSidebarCollapseButton"],
+div[data-testid="stSidebarCollapseButton"],
+button[data-testid="stSidebarHeaderCollapseButton"] { display: none !important; }
+
+/* Center Content Container & Enforce Max Width */
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2.5rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    max-width: 1240px !important;
+    margin: 0 auto !important;
+}
+
+/* Sidebar Styling - Expanded Default (250px) */
+section[data-testid="stSidebar"] {
+    background-color: #FFFFFF !important;
+    border-right: 1px solid #E2E8F0 !important;
+    width: 250px !important;
+    transition: width 0.2s ease-in-out !important;
+}
+
+section[data-testid="stSidebar"] .block-container {
+    padding-top: 1rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+}
+
+/* Collapsed Sidebar Mode (68px) */
+.sidebar-collapsed section[data-testid="stSidebar"],
+section[data-testid="stSidebar"].collapsed-state {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+}
+
+.sidebar-collapsed section[data-testid="stSidebar"] .sidebar-nav-label,
+.sidebar-collapsed section[data-testid="stSidebar"] .sidebar-footer-text,
+.sidebar-collapsed section[data-testid="stSidebar"] .sidebar-logo-full {
+    display: none !important;
+}
+
+/* Top Global Header */
+.global-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.header-main-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #17233C;
+    letter-spacing: -0.02em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.header-sub-title {
+    font-size: 0.82rem;
+    color: #64748B;
+    margin-top: 0.1rem;
+    font-weight: 500;
+}
+
+.header-user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #FFF3ED;
+    border: 1.5px solid #FED7C2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F15A24;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.header-user-avatar:hover {
+    background-color: #FFEBE0;
+    border-color: #F15A24;
+}
+
+/* Hero Banner Styling */
+.hero-banner {
+    background: linear-gradient(135deg, #FFF7F2 0%, #FFEBE0 60%, #FFE2D1 100%);
+    border: 1px solid #FED7C2;
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(241, 90, 36, 0.04);
+}
+
+.hero-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #17233C;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+.hero-title span {
+    color: #F15A24;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.2rem;
+}
+
+.hero-supporting {
+    font-size: 0.875rem;
+    color: #64748B;
+    font-weight: 500;
+}
+
+.hero-watermark {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+    text-align: right;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: #C2410C;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* KPI Stat Cards (White, Subtle Border, Line Icons) */
+.stat-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 1rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    transition: all 0.15s ease-in-out;
+}
+
+.stat-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.stat-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon-orange { background-color: #FFF3ED; color: #F15A24; }
+.stat-icon-blue { background-color: #EFF6FF; color: #3B82F6; }
+.stat-icon-green { background-color: #F0FDF4; color: #16A34A; }
+.stat-icon-red { background-color: #FEF2F2; color: #EF4444; }
+.stat-icon-amber { background-color: #FFFBEB; color: #F59E0B; }
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.stat-value {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #17233C;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-top: 0.15rem;
+}
+
+/* Urgency & Status Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.badge-critical { background-color: #FEE2E2; color: #B91C1C; }
+.badge-high { background-color: #FEF2F2; color: #DC2626; }
+.badge-medium { background-color: #FEF3C7; color: #D97706; }
+.badge-low { background-color: #DCFCE7; color: #15803D; }
+
+.badge-open { background-color: #EFF6FF; color: #1D4ED8; }
+.badge-in-progress { background-color: #FEF3C7; color: #B45309; }
+.badge-resolved { background-color: #DCFCE7; color: #15803D; }
+.badge-rejected { background-color: #F3F4F6; color: #4B5563; }
+
+/* Sidebar Navigation Menu Buttons */
+section[data-testid="stSidebar"] div.stButton {
+    margin-bottom: 6px !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button {
+    height: 42px !important;
+    min-height: 42px !important;
+    border-radius: 8px !important;
+    padding: 0 0.85rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    width: 100% !important;
+    text-align: left !important;
+    transition: all 0.15s ease-in-out !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button:hover {
+    background: #FFF7F2 !important;
+    color: #F15A24 !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
+    background: #FFF0E8 !important;
+    color: #F15A24 !important;
+    font-weight: 600 !important;
+    border-left: 3px solid #F15A24 !important;
+}
+
+/* Card Container */
+.sentinel-card-container {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    margin-bottom: 1.25rem;
+}

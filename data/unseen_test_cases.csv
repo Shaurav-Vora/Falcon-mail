@@ -1,0 +1,27 @@
+text,expected_category,expected_urgency
+"The internet keeps dropping every few minutes in the engineering lab.",IT,Medium
+"The ceiling beside the food court is dripping and the tiles are slippery.",Plumbing,High
+"My student portal is not displaying any of my registered modules and the exam is tomorrow.",Academic,High
+"Smoke is coming from the electrical cabinet outside Block C.",Safety,Critical
+"The restroom beside the library smells bad and has not been cleaned today.",Cleanliness,Medium
+"Bus 3 did not arrive at the scheduled pickup time.",Transport,Medium
+"The classroom air conditioner in Room 405 is blowing warm air during afternoon lecture.",Maintenance,Medium
+"An open flame was spotted inside the waste disposal bin behind cafeteria.",Safety,Critical
+"Student fee receipt does not reflect the online bank transfer made last Friday.",Administration,Medium
+"All bench power outlets in Electronics Lab 1 tripped during the circuit experiment.",Electrical,High
+"Water pressure in the gym shower stalls is completely absent.",Facilities,Medium
+"Found a pair of silver Apple AirPods on the 2nd floor library study desk.",Other,Low
+"Wi-Fi signal is completely non-existent inside Seminar Room B.",IT,Medium
+"A heavy pane of glass in the atrium walkway is cracked and vibrating with the wind.",Maintenance,High
+"Someone slipped on spilled cooking grease near the food court counter.",Safety,High
+"The professor failed to turn up for the 11 AM calculus lecture without prior announcement.",Academic,Medium
+"The campus ATM machine debited money from my account but did not dispense cash.",Administration,High
+"Morning commuter shuttle driver was speeding dangerously over campus speed bumps.",Transport,High
+"Drinking water from the fountain near Block A has a brownish metallic color.",Facilities,High
+"Trash containers outside the student union are overflowing and attracting crows.",Cleanliness,Low
+"Exposed electrical wiring hanging from the false ceiling in Room 102.",Electrical,Critical
+"Main drainage sewer is backing up onto the ground floor walkway.",Plumbing,High
+"Lost my brown leather wallet containing university ID card in the auditorium.",Other,Low
+"Final semester exam timetable has two major papers scheduled at the exact same hour.",Academic,High
+"Campus parking barrier arm fell down directly onto a student car.",Transport,High
+"Laboratory chemical fumes smell overpowering in hallway 204.",Safety,Critical

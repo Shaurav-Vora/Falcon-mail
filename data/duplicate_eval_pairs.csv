@@ -1,0 +1,61 @@
+text_a,text_b,label,notes
+"Water is leaking from the ceiling near the cafeteria.","There is water all over the cafeteria floor because one of the pipes is leaking.",1,obvious_duplicate
+"The Wi-Fi in Lab 205 is disconnected.","Wi-Fi in Lab 205 is not working and keeps disconnecting.",1,obvious_duplicate
+"The air conditioner in Room 302 stopped cooling.","AC in Room 302 is broken and blowing hot air.",1,obvious_duplicate
+"Elevator in Admin building is shaking violently.","The elevator in administration building is making loud noises and jerking.",1,obvious_duplicate
+"Projector in Lecture Hall 1 is flickering.","Lecture Hall 1 projector won't display slides properly.",1,obvious_duplicate
+"Stray dog wandering near the sports field behaving aggressively.","An aggressive dog is roaming around the campus sports complex.",1,obvious_duplicate
+"Fire alarm in Block B is beeping continuously.","False alarm sound going off repeatedly in Block B building.",1,obvious_duplicate
+"Restroom near cafeteria is dirty and out of soap.","Cafeteria washroom has not been cleaned and has no handwash.",1,obvious_duplicate
+"My student portal gives error 500 when uploading assignment.","Cannot upload assignment on learning portal due to 500 server error.",1,obvious_duplicate
+"Bus 3 arrived 45 minutes late this morning.","Campus shuttle route 3 was severely delayed by 45 minutes today.",1,obvious_duplicate
+"Power outage in Block C left all classes in dark.","There is no electricity in Block C classrooms right now.",1,obvious_duplicate
+"Flush tank leaking water in 1st floor bathroom.","Water is continuously running from the toilet flush in floor 1 washroom.",1,obvious_duplicate
+"Smoke coming from electrical breaker in ground floor.","Thick smoke observed coming out of ground floor electrical panel.",1,obvious_duplicate
+"Lost black leather wallet containing student card in library.","Someone lost a black wallet with university ID near library entrance.",1,obvious_duplicate
+"The water fountain near Block A is dispensing dirty brown water.","Brown muddy water coming from drinking fountain near Block A.",1,obvious_duplicate
+"Gym pulley wire snapped during student workout.","The cable on the gym weights machine snapped.",1,obvious_duplicate
+"Chemical spill of unknown liquid in chemistry lab 2.","Liquid chemical spilled across workbench in chemistry lab 2.",1,obvious_duplicate
+"Biometric scanner at gate is not recognizing student cards.","Gate attendance biometric machine is offline and not reading IDs.",1,obvious_duplicate
+"Tree branch broke and is hanging over student walkway.","A large branch snapped off a tree and is dangling over the walking path.",1,obvious_duplicate
+"Emergency exit door in Block C is locked with padlock.","Block C emergency fire exit is padlocked and inaccessible.",1,obvious_duplicate
+"Water leaking from ceiling near cafeteria.","Food court has run out of vegetarian meal options today.",0,same_location_different_problem
+"Water leaking from ceiling near cafeteria.","Cafeteria cashier counter queue is moving very slowly.",0,same_location_different_problem
+"The Wi-Fi in Lab 205 is disconnected.","The projector in Lab 205 is not turning on.",0,same_location_different_problem
+"The Wi-Fi in Lab 205 is disconnected.","Lab 205 door lock is broken and won't lock.",0,same_location_different_problem
+"The air conditioner in Room 302 stopped cooling.","Light bulbs in Room 302 are flickering continuously.",0,same_location_different_problem
+"The air conditioner in Room 302 stopped cooling.","Desks in Room 302 are wobbly and missing screws.",0,same_location_different_problem
+"Elevator in Admin building is shaking violently.","Admin office staff refused to sign my clearance form.",0,same_building_different_problem
+"Restroom near cafeteria is dirty and out of soap.","Restroom in Block D 3rd floor toilet bowl is overflowing.",0,same_category_different_location
+"The Wi-Fi in Lab 205 is disconnected.","Wi-Fi speed in male dormitory Block B is slow.",0,same_category_different_location
+"Power outage in Block C left all classes in dark.","Power socket in Room 104 sparked when plugging in laptop.",0,same_category_different_incident
+"Projector in Lecture Hall 1 is flickering.","Projector in Room 402 is showing green tinted display.",0,same_category_different_location
+"Bus 3 arrived 45 minutes late this morning.","Bus 5 air conditioning is not working properly.",0,same_category_different_bus
+"My student portal gives error 500 when uploading assignment.","Portal grade transcript has incorrect letter grade for Math.",0,same_category_different_incident
+"Chemical spill in chemistry lab 2.","Chemistry department door is jammed shut.",0,same_dept_different_issue
+"Lost black leather wallet containing student card in library.","Found a blue umbrella near library turnstiles.",0,same_category_different_item
+"Lost silver laptop charger in Lecture Hall 3.","Found set of car keys on bench near cafeteria.",0,same_category_different_item
+"Water leaking from ceiling near cafeteria.","Ceiling fan in Room 205 is making loud squeaking noise.",0,unrelated
+"Smoke coming from electrical breaker in ground floor.","Student shuttle bus driver was driving too fast.",0,unrelated
+"The Wi-Fi in Lab 205 is disconnected.","Gymnasium treadmill speed sensor is inaccurate.",0,unrelated
+"Emergency exit door in Block C is padlocked.","Library printer is out of A4 paper.",0,unrelated
+"Toner empty.","Printer toner empty in library.",1,short_input_duplicate
+"AC broken.","Classroom AC is broken.",1,short_input_duplicate
+"Wi-Fi down.","Wi-Fi network is down.",1,short_input_duplicate
+"Water leak.","Water is leaking.",1,short_input_duplicate
+"No internet.","The internet connection is completely dead.",1,short_input_duplicate
+"AC broken.","Water leak.",0,short_input_different
+"Wi-Fi down.","Printer jam.",0,short_input_different
+"Door locked.","Elevator stuck.",0,short_input_different
+"The projector in Auditorium is broken.","Auditorium sound system microphone is buzzing with feedback.",0,same_hall_different_av
+"Hostel Room 304 shower drain is blocked.","Hostel Room 304 study desk chair has a broken wheel.",0,same_room_different_amenity
+"Hostel Room 304 shower drain is blocked.","Water is backing up in the shower drain in dorm room 304.",1,paraphrased_duplicate
+"Library 2nd floor power sockets are dead.","Power outlets on library second floor are not supplying electricity.",1,paraphrased_duplicate
+"Library 2nd floor power sockets are dead.","Library 2nd floor quiet study area is too noisy today.",0,same_floor_different_issue
+"Broken window latch in Room 108.","Window latch in Room 108 will not lock securely.",1,paraphrased_duplicate
+"Broken window latch in Room 108.","Computer monitor on desk 5 in Room 108 is flickering.",0,same_room_different_issue
+"Bus 2 driver was talking on phone while driving.","Driver of shuttle bus 2 was seen texting and calling during student ride.",1,paraphrased_duplicate
+"Bus 2 driver was talking on phone while driving.","Bus 2 departed 10 minutes earlier than scheduled departure time.",0,same_bus_different_complaint
+"Exam hall ticket download button is missing on student portal.","Unable to download my semester exam hall ticket from student portal.",1,paraphrased_duplicate
+"Exam hall ticket download button is missing on student portal.","Exam timetable has scheduled two core subjects at the exact same hour.",0,same_system_different_issue
+"Exposed copper wiring on the wall near Room 105.","Bare electrical wires exposed along hallway corridor near Room 105.",1,paraphrased_duplicate

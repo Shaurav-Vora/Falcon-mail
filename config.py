@@ -14,8 +14,12 @@ os.makedirs(DATABASE_DIR, exist_ok=True)
 # Database Path
 DB_PATH = os.path.join(DATABASE_DIR, "sentinel.db")
 
+# Reproducibility Central Seed
+RANDOM_SEED = 42
+
 # Dataset Path
 COMPLAINTS_CSV_PATH = os.path.join(DATA_DIR, "complaints.csv")
+UNSEEN_TEST_CSV_PATH = os.path.join(DATA_DIR, "unseen_test_cases.csv")
 
 # Trained Models Paths (Models trained by us on our labeled complaint dataset)
 CATEGORY_MODEL_PATH = os.path.join(MODELS_DIR, "category_classifier.pkl")
@@ -25,8 +29,8 @@ URGENCY_MODEL_PATH = os.path.join(MODELS_DIR, "urgency_classifier.pkl")
 SPACY_MODEL_NAME = "en_core_web_sm"
 SENTENCE_TRANSFORMER_MODEL = "all-MiniLM-L6-v2"
 
-# Duplicate Detection Settings (Evaluated optimal threshold: 0.70)
-DEFAULT_DUPLICATE_THRESHOLD = 0.70
+# Duplicate Detection Settings (Selected validation threshold based on 60 labeled pairs: 0.65, F1: 0.8727)
+DEFAULT_DUPLICATE_THRESHOLD = 0.65
 
 # Complaint Categories
 CATEGORIES = [

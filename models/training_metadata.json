@@ -1,0 +1,65 @@
+{
+  "category_model": {
+    "algorithm": "TF-IDF + LogisticRegression(C=2.5, class_weight='balanced')",
+    "dataset_hash": "3de7f257229b0997ae28f6a051d2903e17ed6fd82575d075fa7aaba30928875c",
+    "dataset_size": 510,
+    "train_size": 406,
+    "test_size": 104,
+    "train_template_groups": 176,
+    "test_template_groups": 44,
+    "group_leakage_detected": false,
+    "random_seed": 42,
+    "python_version": "3.14.3",
+    "sklearn_version": "1.9.1",
+    "timestamp": "2026-09-12T14:36:30.829470",
+    "metrics": {
+      "accuracy": 0.2981,
+      "macro_precision": 0.3454,
+      "macro_recall": 0.3595,
+      "macro_f1": 0.3241,
+      "weighted_precision": 0.3569,
+      "weighted_recall": 0.2981,
+      "weighted_f1": 0.2915
+    }
+  },
+  "urgency_model": {
+    "algorithm": "TF-IDF + Logistic Regression",
+    "selection_reason": "Logistic Regression achieved superior safety-weighted score (0.2919 vs 0.2110) with Macro F1: 0.3157 and Critical Recall: 0.0%.",
+    "models_compared": {
+      "Logistic Regression": {
+        "accuracy": 0.4038,
+        "macro_f1": 0.3157,
+        "weighted_f1": 0.3911,
+        "critical_recall": 0.0,
+        "high_recall": 0.4828,
+        "safety_score": 0.2919
+      },
+      "Random Forest": {
+        "accuracy": 0.3654,
+        "macro_f1": 0.2525,
+        "weighted_f1": 0.3206,
+        "critical_recall": 0.0,
+        "high_recall": 0.1379,
+        "safety_score": 0.211
+      }
+    },
+    "dataset_hash": "3de7f257229b0997ae28f6a051d2903e17ed6fd82575d075fa7aaba30928875c",
+    "dataset_size": 510,
+    "train_size": 406,
+    "test_size": 104,
+    "train_template_groups": 176,
+    "test_template_groups": 44,
+    "group_leakage_detected": false,
+    "random_seed": 42,
+    "python_version": "3.14.3",
+    "sklearn_version": "1.9.1",
+    "timestamp": "2026-09-12T14:37:03.162206",
+    "metrics": {
+      "accuracy": 0.4038,
+      "macro_f1": 0.3157,
+      "weighted_f1": 0.3911,
+      "critical_recall": 0.0,
+      "high_recall": 0.4828
+    }
+  }
+}

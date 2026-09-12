@@ -1,4 +1,5 @@
 import streamlit as st
+import html
 from utils.ui import render_global_header
 from nlp.pipeline import process_complaint
 from config import DEFAULT_DUPLICATE_THRESHOLD, CATEGORIES
@@ -29,7 +30,6 @@ def render_submit_complaint_page():
     col_left, col_right = st.columns([0.65, 0.35], gap="large")
     
     with col_left:
-        # Form Header
         st.markdown(
             """
             <div style="font-size: 1.15rem; font-weight: 700; color: #17233C; margin-bottom: 2px;">
@@ -86,14 +86,14 @@ def render_submit_complaint_page():
             complaint_text = st.text_area(
                 "Describe your issue *",
                 value=initial_val,
-                height=140,
+                height=150,
                 placeholder="E.g., Describe the issue you're facing on campus...",
                 label_visibility="collapsed"
             )
             
             st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
             
-            # Location + Category Inputs
+            # Location + Category Inputs (Separated structured metadata)
             col_opt1, col_opt2 = st.columns(2)
             with col_opt1:
                 st.markdown("<div style='font-size: 0.82rem; font-weight: 600; color: #17233C; margin-bottom: 4px;'>Location (Optional)</div>", unsafe_allow_html=True)
@@ -103,17 +103,11 @@ def render_submit_complaint_page():
             with col_opt2:
                 st.markdown("<div style='font-size: 0.82rem; font-weight: 600; color: #17233C; margin-bottom: 4px;'>Category (Optional Context)</div>", unsafe_allow_html=True)
                 optional_cat = st.selectbox("Category (Optional Context)", ["Automatic AI Selection"] + CATEGORIES, label_visibility="collapsed")
-                st.markdown("<div style='font-size: 11px; color: #94A3B8; margin-top: 2px;'>AI will still predict the most appropriate category automatically.</div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size: 11px; color: #94A3B8; margin-top: 2px;'>AI will predict category automatically; your selection provides context.</div>", unsafe_allow_html=True)
 
-            st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
-
-            # File Uploader
-            st.markdown("<div style='font-size: 0.82rem; font-weight: 600; color: #17233C; margin-bottom: 2px;'>Attach a file (Optional)</div><div style='font-size: 11px; color: #94A3B8; margin-bottom: 6px;'>Images, PDFs or documents</div>", unsafe_allow_html=True)
-            uploaded_doc = st.file_uploader("Attach file", type=["jpg", "png", "pdf", "docx"], label_visibility="collapsed")
-            
             st.markdown("<div style='margin-bottom: 16px;'></div>", unsafe_allow_html=True)
 
-            # Analyze & Submit Button (Right-aligned, strong CTA)
+            # Analyze & Submit Button
             btn_space, btn_action = st.columns([0.5, 0.5])
             with btn_action:
                 submit_btn = st.form_submit_button("Analyze & Submit Complaint", use_container_width=True)
@@ -122,13 +116,19 @@ def render_submit_complaint_page():
             if not complaint_text or not complaint_text.strip():
                 st.error("Please enter a complaint description.")
             else:
-                full_text = complaint_text
-                if optional_loc:
-                    full_text += f" Location: {optional_loc}"
-                    
+                user_cat_val = optional_cat if optional_cat != "Automatic AI Selection" else None
+                user_loc_val = optional_loc.strip() if optional_loc and optional_loc.strip() else None
+                
                 with st.spinner("Running SENTINEL NLP Analysis..."):
                     try:
-                        res = process_complaint(full_text, store_in_db=True, duplicate_threshold=DEFAULT_DUPLICATE_THRESHOLD)
+                        # Process with clean separation of text, location, and user category
+                        res = process_complaint(
+                            text=complaint_text,
+                            store_in_db=True,
+                            duplicate_threshold=DEFAULT_DUPLICATE_THRESHOLD,
+                            user_location=user_loc_val,
+                            user_category=user_cat_val
+                        )
                         st.session_state["last_submission_result"] = res
                         st.session_state["complaint_input_value"] = ""
                         st.rerun()
@@ -136,9 +136,9 @@ def render_submit_complaint_page():
                         st.error(f"Failed to process complaint: {str(e)}")
 
     with col_right:
-        # CARD 1: REPORTING TIPS (Compact, zero raw HTML)
+        # CARD 1: REPORTING TIPS
         with st.container(border=True):
-            st.markdown("<div style='font-size: 0.98rem; font-weight: 700; color: #17233C; margin-bottom: 2px;'>Reporting Tips</div><div style='font-size: 0.78rem; color: #64748B; margin-bottom: 12px;'>A few tips to help us understand and resolve your issue faster.</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.98rem; font-weight: 700; color: #17233C; margin-bottom: 2px;'>Reporting Tips</div><div style='font-size: 0.78rem; color: #64748B; margin-bottom: 12px;'>A few tips to help us resolve your issue faster.</div>", unsafe_allow_html=True)
             
             tips = [
                 ("1", "Be specific", "Explain what happened and how it affects you."),
@@ -151,32 +151,32 @@ def render_submit_complaint_page():
                 st.markdown(
                     f"<div style='display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;'>"
                     f"<span style='background:#FFF1E8; color:#F15A24; font-weight:700; font-size:12px; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;'>{num}</span>"
-                    f"<div><div style='font-size:13px; font-weight:600; color:#17233C; line-height:1.2;'>{title}</div>"
-                    f"<div style='font-size:12px; color:#64748B; line-height:1.3;'>{desc}</div></div>"
+                    f"<div><div style='font-size:13px; font-weight:600; color:#17233C; line-height:1.2;'>{html.escape(title)}</div>"
+                    f"<div style='font-size:12px; color:#64748B; line-height:1.3;'>{html.escape(desc)}</div></div>"
                     f"</div>",
                     unsafe_allow_html=True
                 )
 
         st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
 
-        # CARD 2: HOW AI HELPS (Compact, zero raw HTML)
+        # CARD 2: HOW AI HELPS
         with st.container(border=True):
             st.markdown("<div style='font-size: 0.98rem; font-weight: 700; color: #17233C; margin-bottom: 2px;'>How AI Helps</div><div style='font-size: 0.78rem; color: #64748B; margin-bottom: 12px;'>Our AI automatically analyzes your complaint to:</div>", unsafe_allow_html=True)
             
             ai_features = [
                 ("Category Detection", "Identifies the most relevant complaint category."),
-                ("Urgency Detection", "Estimates the priority of the complaint."),
+                ("Urgency Detection", "Estimates the priority with safety rule elevation."),
                 ("Location Extraction", "Finds room, block, building, or area information."),
-                ("Duplicate Detection", "Checks for similar complaints already submitted."),
-                ("Summary Generation", "Creates a short structured summary.")
+                ("Duplicate Detection", "Checks for similar active or historical complaints."),
+                ("Summary Generation", "Creates a structured summary for quick response.")
             ]
             
             for title, desc in ai_features:
                 st.markdown(
                     f"<div style='display:flex; align-items:flex-start; gap:8px; margin-bottom:9px;'>"
                     f"<span style='color:#F15A24; font-size:13px; line-height:1.3; font-weight:700;'>•</span>"
-                    f"<div><div style='font-size:13px; font-weight:600; color:#17233C; line-height:1.2;'>{title}</div>"
-                    f"<div style='font-size:11.5px; color:#64748B; line-height:1.3;'>{desc}</div></div>"
+                    f"<div><div style='font-size:13px; font-weight:600; color:#17233C; line-height:1.2;'>{html.escape(title)}</div>"
+                    f"<div style='font-size:11.5px; color:#64748B; line-height:1.3;'>{html.escape(desc)}</div></div>"
                     f"</div>",
                     unsafe_allow_html=True
                 )
@@ -189,21 +189,32 @@ def render_submit_complaint_page():
             )
 
 def render_submission_result_view(result: dict):
-    """Render successful submission breakdown card."""
+    """Render successful submission breakdown card with honest ML confidence and vector line icons."""
     st.success(f"Complaint Record **#{result['complaint_id']}** Successfully Saved to Database!")
     
     st.markdown("### SENTINEL AI Processing Results")
     
     c1, c2, c3, c4 = st.columns(4)
     with c1:
+        raw_cat = html.escape(str(result['category']))
+        cat_conf = result['category_confidence'] * 100
+        user_cat = result.get('user_category')
+        cat_subtext = f"{cat_conf:.1f}% ML confidence"
+        if user_cat and user_cat != result['category']:
+            cat_subtext += f"<br><span style='color:#D97706;'>User chose: {html.escape(user_cat)}</span>"
+            
         st.markdown(
             f"""
             <div class="stat-card">
-                <div class="stat-icon-box stat-icon-orange">📁</div>
+                <div class="stat-icon-box stat-icon-orange">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F15A24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
                 <div>
                     <div class="stat-label">Category</div>
-                    <div style="font-size: 1.15rem; font-weight: 800; color: #F15A24;">{result['category']}</div>
-                    <div style="font-size: 0.75rem; color: #94A3B8;">{result['category_confidence']*100:.1f}% confidence</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: #F15A24;">{raw_cat}</div>
+                    <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.2;">{cat_subtext}</div>
                 </div>
             </div>
             """,
@@ -212,42 +223,73 @@ def render_submission_result_view(result: dict):
     with c2:
         urg = result['urgency']
         u_cls = "stat-icon-red" if urg in ["Critical", "High"] else ("stat-icon-amber" if urg == "Medium" else "stat-icon-green")
+        stroke_c = "#EF4444" if urg in ["Critical", "High"] else ("#F59E0B" if urg == "Medium" else "#16A34A")
+        
+        # Honest confidence reporting (Issue 6 & Correction 3)
+        ml_pred = result.get("ml_prediction", urg)
+        ml_conf = result.get("ml_confidence", result.get("urgency_confidence", 0.0)) * 100
+        
+        if result.get("rule_elevated"):
+            urg_subtext = f"Safety Rule Applied<br><span style='color:#64748B;'>ML: {html.escape(ml_pred)} ({ml_conf:.1f}%)</span>"
+        else:
+            urg_subtext = f"{ml_conf:.1f}% ML confidence"
+            
         st.markdown(
             f"""
             <div class="stat-card">
-                <div class="stat-icon-box {u_cls}">⚠️</div>
+                <div class="stat-icon-box {u_cls}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{stroke_c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
                 <div>
-                    <div class="stat-label">Urgency</div>
-                    <div style="font-size: 1.15rem; font-weight: 800; color: #17233C;">{urg}</div>
-                    <div style="font-size: 0.75rem; color: #94A3B8;">{result['urgency_confidence']*100:.1f}% confidence</div>
+                    <div class="stat-label">Urgency Priority</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: #17233C;">{html.escape(urg)}</div>
+                    <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.2;">{urg_subtext}</div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
     with c3:
+        loc_val = result.get('location') or result.get('entities', {}).get('location', 'Not specified')
+        loc_src = "User Specified" if result.get('user_location') else "Extracted by NLP"
         st.markdown(
             f"""
             <div class="stat-card">
-                <div class="stat-icon-box stat-icon-blue">📍</div>
+                <div class="stat-icon-box stat-icon-blue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
                 <div>
                     <div class="stat-label">Location</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: #17233C;">{result['entities']['location']}</div>
-                    <div style="font-size: 0.75rem; color: #94A3B8;">Extracted by NLP</div>
+                    <div style="font-size: 1.05rem; font-weight: 700; color: #17233C;">{html.escape(str(loc_val))}</div>
+                    <div style="font-size: 0.72rem; color: #94A3B8;">{html.escape(loc_src)}</div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
     with c4:
+        dept_val = result.get('recommended_department', 'Campus Facilities')
         st.markdown(
             f"""
             <div class="stat-card">
-                <div class="stat-icon-box stat-icon-green">🏢</div>
+                <div class="stat-icon-box stat-icon-green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                        <line x1="9" y1="22" x2="9" y2="2"></line>
+                        <line x1="15" y1="22" x2="15" y2="2"></line>
+                    </svg>
+                </div>
                 <div>
                     <div class="stat-label">Department</div>
-                    <div style="font-size: 0.95rem; font-weight: 700; color: #17233C;">{result['recommended_department']}</div>
-                    <div style="font-size: 0.75rem; color: #94A3B8;">Assigned Unit</div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: #17233C; line-height: 1.2;">{html.escape(str(dept_val))}</div>
+                    <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">Assigned Routing</div>
                 </div>
             </div>
             """,
@@ -255,12 +297,24 @@ def render_submission_result_view(result: dict):
         )
     
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
+    
+    # Optional Category Discrepancy Note (Issue 12 / Correction 15)
+    user_cat = result.get('user_category')
+    if user_cat and user_cat != result['category']:
+        st.info(
+            f"Note: You selected **{html.escape(user_cat)}**, but the AI predicted **{html.escape(result['category'])}** "
+            f"based on the complaint text analysis. Both entries have been preserved."
+        )
+        
     st.markdown("#### Executive Summary")
     st.info(result["summary"])
     
-    dup = result["duplicate"]
-    if dup.get("is_duplicate"):
-        st.warning(f"Duplicate Alert: Similar to existing Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity')*100:.1f}%).\nMatched Text: \"{dup.get('matched_text')}\"")
+    dup = result.get("duplicate", {})
+    dup_type = dup.get("duplicate_type", "none")
+    if dup_type == "active_duplicate":
+        st.warning(f"Active Duplicate Alert: Highly similar to Open Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nMatched Complaint: \"{dup.get('matched_text')}\"")
+    elif dup_type == "related_historical":
+        st.info(f"Related Historical Incident: Matches previously resolved Complaint #{dup.get('matched_id')} (Similarity: {dup.get('similarity', 0)*100:.1f}%).\nHistorical Record: \"{dup.get('matched_text')}\"")
     else:
         st.success("Unique Incident: No duplicate complaints detected in database.")
         
@@ -277,5 +331,3 @@ def render_submission_result_view(result: dict):
             st.session_state["last_submission_result"] = None
             st.session_state["nav_page"] = "Dashboard"
             st.rerun()
-
-
