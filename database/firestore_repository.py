@@ -21,6 +21,7 @@ from google.cloud.firestore_v1 import SERVER_TIMESTAMP, transactional
 import config
 from database.auth_context import AuthenticatedUser
 from database.base_repository import BaseComplaintRepository
+from database.identifiers import generate_complaint_id
 
 logger = logging.getLogger("sentinel.firestore_repository")
 
@@ -64,7 +65,7 @@ class FirestoreRepository(BaseComplaintRepository):
         if not actor or not actor.uid:
             raise PermissionError("Unauthenticated request. A valid authenticated user is required.")
 
-        complaint_id = data.get("complaint_id") or f"CMP-{uuid.uuid4().hex[:8].upper()}"
+        complaint_id = data.get("complaint_id") or generate_complaint_id()
         doc_ref = self.db.collection("complaints").document(complaint_id)
 
         # Convert embedding to list of floats if present

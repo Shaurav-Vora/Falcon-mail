@@ -1,5 +1,5 @@
 """
-SENTINEL - Base Repository Interface
+Falcon Mail - Base Repository Interface
 Defines the standard repository contract for complaint storage, notifications,
 audit trail, and real-time dashboard queries.
 
@@ -18,6 +18,84 @@ class BaseComplaintRepository(ABC):
     @abstractmethod
     def create_complaint(self, data: Dict[str, Any], actor: AuthenticatedUser) -> str:
         """Insert a newly submitted complaint and return its complaint_id."""
+        pass
+
+    @abstractmethod
+    def create_processing_run(self, run: Dict[str, Any], actor: AuthenticatedUser) -> str:
+        """Create an NLP processing run and return its run ID."""
+        pass
+
+    @abstractmethod
+    def update_processing_stage(
+        self,
+        run_id: str,
+        stage: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Persist the latest data and state for one NLP processing stage."""
+        pass
+
+    @abstractmethod
+    def finish_processing_run(
+        self,
+        run_id: str,
+        status: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Mark an NLP processing run as completed or failed."""
+        pass
+
+    @abstractmethod
+    def get_processing_run(
+        self,
+        run_id: str,
+        actor: AuthenticatedUser,
+    ) -> Optional[Dict[str, Any]]:
+        """Retrieve one processing run for an authorized administrator."""
+        pass
+
+    @abstractmethod
+    def list_processing_runs(
+        self,
+        actor: AuthenticatedUser,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """List recent processing runs for an authorized administrator."""
+        pass
+
+    @abstractmethod
+    def finalize_complaint_analysis(
+        self,
+        complaint_id: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Persist the successful NLP result on a complaint."""
+        pass
+
+    @abstractmethod
+    def mark_complaint_needs_review(
+        self,
+        complaint_id: str,
+        safe_error: str,
+        diagnostic_code: str,
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Keep a failed complaint and mark it for safe manual review."""
+        pass
+
+    @abstractmethod
+    def override_complaint_prediction(
+        self,
+        complaint_id: str,
+        field: str,
+        new_value: Any,
+        reason: str,
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Record an administrator correction to one predicted field."""
         pass
 
     @abstractmethod

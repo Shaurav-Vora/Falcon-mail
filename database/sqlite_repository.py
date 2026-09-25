@@ -17,6 +17,7 @@ import numpy as np
 import config
 from database.auth_context import AuthenticatedUser
 from database.base_repository import BaseComplaintRepository
+from database.identifiers import generate_complaint_id
 
 PRIORITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
 
@@ -105,7 +106,7 @@ class SQLiteRepository(BaseComplaintRepository):
         if not actor or not actor.uid:
             raise PermissionError("Unauthenticated request.")
 
-        complaint_id = data.get("complaint_id") or f"CMP-{uuid.uuid4().hex[:8].upper()}"
+        complaint_id = data.get("complaint_id") or generate_complaint_id()
         embedding_blob = None
         if data.get("dense_embedding") is not None:
             arr = np.array(data["dense_embedding"], dtype=np.float32)
