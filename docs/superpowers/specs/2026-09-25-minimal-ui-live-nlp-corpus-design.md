@@ -1,19 +1,20 @@
-# SENTINEL Minimal UI, Live NLP Trace, and Corpus Design
+# Falcon Mail Minimal UI, Live NLP Trace, and Corpus Design
 
 **Date:** 2026-09-25
 **Status:** Approved design awaiting implementation planning
 
 ## 1. Purpose
 
-SENTINEL is an online campus ticketing system. A student raises a ticket through a web form, the NLP pipeline classifies and prioritizes it, extracts operational details, checks for repeated incidents, and routes it to the responsible department. Administrators manage the resulting ticket queue.
+Falcon Mail is an online campus ticketing system. A student raises a ticket through a web form, the NLP pipeline classifies and prioritizes it, extracts operational details, checks for repeated incidents, and routes it to the responsible department. Administrators manage the resulting ticket queue.
 
-This design simplifies the student interface, adds an administrator-only live view of genuine NLP processing, and replaces the current undocumented synthetic-only corpus workflow with a traceable corpus that combines reviewed external campus complaints and existing SENTINEL examples.
+This design simplifies the student interface, adds an administrator-only live view of genuine NLP processing, and replaces the current undocumented synthetic-only corpus workflow with a traceable corpus that combines reviewed external campus complaints and existing Falcon Mail examples.
 
 The project remains a Streamlit application backed by Firebase Authentication and Cloud Firestore. It will not add email, WhatsApp, chat, or other ingestion channels.
 
 ## 2. Goals
 
 - Make raising and tracking a ticket straightforward for students.
+- Use `Falcon Mail` consistently as the user-facing product name and remove the previous branding from application copy.
 - Give administrators a live inbox where each incoming ticket progresses through the actual NLP stages.
 - Preserve the existing administrator assignment, status, resolution, notification, and analytics functions.
 - Retain a submitted ticket even when an NLP component fails.
@@ -303,9 +304,9 @@ The live pipeline rail is the single expressive visual device. Motion occurs onl
 
 Corpus v2 combines:
 
-1. The current 585-record SENTINEL corpus, retained and marked synthetic.
+1. The current 585-record Falcon Mail corpus, retained and marked synthetic.
 2. The external `alaminxpro/university-students-complaints` dataset from Hugging Face, described by its publisher as 332 university complaints and released under CC BY 4.0.
-3. Manually reviewed additions only when required to cover missing or weak SENTINEL categories.
+3. Manually reviewed additions only when required to cover missing or weak Falcon Mail categories.
 
 The external dataset is a domain anchor, not unquestioned ground truth. Its category, severity, department, and aspect labels require review before training.
 
@@ -314,7 +315,7 @@ The external dataset is a domain anchor, not unquestioned ground truth. Its cate
 ```text
 data/
     raw/
-        sentinel_v1/
+        falcon_mail_v1/
         university_students_complaints/
     processed/
         corpus_v2.csv
@@ -352,8 +353,8 @@ Gender, semester, and student department are excluded from model features becaus
 
 ### Review and splitting
 
-- Map the external five-category taxonomy into SENTINEL's eleven categories using a documented mapping.
-- Review urgency against SENTINEL's written urgency rubric; do not map `Urgent` mechanically to `Critical`.
+- Map the external five-category taxonomy into Falcon Mail's eleven categories using a documented mapping.
+- Review urgency against Falcon Mail's written urgency rubric; do not map `Urgent` mechanically to `Critical`.
 - Preserve the source `Complaint_Group_ID` as `incident_group_id`.
 - Keep every record in the same incident or template group within one data split.
 - Preserve source and original labels for reproducibility.
