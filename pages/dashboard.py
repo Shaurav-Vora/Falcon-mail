@@ -1,5 +1,5 @@
 """
-SENTINEL - Administrator Operations Dashboard & Campus Analytics
+Falcon Mail - Administrator Operations Dashboard & Campus Analytics
 Provides campus-wide incident analytics, category distributions, priority breakdowns,
 and near-real-time synchronization for facility managers and campus administration.
 

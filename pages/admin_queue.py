@@ -1,5 +1,5 @@
 """
-SENTINEL - Administrator Complaint Queue & Triage Interface
+Falcon Mail - Administrator Ticket Queue & Triage Interface
 Displays unresolved campus complaints sorted strictly by Priority (Critical -> High -> Medium -> Low),
 then oldest first.
 
@@ -167,7 +167,7 @@ def render_admin_queue_page():
         st.error("Access Denied: Administrator privileges are required to view the Complaint Queue.")
         return
 
-    render_global_header("Complaint Queue")
+    render_global_header("Live tickets")
     st.markdown(
         """
         <div style="margin-bottom: 1.25rem;">

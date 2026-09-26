@@ -404,7 +404,7 @@ def generate_dataset():
     df.to_csv(COMPLAINTS_CSV_PATH, index=False)
     
     print(f"==========================================================")
-    print(f"       SENTINEL DATASET GENERATOR - EXECUTION REPORT       ")
+    print(f"       FALCON MAIL DATASET GENERATOR - EXECUTION REPORT     ")
     print(f"==========================================================")
     print(f"Dataset generated at: {COMPLAINTS_CSV_PATH}")
     print(f"Total samples: {len(df)}")

@@ -1,5 +1,5 @@
 """
-SENTINEL - Student In-App Notifications Page
+Falcon Mail - Student In-App Notifications Page
 Displays status change alerts, resolution notices, and updates for the student's complaints.
 
 SECURITY & SYNC ARCHITECTURE:

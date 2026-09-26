@@ -6,7 +6,7 @@ from config import DEFAULT_DUPLICATE_THRESHOLD, CATEGORIES
 
 def render_submit_complaint_page():
     """Render Page 2: Submit Complaint with chip suggestions, tips, and AI breakdown."""
-    render_global_header("Submit Complaint")
+    render_global_header("Raise a ticket")
     
     # 1. HERO BANNER
     st.markdown(
@@ -122,7 +122,7 @@ def render_submit_complaint_page():
                 from utils.auth import get_current_user
                 current_actor = get_current_user()
 
-                with st.spinner("Running SENTINEL NLP Analysis..."):
+                with st.spinner("Processing your ticket..."):
                     try:
                         # Process with clean separation of text, location, and user category
                         res = process_complaint(

@@ -305,7 +305,7 @@ def render_history_page():
         dup_text = f"Yes (Matched #{dup_of})" if is_dup and dup_of else ("Yes (Potential Duplicate)" if is_dup else "None (Unique Complaint)")
         dup_color = "#D97706" if is_dup else "#16A34A"
 
-        detail_card_html = f"""<div class="sentinel-card-container">
+        detail_card_html = f"""<div class="ticket-panel">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #F1F5F9; padding-bottom: 0.75rem;">
 <div>
 <span style="font-size: 1.15rem; font-weight: 800; color: #17233C;">Complaint #{rec_id}</span>

@@ -1,5 +1,5 @@
 """
-SENTINEL - Resolved Cases Archive (Admin)
+Falcon Mail - Resolved Cases Archive (Admin)
 Displays resolved and rejected complaint records with resolution notes,
 assignee details, and immutable audit timelines.
 
@@ -19,7 +19,7 @@ def render_resolved_cases_page():
         st.error("Access Denied: Administrator privileges required.")
         return
 
-    render_global_header("Resolved Cases")
+    render_global_header("Resolved")
     st.markdown(
         """
         <div style="margin-bottom: 1.25rem;">

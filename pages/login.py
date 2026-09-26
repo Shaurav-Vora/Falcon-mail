@@ -1,6 +1,6 @@
 """
-SENTINEL - Authentication Page
-Renders the Manipal Academy of Higher Education / SENTINEL login, registration,
+Falcon Mail - Authentication Page
+Renders the Manipal Academy of Higher Education / Falcon Mail login, registration,
 and password reset interfaces for unauthenticated sessions.
 
 SECURITY DIRECTIVE:
@@ -27,8 +27,7 @@ def render_login_page():
         margin: 2rem auto;
         padding: 2.5rem;
         background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-radius: 6px;
         border: 1px solid #e2e8f0;
     }
     .auth-brand {
@@ -55,13 +54,13 @@ def render_login_page():
     with col2:
         st.markdown("""
         <div class="auth-brand">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #1e3a8a;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #F15A24;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#F15A24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
             </div>
-            <h1 class="auth-title">SENTINEL</h1>
-            <p class="auth-subtitle">Campus Incident & Complaint Intelligence Platform</p>
+            <h1 class="auth-title">Falcon Mail</h1>
+            <p class="auth-subtitle">Raise and track campus support tickets</p>
         </div>
         """, unsafe_allow_html=True)
 

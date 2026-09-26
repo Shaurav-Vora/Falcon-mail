@@ -1,5 +1,5 @@
 """
-SENTINEL - Authentication & Session Management Service
+Falcon Mail - Authentication & Session Management Service
 Handles Firebase Authentication via Identity Toolkit REST API, token verification
 with Firebase Admin SDK, role resolution via custom claims, profile management in
 users/{uid}, and clean session state transitions for Streamlit.
@@ -25,7 +25,7 @@ from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 import config
 from database.auth_context import AuthenticatedUser
 
-logger = logging.getLogger("sentinel.auth")
+logger = logging.getLogger("falcon_mail.auth")
 
 # Firebase Identity Toolkit REST Endpoints
 AUTH_SIGNIN_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"

@@ -1,5 +1,5 @@
 """
-SENTINEL - Student Complaints View ("My Complaints")
+Falcon Mail - Student Tickets View
 Displays all complaints submitted by the authenticated student.
 
 SECURITY & SYNC ARCHITECTURE:
@@ -112,11 +112,11 @@ def render_student_complaints_page():
         st.warning("Please sign in to view your complaints.")
         return
 
-    render_global_header("My Complaints")
+    render_global_header("My tickets")
     st.markdown(
         """
         <div style="margin-bottom: 1.25rem;">
-            <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">My Submitted Complaints</h2>
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">My tickets</h2>
             <p style="color: #64748b; font-size: 0.9rem;">Track live progress, investigation updates, and resolution notes in near-real-time.</p>
         </div>
         """,
