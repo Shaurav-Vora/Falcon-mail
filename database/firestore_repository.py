@@ -1,5 +1,5 @@
 """
-SENTINEL - Cloud Firestore Repository
+Falcon Mail - Cloud Firestore Repository
 Provides shared cloud persistence, server-side authorization enforcement,
 near-real-time scoped queries, concurrency-safe transactions, and immutable audit logging.
 
@@ -21,9 +21,9 @@ from google.cloud.firestore_v1 import SERVER_TIMESTAMP, transactional
 import config
 from database.auth_context import AuthenticatedUser
 from database.base_repository import BaseComplaintRepository
-from database.identifiers import generate_complaint_id
+from database.identifiers import generate_complaint_id, generate_processing_run_id
 
-logger = logging.getLogger("sentinel.firestore_repository")
+logger = logging.getLogger("falcon_mail.firestore_repository")
 
 # Priority ranking map for sorting queues
 PRIORITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
@@ -80,15 +80,15 @@ class FirestoreRepository(BaseComplaintRepository):
             "complaint_id": complaint_id,
             "title": data.get("title", "Untitled Complaint"),
             "description": data.get("description", ""),
-            "category": data.get("category", "Other"),
-            "category_confidence": float(data.get("category_confidence", 1.0)),
-            "urgency": data.get("urgency", "Medium"),
-            "urgency_confidence": float(data.get("urgency_confidence", 1.0)),
-            "department": data.get("department", "General Services"),
+            "category": data["category"] if "category" in data else "Other",
+            "category_confidence": self._optional_float(data, "category_confidence", 1.0),
+            "urgency": data["urgency"] if "urgency" in data else "Medium",
+            "urgency_confidence": self._optional_float(data, "urgency_confidence", 1.0),
+            "department": data["department"] if "department" in data else "General Services",
             "location": data.get("location", "Campus"),
             "building": data.get("building"),
             "room": data.get("room"),
-            "status": "Open",
+            "status": data.get("status", "Open"),
             "reporter_uid": actor.uid,
             "reporter_name": actor.full_name or "Anonymous",
             "reporter_email": actor.email,
@@ -102,7 +102,13 @@ class FirestoreRepository(BaseComplaintRepository):
             "duplicate_similarity": float(data.get("duplicate_similarity", 0.0))
             if data.get("duplicate_similarity") is not None
             else None,
-            "entities": data.get("entities", {}),
+            "entities": data["entities"] if "entities" in data else {},
+            "summary": data.get("summary"),
+            "processing_run_id": data.get("processing_run_id"),
+            "processing_status": data.get("processing_status"),
+            "needs_manual_review": bool(data.get("needs_manual_review", False)),
+            "model_versions": data.get("model_versions", {}),
+            "prediction_overrides": data.get("prediction_overrides", []),
             "created_at": SERVER_TIMESTAMP,
             "updated_at": SERVER_TIMESTAMP,
             "resolved_at": None,
@@ -118,7 +124,7 @@ class FirestoreRepository(BaseComplaintRepository):
             actor_uid=actor.uid,
             actor_name=actor.full_name,
             from_status=None,
-            to_status="Open",
+            to_status=doc_data["status"],
             note="Complaint submitted by student.",
         )
 
@@ -134,7 +140,207 @@ class FirestoreRepository(BaseComplaintRepository):
         return complaint_id
 
     # --------------------------------------------------------------------------
-    # 2. Scoped Complaint Retrieval & Authorization
+    # 2. NLP Processing Runs & Finalization
+    # --------------------------------------------------------------------------
+    def create_processing_run(self, run: Dict[str, Any], actor: AuthenticatedUser) -> str:
+        """Create the server-owned trace for an authenticated ticket submission."""
+        if not actor or not actor.uid:
+            raise PermissionError("Unauthenticated request.")
+
+        reporter_uid = run.get("reporter_uid") or actor.uid
+        if not actor.is_admin and reporter_uid != actor.uid:
+            raise PermissionError("Access Denied: Cannot create another student's processing run.")
+
+        run_id = run.get("run_id") or generate_processing_run_id()
+        ticket_id = run.get("ticket_id") or run.get("complaint_id")
+        doc_data = {
+            "run_id": run_id,
+            "ticket_id": ticket_id,
+            "reporter_uid": reporter_uid,
+            "reporter_name": run.get("reporter_name") or actor.full_name,
+            "title": run.get("title", "Untitled Complaint"),
+            "submitted_location": run.get("submitted_location"),
+            "overall_status": "processing",
+            "current_stage": "received",
+            "stages": {},
+            "retry_count": 0,
+            "attempt_history": [],
+            "created_at": SERVER_TIMESTAMP,
+            "updated_at": SERVER_TIMESTAMP,
+            "completed_at": None,
+        }
+        self.db.collection("processing_runs").document(run_id).set(doc_data)
+        return run_id
+
+    def update_processing_stage(
+        self,
+        run_id: str,
+        stage: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Update one stage after confirming run ownership or administrator access."""
+        doc_ref, _ = self._authorized_processing_run(run_id, actor)
+        updates = {
+            "current_stage": stage,
+            "updated_at": SERVER_TIMESTAMP,
+            f"stages.{stage}": data,
+        }
+        doc_ref.update(updates)
+
+    def finish_processing_run(
+        self,
+        run_id: str,
+        status: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Finish a run while protecting its immutable identity and owner fields."""
+        if status not in {"completed", "failed", "needs_review"}:
+            raise ValueError("Processing run status must be completed, failed, or needs_review.")
+
+        doc_ref, _ = self._authorized_processing_run(run_id, actor)
+        protected_fields = {"run_id", "reporter_uid", "created_at"}
+        updates = {key: value for key, value in data.items() if key not in protected_fields}
+        updates.update({
+            "overall_status": status,
+            "updated_at": SERVER_TIMESTAMP,
+            "completed_at": SERVER_TIMESTAMP,
+        })
+        doc_ref.update(updates)
+
+    def get_processing_run(
+        self,
+        run_id: str,
+        actor: AuthenticatedUser,
+    ) -> Optional[Dict[str, Any]]:
+        """Return an administrator trace or a sanitized owner progress record."""
+        if not actor or not actor.uid:
+            raise PermissionError("Unauthenticated request.")
+
+        doc = self.db.collection("processing_runs").document(run_id).get()
+        if not doc.exists:
+            return None
+
+        data = doc.to_dict()
+        if not actor.is_admin and data.get("reporter_uid") != actor.uid:
+            raise PermissionError("Access Denied: Cannot view another student's processing run.")
+
+        normalized = self._normalize_doc(data)
+        return normalized if actor.is_admin else self._strip_trace_diagnostics(normalized)
+
+    def list_processing_runs(
+        self,
+        actor: AuthenticatedUser,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """List the newest processing runs for administrators."""
+        if not actor or not actor.is_admin:
+            raise PermissionError("Access Denied: Admin privileges required.")
+
+        safe_limit = max(1, min(int(limit), 500))
+        docs = self.db.collection("processing_runs").stream()
+        results = [self._normalize_doc(doc.to_dict()) for doc in docs]
+        results.sort(key=lambda item: str(item.get("created_at") or ""), reverse=True)
+        return results[:safe_limit]
+
+    def finalize_complaint_analysis(
+        self,
+        complaint_id: str,
+        data: Dict[str, Any],
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Attach successful NLP results to the retained complaint intake record."""
+        doc_ref, _ = self._authorized_complaint(complaint_id, actor)
+        analysis_fields = {
+            "title", "processed_text", "category", "category_confidence", "user_category",
+            "urgency", "final_urgency", "urgency_confidence", "ml_prediction",
+            "ml_confidence", "rule_elevated", "rule_trigger", "decision_source",
+            "entities", "location", "user_location", "building", "room", "issue",
+            "summary", "recommended_department", "department", "duplicate",
+            "student_dup_notice", "dense_embedding", "duplicate_of_id",
+            "duplicate_similarity", "model_versions", "processing_run_id",
+        }
+        updates = {key: data[key] for key in analysis_fields if key in data}
+        embedding = updates.get("dense_embedding")
+        if hasattr(embedding, "tolist"):
+            updates["dense_embedding"] = embedding.tolist()
+        updates.update({
+            "status": "Open",
+            "processing_status": "completed",
+            "needs_manual_review": False,
+            "safe_error": None,
+            "diagnostic_code": None,
+            "updated_at": SERVER_TIMESTAMP,
+        })
+        doc_ref.update(updates)
+
+    def mark_complaint_needs_review(
+        self,
+        complaint_id: str,
+        safe_error: str,
+        diagnostic_code: str,
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Retain a failed ticket without inventing category or urgency predictions."""
+        doc_ref, _ = self._authorized_complaint(complaint_id, actor)
+        doc_ref.update({
+            "status": "Needs Review",
+            "category": None,
+            "category_confidence": None,
+            "urgency": None,
+            "urgency_confidence": None,
+            "department": None,
+            "processing_status": "needs_review",
+            "needs_manual_review": True,
+            "safe_error": safe_error,
+            "diagnostic_code": diagnostic_code,
+            "updated_at": SERVER_TIMESTAMP,
+        })
+
+    def override_complaint_prediction(
+        self,
+        complaint_id: str,
+        field: str,
+        new_value: Any,
+        reason: str,
+        actor: AuthenticatedUser,
+    ) -> None:
+        """Apply and audit an administrator correction to an approved prediction field."""
+        if not actor or not actor.is_admin:
+            raise PermissionError("Access Denied: Admin privileges required.")
+        if field not in {"category", "urgency", "location", "department"}:
+            raise ValueError("Only category, urgency, location, and department may be overridden.")
+        if not reason or not reason.strip():
+            raise ValueError("A non-empty reason is required for prediction overrides.")
+
+        doc_ref, complaint = self._authorized_complaint(complaint_id, actor)
+        override = {
+            "field": field,
+            "previous_value": complaint.get(field),
+            "new_value": new_value,
+            "administrator_uid": actor.uid,
+            "administrator_name": actor.full_name or actor.email,
+            "reason": reason.strip(),
+            "created_at": datetime.now(timezone.utc),
+        }
+        doc_ref.update({
+            field: new_value,
+            "prediction_overrides": firestore.ArrayUnion([override]),
+            "updated_at": SERVER_TIMESTAMP,
+        })
+        self._log_audit_event_direct(
+            complaint_id=complaint_id,
+            event_type="prediction_overridden",
+            actor_uid=actor.uid,
+            actor_name=actor.full_name or actor.email,
+            from_status=complaint.get("status"),
+            to_status=complaint.get("status"),
+            note=f"{field} corrected: {reason.strip()}",
+        )
+
+    # --------------------------------------------------------------------------
+    # 3. Scoped Complaint Retrieval & Authorization
     # --------------------------------------------------------------------------
     def get_complaint_by_id(self, complaint_id: str, actor: AuthenticatedUser) -> Optional[Dict[str, Any]]:
         """Retrieve a complaint by ID.
@@ -531,12 +737,58 @@ class FirestoreRepository(BaseComplaintRepository):
         }
 
     # --------------------------------------------------------------------------
-    # Helper: Normalize Firestore Timestamps and Types
+    # Helpers: Authorization, Sanitization, and Firestore Type Normalization
     # --------------------------------------------------------------------------
+    def _authorized_processing_run(self, run_id: str, actor: AuthenticatedUser):
+        """Return a run reference and data after owner/admin authorization."""
+        if not actor or not actor.uid:
+            raise PermissionError("Unauthenticated request.")
+        doc_ref = self.db.collection("processing_runs").document(run_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise ValueError(f"Processing run '{run_id}' was not found.")
+        data = doc.to_dict()
+        if not actor.is_admin and data.get("reporter_uid") != actor.uid:
+            raise PermissionError("Access Denied: Cannot modify another student's processing run.")
+        return doc_ref, data
+
+    def _authorized_complaint(self, complaint_id: str, actor: AuthenticatedUser):
+        """Return a complaint reference and data after owner/admin authorization."""
+        if not actor or not actor.uid:
+            raise PermissionError("Unauthenticated request.")
+        doc_ref = self.db.collection("complaints").document(complaint_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise ValueError(f"Complaint '{complaint_id}' was not found.")
+        data = doc.to_dict()
+        if not actor.is_admin and data.get("reporter_uid") != actor.uid:
+            raise PermissionError("Access Denied: Cannot modify another student's complaint.")
+        return doc_ref, data
+
+    @staticmethod
+    def _strip_trace_diagnostics(value: Any) -> Any:
+        """Recursively remove administrator-only evidence and diagnostics."""
+        private_keys = {"evidence", "safe_error", "diagnostic_code"}
+        if isinstance(value, dict):
+            return {
+                key: FirestoreRepository._strip_trace_diagnostics(item)
+                for key, item in value.items()
+                if key not in private_keys
+            }
+        if isinstance(value, list):
+            return [FirestoreRepository._strip_trace_diagnostics(item) for item in value]
+        return value
+
+    @staticmethod
+    def _optional_float(data: Dict[str, Any], key: str, default: float) -> Optional[float]:
+        """Coerce a numeric field while preserving an explicitly supplied null."""
+        value = data[key] if key in data else default
+        return None if value is None else float(value)
+
     def _normalize_doc(self, doc: Dict[str, Any]) -> Dict[str, Any]:
         """Convert Firestore Timestamps to ISO strings and format dict."""
         res = dict(doc)
-        for key in ["created_at", "updated_at", "resolved_at"]:
+        for key in ["created_at", "updated_at", "resolved_at", "completed_at"]:
             val = res.get(key)
             if val is not None:
                 if hasattr(val, "isoformat"):

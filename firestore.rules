@@ -1,10 +1,10 @@
 rules_version = '2';
 
 // ==============================================================================
-// SENTINEL - Cloud Firestore Security Rules (Defense-in-Depth)
+// Falcon Mail - Cloud Firestore Security Rules (Defense-in-Depth)
 //
 // CRITICAL SECURITY ARCHITECTURE NOTE:
-// SENTINEL is a server-side Streamlit Python application that interacts with
+// Falcon Mail is a server-side Streamlit Python application that interacts with
 // Cloud Firestore using the firebase-admin SDK with private service account
 // credentials. In the Firebase security model, all calls made by the Admin SDK
 // bypass Firestore Security Rules automatically.
@@ -69,6 +69,12 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
       allow create: if isAuthenticated();
       allow delete: if isAdmin();
+    }
+
+    // NLP traces are exposed only through the server after role-aware filtering.
+    match /processing_runs/{runId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
     }
 
     // Default deny for all other collections
