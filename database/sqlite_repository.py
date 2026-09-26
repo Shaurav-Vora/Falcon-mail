@@ -292,8 +292,10 @@ class SQLiteRepository(BaseComplaintRepository):
         actor: AuthenticatedUser,
     ) -> None:
         """Finish a run while preserving its immutable owner and identity."""
-        if status not in {"completed", "failed", "needs_review"}:
-            raise ValueError("Processing run status must be completed, failed, or needs_review.")
+        if status not in {"processing", "completed", "failed", "needs_review"}:
+            raise ValueError(
+                "Processing run status must be processing, completed, failed, or needs_review."
+            )
         run = self._authorized_processing_run(run_id, actor)
         now = self._utc_now()
         stages = data.get("stages", run.get("stages", {}))
@@ -314,7 +316,7 @@ class SQLiteRepository(BaseComplaintRepository):
                 data.get("safe_error"),
                 data.get("diagnostic_code"),
                 now,
-                now,
+                None if status == "processing" else now,
                 run_id,
             ))
             conn.commit()

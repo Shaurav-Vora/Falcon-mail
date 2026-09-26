@@ -19,46 +19,38 @@ def get_urgency_model():
         _urgency_model = joblib.load(URGENCY_MODEL_PATH)
     return _urgency_model
 
-def predict_urgency(text: str) -> dict:
-    """
-    Predict complaint urgency level using ML model + Safety Rule Elevation Layer.
-    
-    Academic Architecture:
-    1. Statistical ML Model: TF-IDF + Classifier generates calibrated class probabilities.
-    2. Deterministic Safety Fallback Layer: Checks for life safety / critical keywords (fire, smoke, gas leak)
-       or time-sensitive terms (exam tomorrow).
-    3. Transparent Metadata: ML prediction & ML confidence are preserved separately from rule elevation.
-       Confidence is NOT artificially set to 1.0 on rule overrides.
-       
-    Returns:
-        dict: {
-            "urgency": str (final_urgency for backward compatibility),
-            "final_urgency": str,
-            "ml_prediction": str,
-            "ml_confidence": float,
-            "rule_elevated": bool,
-            "rule_trigger": str | None,
-            "decision_source": "safety_rule" | "ml"
-        }
-    """
+def predict_ml_urgency(text: str) -> dict:
+    """Predict urgency using only the trained statistical model."""
     processed = preprocess_text(text)["processed_text"]
     model = get_urgency_model()
-    
+
     probabilities = model.predict_proba([processed])[0]
     classes = model.classes_
-    
+
     best_idx = np.argmax(probabilities)
     ml_urgency = str(classes[best_idx])
     ml_confidence = float(probabilities[best_idx])
-    
-    # Safety & Priority Rule Elevation Check
+
+    return {
+        "urgency": ml_urgency,
+        "final_urgency": ml_urgency,
+        "ml_prediction": ml_urgency,
+        "ml_confidence": round(ml_confidence, 4),
+        "confidence": round(ml_confidence, 4),
+        "ml_predicted_urgency": ml_urgency,
+    }
+
+
+def apply_safety_rules(text: str, ml_result: dict) -> dict:
+    """Apply transparent deterministic safety elevation to an ML prediction."""
+    ml_urgency = str(ml_result["ml_prediction"])
+    ml_confidence = float(ml_result["ml_confidence"])
     text_lower = text.lower()
     matched_keyword = None
     rule_elevated = False
     final_urgency = ml_urgency
     decision_source = "ml"
     
-    # 1. Critical Rule Check (Life safety & severe hazard)
     for kw in EMERGENCY_KEYWORDS:
         if kw in text_lower:
             matched_keyword = kw
@@ -67,7 +59,6 @@ def predict_urgency(text: str) -> dict:
             decision_source = "safety_rule"
             break
             
-    # 2. High Priority Time-Sensitive Rule Check (if not already Critical)
     if final_urgency not in ["Critical", "High"]:
         for kw in HIGH_URGENCY_KEYWORDS:
             if kw in text_lower:
@@ -78,7 +69,6 @@ def predict_urgency(text: str) -> dict:
                 break
             
     return {
-        # Standardized return structure
         "urgency": final_urgency,
         "final_urgency": final_urgency,
         "ml_prediction": ml_urgency,
@@ -86,11 +76,15 @@ def predict_urgency(text: str) -> dict:
         "rule_elevated": rule_elevated,
         "rule_trigger": matched_keyword,
         "decision_source": decision_source,
-        # Backward-compatible fields
         "confidence": round(ml_confidence, 4),
         "ml_predicted_urgency": ml_urgency,
         "matched_emergency_keyword": matched_keyword
     }
+
+
+def predict_urgency(text: str) -> dict:
+    """Backward-compatible wrapper for ML prediction plus safety elevation."""
+    return apply_safety_rules(text, predict_ml_urgency(text))
 
 if __name__ == "__main__":
     sample = "There is smoke coming from the electrical panel near Block A ground floor."

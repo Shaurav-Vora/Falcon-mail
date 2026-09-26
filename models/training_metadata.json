@@ -1,5 +1,6 @@
 {
   "category_model": {
+    "model_version": "category-2026-09-12-v1",
     "algorithm": "Word+Char FeatureUnion + Logistic Regression",
     "models_compared": {
       "Word TF-IDF + LR": {
@@ -36,6 +37,7 @@
     }
   },
   "urgency_model": {
+    "model_version": "urgency-2026-09-12-v1",
     "algorithm": "TF-IDF + Logistic Regression",
     "selection_reason": "Logistic Regression achieved superior safety-weighted score (0.3434) with Macro F1: 0.3679, Critical Recall: 21.4%, and High Recall: 30.0%.",
     "models_compared": {

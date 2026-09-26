@@ -196,8 +196,10 @@ class FirestoreRepository(BaseComplaintRepository):
         actor: AuthenticatedUser,
     ) -> None:
         """Finish a run while protecting its immutable identity and owner fields."""
-        if status not in {"completed", "failed", "needs_review"}:
-            raise ValueError("Processing run status must be completed, failed, or needs_review.")
+        if status not in {"processing", "completed", "failed", "needs_review"}:
+            raise ValueError(
+                "Processing run status must be processing, completed, failed, or needs_review."
+            )
 
         doc_ref, _ = self._authorized_processing_run(run_id, actor)
         protected_fields = {"run_id", "reporter_uid", "created_at"}
@@ -205,7 +207,7 @@ class FirestoreRepository(BaseComplaintRepository):
         updates.update({
             "overall_status": status,
             "updated_at": SERVER_TIMESTAMP,
-            "completed_at": SERVER_TIMESTAMP,
+            "completed_at": None if status == "processing" else SERVER_TIMESTAMP,
         })
         doc_ref.update(updates)
 

@@ -135,7 +135,11 @@ def check_duplicate_complaint(
     return {
         "is_duplicate": is_dup,
         "duplicate_type": dup_type,
-        "matched_id": best_match["id"] if best_match else None,
+        "matched_id": (
+            best_match.get("id") or best_match.get("complaint_id")
+            if best_match
+            else None
+        ),
         "matched_text": best_match.get("complaint_text") or best_match.get("text") if best_match else None,
         "similarity": round(best_similarity, 4),
         "composite_score": round(best_composite, 4),
