@@ -318,6 +318,24 @@ section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
 .status-needs-review { background-color: #FDEBE9; color: var(--fm-critical); }
 .urgency-pending { background-color: #EEF1F5; color: var(--fm-secondary); }
 
+.st-key-ticket_form_shell,
+.st-key-ticket_review_shell,
+.st-key-ticket_result_shell {
+    max-width: 720px;
+}
+
+.st-key-ticket_form_shell [data-testid="stForm"] {
+    background: var(--fm-surface);
+    border: 1px solid var(--fm-border);
+    border-radius: 6px;
+    padding: 1.25rem;
+}
+
+.st-key-ticket_review_shell [data-testid="stVerticalBlockBorderWrapper"],
+.st-key-ticket_result_shell [data-testid="stVerticalBlockBorderWrapper"] {
+    box-shadow: none !important;
+}
+
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible,
 [role="button"]:focus-visible {
     outline: 3px solid rgba(241, 90, 36, 0.35) !important;
