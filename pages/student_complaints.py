@@ -33,7 +33,7 @@ def render_student_complaints_fragment(user, repo):
     # Filter by status
     status_filter = st.selectbox(
         "Filter by Status",
-        ["All", "Open", "In Progress", "Resolved", "Rejected"],
+        ["All", "Processing", "Needs Review", "Open", "In Progress", "Resolved", "Rejected"],
         key="student_status_filter",
     )
 
@@ -45,8 +45,8 @@ def render_student_complaints_fragment(user, repo):
 
     for c in filtered:
         cid = c.get("complaint_id", "N/A")
-        status = c.get("status", "Open")
-        urgency = c.get("urgency", "Medium")
+        status = str(c.get("status") or "Processing")
+        urgency = str(c.get("urgency") or "Pending")
         created = c.get("created_at", "")[:16].replace("T", " ")
 
         status_class = f"status-{status.lower().replace(' ', '-')}"
@@ -68,9 +68,9 @@ def render_student_complaints_fragment(user, repo):
                     </div>
                     <p style="color: #475569; font-size: 0.9rem; margin-bottom: 0.6rem;">{c.get('description', '')}</p>
                     <div style="display: flex; gap: 1.5rem; font-size: 0.8rem; color: #64748b; margin-top: 0.4rem;">
-                        <span>Category: <b>{c.get('category', 'Other')}</b></span>
-                        <span>Location: <b>{c.get('location', 'Campus')}</b></span>
-                        <span>Department: <b>{c.get('department', 'General')}</b></span>
+                        <span>Category: <b>{c.get('category') or 'Pending analysis'}</b></span>
+                        <span>Location: <b>{c.get('location') or 'Campus'}</b></span>
+                        <span>Department: <b>{c.get('department') or 'Awaiting routing'}</b></span>
                         <span>Submitted: <b>{created}</b></span>
                     </div>
                 </div>

@@ -86,6 +86,8 @@ class FirestoreRepository(BaseComplaintRepository):
             "urgency_confidence": self._optional_float(data, "urgency_confidence", 1.0),
             "department": data["department"] if "department" in data else "General Services",
             "location": data.get("location", "Campus"),
+            "submitted_location": data.get("submitted_location", data.get("location")),
+            "submitted_category": data.get("submitted_category", data.get("user_category")),
             "building": data.get("building"),
             "room": data.get("room"),
             "status": data.get("status", "Open"),
@@ -114,28 +116,36 @@ class FirestoreRepository(BaseComplaintRepository):
             "resolved_at": None,
         }
 
-        # Write complaint document
-        doc_ref.set(doc_data)
+        event_id = f"EVT-{uuid.uuid4().hex[:8].upper()}"
+        event_ref = doc_ref.collection("events").document(event_id)
+        notification_id = f"NOTIF-{uuid.uuid4().hex[:8].upper()}"
+        notification_ref = self.db.collection("notifications").document(notification_id)
 
-        # Record initial immutable audit event
-        self._log_audit_event_direct(
-            complaint_id=complaint_id,
-            event_type="submitted",
-            actor_uid=actor.uid,
-            actor_name=actor.full_name,
-            from_status=None,
-            to_status=doc_data["status"],
-            note="Complaint submitted by student.",
-        )
-
-        # Create student notification
-        self.create_notification(
-            recipient_uid=actor.uid,
-            complaint_id=complaint_id,
-            notif_type="complaint_created",
-            title="Complaint Submitted",
-            message=f"Your complaint #{complaint_id} '{doc_data['title']}' has been registered.",
-        )
+        # Intake is all-or-nothing: a ticket is never left without its audit event
+        # and acknowledgement notification.
+        batch = self.db.batch()
+        batch.create(doc_ref, doc_data)
+        batch.create(event_ref, {
+            "event_id": event_id,
+            "event_type": "submitted",
+            "actor_uid": actor.uid,
+            "actor_name": actor.full_name or "System",
+            "from_status": None,
+            "to_status": doc_data["status"],
+            "note": "Complaint submitted by student.",
+            "created_at": SERVER_TIMESTAMP,
+        })
+        batch.create(notification_ref, {
+            "notification_id": notification_id,
+            "recipient_uid": actor.uid,
+            "complaint_id": complaint_id,
+            "type": "complaint_created",
+            "title": "Complaint Submitted",
+            "message": f"Your complaint #{complaint_id} '{doc_data['title']}' has been registered.",
+            "read": False,
+            "created_at": SERVER_TIMESTAMP,
+        })
+        batch.commit()
 
         return complaint_id
 
@@ -153,6 +163,14 @@ class FirestoreRepository(BaseComplaintRepository):
 
         run_id = run.get("run_id") or generate_processing_run_id()
         ticket_id = run.get("ticket_id") or run.get("complaint_id")
+        if not ticket_id:
+            raise ValueError("A processing run must reference a ticket.")
+        ticket = self.db.collection("complaints").document(ticket_id).get()
+        if not ticket.exists:
+            raise ValueError(f"Complaint '{ticket_id}' was not found.")
+        ticket_data = ticket.to_dict()
+        if ticket_data.get("reporter_uid") != reporter_uid:
+            raise PermissionError("Processing run reporter does not own the referenced ticket.")
         doc_data = {
             "run_id": run_id,
             "ticket_id": ticket_id,
@@ -169,7 +187,7 @@ class FirestoreRepository(BaseComplaintRepository):
             "updated_at": SERVER_TIMESTAMP,
             "completed_at": None,
         }
-        self.db.collection("processing_runs").document(run_id).set(doc_data)
+        self.db.collection("processing_runs").document(run_id).create(doc_data)
         return run_id
 
     def update_processing_stage(
@@ -229,7 +247,7 @@ class FirestoreRepository(BaseComplaintRepository):
             raise PermissionError("Access Denied: Cannot view another student's processing run.")
 
         normalized = self._normalize_doc(data)
-        return normalized if actor.is_admin else self._strip_trace_diagnostics(normalized)
+        return normalized if actor.is_admin else self._student_processing_progress(normalized)
 
     def list_processing_runs(
         self,
@@ -404,10 +422,10 @@ class FirestoreRepository(BaseComplaintRepository):
         if not actor or not actor.is_admin:
             raise PermissionError("Access Denied: Admin privileges required.")
 
-        # Scoped query: fetch Open and In Progress
+        # Scoped query includes tickets awaiting or actively undergoing analysis.
         docs = (
             self.db.collection("complaints")
-            .where("status", "in", ["Open", "In Progress"])
+            .where("status", "in", ["Processing", "Needs Review", "Open", "In Progress"])
             .stream()
         )
         results = [self._normalize_doc(d.to_dict()) for d in docs]
@@ -768,18 +786,22 @@ class FirestoreRepository(BaseComplaintRepository):
         return doc_ref, data
 
     @staticmethod
-    def _strip_trace_diagnostics(value: Any) -> Any:
-        """Recursively remove administrator-only evidence and diagnostics."""
-        private_keys = {"evidence", "safe_error", "diagnostic_code"}
-        if isinstance(value, dict):
-            return {
-                key: FirestoreRepository._strip_trace_diagnostics(item)
-                for key, item in value.items()
-                if key not in private_keys
-            }
-        if isinstance(value, list):
-            return [FirestoreRepository._strip_trace_diagnostics(item) for item in value]
-        return value
+    def _student_processing_progress(run: Dict[str, Any]) -> Dict[str, Any]:
+        """Expose only progress states to a ticket owner, never model diagnostics."""
+        stages = run.get("stages") or {}
+        return {
+            "run_id": run.get("run_id"),
+            "ticket_id": run.get("ticket_id"),
+            "overall_status": run.get("overall_status"),
+            "current_stage": run.get("current_stage"),
+            "created_at": run.get("created_at"),
+            "updated_at": run.get("updated_at"),
+            "completed_at": run.get("completed_at"),
+            "stages": {
+                name: {"status": (stage or {}).get("status", "pending")}
+                for name, stage in stages.items()
+            },
+        }
 
     @staticmethod
     def _optional_float(data: Dict[str, Any], key: str, default: float) -> Optional[float]:

@@ -37,7 +37,8 @@ def render_admin_queue_fragment(user, repo):
     with col_f1:
         urg_filter = st.selectbox("Priority Filter", ["All", "Critical", "High", "Medium", "Low"], key="q_urg_filter")
     with col_f2:
-        cat_filter = st.selectbox("Category Filter", ["All"] + sorted(list(set(c.get("category", "Other") for c in complaints))), key="q_cat_filter")
+        categories = sorted({str(c.get("category") or "Pending") for c in complaints})
+        cat_filter = st.selectbox("Category Filter", ["All"] + categories, key="q_cat_filter")
     with col_f3:
         search_query = st.text_input("Search Queue", placeholder="Search description, location, ID...", key="q_search_text")
 
@@ -45,27 +46,27 @@ def render_admin_queue_fragment(user, repo):
     if urg_filter != "All":
         filtered = [c for c in filtered if c.get("urgency") == urg_filter]
     if cat_filter != "All":
-        filtered = [c for c in filtered if c.get("category") == cat_filter]
+        filtered = [c for c in filtered if str(c.get("category") or "Pending") == cat_filter]
     if search_query.strip():
         q = search_query.strip().lower()
         filtered = [
             c for c in filtered
-            if q in c.get("complaint_id", "").lower()
-            or q in c.get("description", "").lower()
-            or q in c.get("location", "").lower()
-            or q in c.get("reporter_name", "").lower()
+            if q in str(c.get("complaint_id") or "").lower()
+            or q in str(c.get("description") or "").lower()
+            or q in str(c.get("location") or "").lower()
+            or q in str(c.get("reporter_name") or "").lower()
         ]
 
     st.markdown(f"**Unresolved Incidents: {len(filtered)} / {len(complaints)} total** (Sorted by Priority $\\rightarrow$ Oldest First)")
 
     for c in filtered:
         cid = c.get("complaint_id", "N/A")
-        status = c.get("status", "Open")
-        urgency = c.get("urgency", "Medium")
-        category = c.get("category", "Other")
-        location = c.get("location", "Campus")
-        reporter_name = c.get("reporter_name", "Anonymous")
-        student_id = c.get("student_id", "N/A")
+        status = str(c.get("status") or "Processing")
+        urgency = str(c.get("urgency") or "Pending")
+        category = str(c.get("category") or "Pending")
+        location = str(c.get("location") or "Campus")
+        reporter_name = str(c.get("reporter_name") or "Anonymous")
+        student_id = str(c.get("student_id") or "N/A")
         assigned_to = c.get("assigned_admin_name")
         assigned_uid = c.get("assigned_admin_uid")
         created = str(c.get("created_at", ""))[:16].replace("T", " ")
@@ -125,10 +126,12 @@ def render_admin_queue_fragment(user, repo):
 
                 with col_act2:
                     # Status Transition with Mandatory Resolution Note Validation
+                    transition_statuses = ["Open", "In Progress", "Resolved", "Rejected"]
+                    initial_status = status if status in transition_statuses else "Open"
                     new_status = st.selectbox(
                         "Change Status",
-                        ["Open", "In Progress", "Resolved", "Rejected"],
-                        index=["Open", "In Progress", "Resolved", "Rejected"].index(status),
+                        transition_statuses,
+                        index=transition_statuses.index(initial_status),
                         key=f"status_sel_{cid}",
                     )
 

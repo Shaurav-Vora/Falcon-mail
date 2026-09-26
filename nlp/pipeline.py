@@ -123,6 +123,8 @@ def process_complaint(
                 "urgency_confidence": None,
                 "department": None,
                 "location": user_location or "Campus",
+                "submitted_location": user_location,
+                "submitted_category": user_category,
                 "status": "Processing",
                 "processing_status": "processing",
                 "processing_run_id": processing_run_id,
@@ -412,7 +414,22 @@ def retry_complaint_processing(
         raise ValueError("Complaint has no processing run to retry.")
     run = repo.get_processing_run(run_id, actor)
     if not run:
-        raise ValueError(f"Processing run '{run_id}' was not found.")
+        # Recover an intake whose ticket write succeeded but whose original trace
+        # document could not be created. The ticket and run identities stay stable.
+        repo.create_processing_run(
+            {
+                "run_id": run_id,
+                "ticket_id": complaint_id,
+                "reporter_uid": complaint.get("reporter_uid"),
+                "reporter_name": complaint.get("reporter_name"),
+                "title": complaint.get("title"),
+                "submitted_location": complaint.get("submitted_location"),
+            },
+            actor,
+        )
+        run = repo.get_processing_run(run_id, actor)
+    if not run:
+        raise ValueError(f"Processing run '{run_id}' could not be recovered.")
 
     attempt_history = list(run.get("attempt_history", []))
     attempt_history.append({
@@ -444,8 +461,8 @@ def retry_complaint_processing(
         actor=actor,
         repo=repo,
         store_in_db=True,
-        user_location=complaint.get("user_location") or complaint.get("location"),
-        user_category=complaint.get("user_category"),
+        user_location=complaint.get("submitted_location") or complaint.get("location"),
+        user_category=complaint.get("submitted_category") or complaint.get("user_category"),
         complaint_id=complaint_id,
         processing_run_id=run_id,
     )

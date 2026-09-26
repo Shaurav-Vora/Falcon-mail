@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from database.auth_context import AuthenticatedUser
 from database.base_repository import BaseComplaintRepository
+
+
+logger = logging.getLogger("falcon_mail.pipeline_trace")
 
 
 _PRIVATE_TRACE_KEYS = {
@@ -91,6 +95,34 @@ class RepositoryPipelineTracer(NullPipelineTracer):
         self._started_at: Dict[str, str] = {}
         self._started_perf: Dict[str, float] = {}
 
+    def _safe_stage_write(self, stage_name: str, stage_data: Dict[str, Any]) -> None:
+        """Keep optional observability failures from changing ticket processing."""
+        try:
+            self.repository.update_processing_stage(
+                self.run_id, stage_name, stage_data, self.actor
+            )
+        except Exception as error:
+            logger.warning(
+                "Could not persist NLP trace stage %s for run %s: %s",
+                stage_name,
+                self.run_id,
+                error,
+            )
+
+    def _safe_finish_run(self, status: str, data: Dict[str, Any]) -> None:
+        """Best-effort run finalization; complaint persistence remains authoritative."""
+        try:
+            self.repository.finish_processing_run(
+                self.run_id, status, data, self.actor
+            )
+        except Exception as error:
+            logger.warning(
+                "Could not finalize NLP trace run %s as %s: %s",
+                self.run_id,
+                status,
+                error,
+            )
+
     def start_stage(self, stage_name: str, metadata: Optional[Dict[str, Any]] = None) -> None:
         started_at = _utc_now()
         self._started_at[stage_name] = started_at
@@ -103,9 +135,7 @@ class RepositoryPipelineTracer(NullPipelineTracer):
         }
         if metadata:
             stage_data["metadata"] = _sanitize_trace_value(metadata)
-        self.repository.update_processing_stage(
-            self.run_id, stage_name, stage_data, self.actor
-        )
+        self._safe_stage_write(stage_name, stage_data)
 
     def complete_stage(
         self,
@@ -122,8 +152,7 @@ class RepositoryPipelineTracer(NullPipelineTracer):
             if started_perf is not None
             else None
         )
-        self.repository.update_processing_stage(
-            self.run_id,
+        self._safe_stage_write(
             stage_name,
             {
                 "status": "completed",
@@ -135,7 +164,6 @@ class RepositoryPipelineTracer(NullPipelineTracer):
                 "model_or_rule": model_or_rule,
                 "evidence": _sanitize_trace_value(evidence),
             },
-            self.actor,
         )
 
     def fail_stage(
@@ -151,8 +179,7 @@ class RepositoryPipelineTracer(NullPipelineTracer):
             if started_perf is not None
             else None
         )
-        self.repository.update_processing_stage(
-            self.run_id,
+        self._safe_stage_write(
             stage_name,
             {
                 "status": "failed",
@@ -162,7 +189,6 @@ class RepositoryPipelineTracer(NullPipelineTracer):
                 "safe_error": safe_error[:500],
                 "diagnostic_code": diagnostic_code,
             },
-            self.actor,
         )
 
     def complete_run(self, final_result: Dict[str, Any]) -> None:
@@ -177,8 +203,7 @@ class RepositoryPipelineTracer(NullPipelineTracer):
                 "status",
             )
         }
-        self.repository.finish_processing_run(
-            self.run_id,
+        self._safe_finish_run(
             "completed",
             {
                 "current_stage": "persistence",
@@ -186,16 +211,13 @@ class RepositoryPipelineTracer(NullPipelineTracer):
                 "safe_error": None,
                 "diagnostic_code": None,
             },
-            self.actor,
         )
 
     def fail_run(self, safe_error: str, diagnostic_code: Optional[str] = None) -> None:
-        self.repository.finish_processing_run(
-            self.run_id,
+        self._safe_finish_run(
             "needs_review",
             {
                 "safe_error": safe_error[:500],
                 "diagnostic_code": diagnostic_code,
             },
-            self.actor,
         )

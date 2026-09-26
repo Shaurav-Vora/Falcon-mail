@@ -195,13 +195,23 @@ def render_submit_complaint_page():
 def render_submission_result_view(result: dict):
     """Render successful submission breakdown card with honest ML confidence and vector line icons."""
     st.success(f"Complaint Record **#{result['complaint_id']}** Successfully Saved to Database!")
-    
-    st.markdown("### SENTINEL AI Processing Results")
+
+    if result.get("processing_status") == "needs_review" or result.get("needs_manual_review"):
+        st.markdown("### Falcon Mail Processing Update")
+        st.warning(
+            "Your ticket is safely recorded, but automatic analysis could not finish. "
+            "It is now in the administrator review queue."
+        )
+        st.info(result.get("safe_error") or "An administrator will review this ticket manually.")
+        st.caption(f"Submitted location: {result.get('location') or 'Not specified'}")
+        return
+
+    st.markdown("### Falcon Mail AI Processing Results")
     
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        raw_cat = html.escape(str(result['category']))
-        cat_conf = result['category_confidence'] * 100
+        raw_cat = html.escape(str(result.get('category') or 'Pending'))
+        cat_conf = float(result.get('category_confidence') or 0.0) * 100
         user_cat = result.get('user_category')
         cat_subtext = f"{cat_conf:.1f}% ML confidence"
         if user_cat and user_cat != result['category']:
@@ -225,13 +235,13 @@ def render_submission_result_view(result: dict):
             unsafe_allow_html=True
         )
     with c2:
-        urg = result['urgency']
+        urg = result.get('urgency') or 'Pending'
         u_cls = "stat-icon-red" if urg in ["Critical", "High"] else ("stat-icon-amber" if urg == "Medium" else "stat-icon-green")
         stroke_c = "#EF4444" if urg in ["Critical", "High"] else ("#F59E0B" if urg == "Medium" else "#16A34A")
         
         # Honest confidence reporting (Issue 6 & Correction 3)
-        ml_pred = result.get("ml_prediction", urg)
-        ml_conf = result.get("ml_confidence", result.get("urgency_confidence", 0.0)) * 100
+        ml_pred = result.get("ml_prediction") or urg
+        ml_conf = float(result.get("ml_confidence") or result.get("urgency_confidence") or 0.0) * 100
         
         if result.get("rule_elevated"):
             urg_subtext = f"Safety Rule Applied<br><span style='color:#64748B;'>ML: {html.escape(ml_pred)} ({ml_conf:.1f}%)</span>"
@@ -258,7 +268,7 @@ def render_submission_result_view(result: dict):
             unsafe_allow_html=True
         )
     with c3:
-        loc_val = result.get('location') or result.get('entities', {}).get('location', 'Not specified')
+        loc_val = result.get('location') or (result.get('entities') or {}).get('location') or 'Not specified'
         loc_src = "User Specified" if result.get('user_location') else "Extracted by NLP"
         st.markdown(
             f"""
@@ -279,7 +289,7 @@ def render_submission_result_view(result: dict):
             unsafe_allow_html=True
         )
     with c4:
-        dept_val = result.get('recommended_department', 'Campus Facilities')
+        dept_val = result.get('recommended_department') or result.get('department') or 'Awaiting routing'
         st.markdown(
             f"""
             <div class="stat-card">

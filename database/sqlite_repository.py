@@ -132,6 +132,8 @@ class SQLiteRepository(BaseComplaintRepository):
                 "prediction_overrides_json": "TEXT",
                 "safe_error": "TEXT",
                 "diagnostic_code": "TEXT",
+                "submitted_location": "TEXT",
+                "submitted_category": "TEXT",
             }
             for column_name, column_type in trace_columns.items():
                 if column_name not in complaint_columns:
@@ -164,8 +166,9 @@ class SQLiteRepository(BaseComplaintRepository):
                 reporter_email, student_id, programme, assigned_admin_uid, assigned_admin_name,
                 resolution_note, dense_embedding, duplicate_of_id, duplicate_similarity,
                 entities_json, processing_run_id, processing_status, needs_manual_review,
-                model_versions_json, prediction_overrides_json, safe_error, diagnostic_code
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                model_versions_json, prediction_overrides_json, safe_error, diagnostic_code,
+                submitted_location, submitted_category
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 complaint_id,
                 data.get("title", "Untitled Complaint"),
@@ -198,6 +201,8 @@ class SQLiteRepository(BaseComplaintRepository):
                 prediction_overrides_json,
                 data.get("safe_error"),
                 data.get("diagnostic_code"),
+                data.get("submitted_location", data.get("location")),
+                data.get("submitted_category", data.get("user_category")),
             ))
 
             # Audit event
@@ -235,8 +240,18 @@ class SQLiteRepository(BaseComplaintRepository):
             raise PermissionError("Access Denied: Cannot create another student's processing run.")
 
         run_id = run.get("run_id") or generate_processing_run_id()
+        ticket_id = run.get("ticket_id") or run.get("complaint_id")
+        if not ticket_id:
+            raise ValueError("A processing run must reference a ticket.")
         now = self._utc_now()
         with self._conn() as conn:
+            ticket = conn.execute(
+                "SELECT reporter_uid FROM complaints WHERE id = ?", (ticket_id,)
+            ).fetchone()
+            if not ticket:
+                raise ValueError(f"Complaint '{ticket_id}' was not found.")
+            if ticket["reporter_uid"] != reporter_uid:
+                raise PermissionError("Processing run reporter does not own the referenced ticket.")
             conn.execute("""
             INSERT INTO processing_runs (
                 run_id, ticket_id, reporter_uid, reporter_name, title, submitted_location,
@@ -246,7 +261,7 @@ class SQLiteRepository(BaseComplaintRepository):
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 run_id,
-                run.get("ticket_id") or run.get("complaint_id"),
+                ticket_id,
                 reporter_uid,
                 run.get("reporter_name") or actor.full_name,
                 run.get("title", "Untitled Complaint"),
@@ -338,7 +353,7 @@ class SQLiteRepository(BaseComplaintRepository):
         run = self._processing_row_to_dict(row)
         if not actor.is_admin and run.get("reporter_uid") != actor.uid:
             raise PermissionError("Access Denied: Cannot view another student's processing run.")
-        return run if actor.is_admin else self._strip_trace_diagnostics(run)
+        return run if actor.is_admin else self._student_processing_progress(run)
 
     def list_processing_runs(
         self,
@@ -519,7 +534,10 @@ class SQLiteRepository(BaseComplaintRepository):
 
         with self._conn() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM complaints WHERE status IN ('Open', 'In Progress')")
+            cursor.execute(
+                "SELECT * FROM complaints "
+                "WHERE status IN ('Processing', 'Needs Review', 'Open', 'In Progress')"
+            )
             results = [self._row_to_dict(r) for r in cursor.fetchall()]
 
         results.sort(key=lambda x: (PRIORITY_ORDER.get(x.get("urgency", "Medium"), 2), str(x.get("created_at") or "")))
@@ -783,18 +801,22 @@ class SQLiteRepository(BaseComplaintRepository):
         return run
 
     @staticmethod
-    def _strip_trace_diagnostics(value: Any) -> Any:
-        """Recursively remove administrator-only evidence and diagnostics."""
-        private_keys = {"evidence", "safe_error", "diagnostic_code"}
-        if isinstance(value, dict):
-            return {
-                key: SQLiteRepository._strip_trace_diagnostics(item)
-                for key, item in value.items()
-                if key not in private_keys
-            }
-        if isinstance(value, list):
-            return [SQLiteRepository._strip_trace_diagnostics(item) for item in value]
-        return value
+    def _student_processing_progress(run: Dict[str, Any]) -> Dict[str, Any]:
+        """Expose only progress states to a ticket owner, never model diagnostics."""
+        stages = run.get("stages") or {}
+        return {
+            "run_id": run.get("run_id"),
+            "ticket_id": run.get("ticket_id"),
+            "overall_status": run.get("overall_status"),
+            "current_stage": run.get("current_stage"),
+            "created_at": run.get("created_at"),
+            "updated_at": run.get("updated_at"),
+            "completed_at": run.get("completed_at"),
+            "stages": {
+                name: {"status": (stage or {}).get("status", "pending")}
+                for name, stage in stages.items()
+            },
+        }
 
     @staticmethod
     def _optional_float(data: Dict[str, Any], key: str, default: float) -> Optional[float]:
