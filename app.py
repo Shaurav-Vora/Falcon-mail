@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from pages.login import render_login_page
 from utils.auth import get_current_user
-from utils.ui import inject_custom_css, render_global_header, render_navigation
+from utils.ui import inject_custom_css, render_navigation
 
 # Lazy import page views
 from pages.submit_complaint import render_submit_complaint_page
@@ -25,6 +25,8 @@ from pages.student_complaints import render_student_complaints_page
 from pages.notifications import render_notifications_page
 from pages.dashboard import render_dashboard_page
 from pages.admin_queue import render_admin_queue_page
+from pages.corpus import render_corpus_page
+from pages.models import render_models_page
 from pages.resolved_cases import render_resolved_cases_page
 
 st.set_page_config(
@@ -65,11 +67,10 @@ def main():
             render_dashboard_page()
         elif active_page == "Resolved":
             render_resolved_cases_page()
-        elif active_page in {"Corpus", "Models"}:
-            render_global_header(active_page)
-            st.info(
-                f"The {active_page} evidence page will appear here after its data preparation task is complete."
-            )
+        elif active_page == "Corpus":
+            render_corpus_page()
+        elif active_page == "Models":
+            render_models_page()
         else:
             render_admin_queue_page()
     else:

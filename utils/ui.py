@@ -43,6 +43,13 @@ def render_global_header(active_page_name: str = "Raise a ticket"):
     )
 
 
+def render_admin_evidence_header(title: str, description: str) -> None:
+    """Render the shared heading used by administrator evidence pages."""
+    render_global_header(title)
+    st.caption(description)
+    st.divider()
+
+
 def render_navigation():
     """Render compact student top navigation or the admin workspace sidebar."""
     from utils.auth import get_current_user, logout
