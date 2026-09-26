@@ -1,245 +1,196 @@
-# SENTINEL – Enterprise Campus Incident Intelligence & Resolution Platform
-### NLP-Driven Complaint Intelligence, Firebase Auth, Cloud Firestore & Server-Side RBAC
-**Manipal Academy of Higher Education Dubai Campus**
+# Falcon Mail
 
----
+Falcon Mail is a student-friendly online ticketing system for campus complaints. A student submits one ticket through the web application; the local NLP pipeline categorizes it, estimates urgency, applies safety rules, extracts useful details, checks for repeated incidents, summarizes it, and routes it to the responsible department.
 
-## 🏛️ Executive Overview
+Administrators can inspect the genuine stored pipeline trace. Progress is not simulated.
 
-**SENTINEL** is an enterprise-grade multi-user intelligence platform for university campus incident reporting, automated natural language triage, and administrative resolution workflows.
+## What the pipeline does
 
-The system bridges classical machine learning with secure cloud persistence:
-1. **100% Local NLP Pipeline**: Category classification (`FeatureUnion` word+char n-grams), urgency assessment with deterministic safety rule elevation, spaCy named entity and campus location extraction, dense semantic vector embeddings (`all-MiniLM-L6-v2`), multi-signal duplicate detection with student privacy preservation, and domain-routed summarization.
-2. **Multi-User Security & Server-Side RBAC**: Firebase Authentication with custom user claims. Public registration is strictly restricted to students; staff roles are provisioned through server CLI. Every backend repository function validates `actor: AuthenticatedUser` server-side, ensuring students can never view or modify another student's complaints.
-3. **Shared Cloud Firestore Persistence**: Cloud Firestore serves as the single source of truth (`SENTINEL_STORAGE_BACKEND = "firestore"`), with atomic transactions for administrator assignments, server timestamps (`firestore.SERVER_TIMESTAMP`), and immutable audit logging.
-4. **Near-Real-Time Synchronization**: Live 1–2 second synchronization across active student and administrator browser sessions powered by Streamlit `@st.fragment(run_every="2s")` without full-app reload loops.
+Every submitted ticket moves through these stages in order:
 
----
+| Stage | Purpose |
+| --- | --- |
+| `received` | Validate the request and retain the initial ticket. |
+| `preprocessing` | Normalize and lemmatize text with spaCy. |
+| `category` | Predict one of the Falcon Mail complaint categories. |
+| `urgency` | Produce the statistical ML urgency prediction. |
+| `safety_rules` | Elevate fire, smoke, injury, and other safety incidents deterministically. |
+| `extraction` | Resolve location, room, building, dates, times, and supported entities. |
+| `duplicates` | Create a MiniLM embedding and compare eligible active tickets. |
+| `summary` | Generate a short operational summary. |
+| `routing` | Map the category to the responsible department. |
+| `persistence` | Save the final analysis and ticket state. |
 
-## 📐 System Architecture
+A stage can be `pending`, `running`, `completed`, `failed`, or `skipped`. Stored stage records include start and completion timestamps, duration, concise result, confidence when available, model or rule source, and administrator-only evidence.
 
-```
-                          [ Client Browser Session (Student / Admin) ]
-                                                │
-                                    (Email/Password Auth)
-                                                ▼
-                                    [ Firebase Auth REST ]
-                                     (ID Token + Refresh)
-                                                │
-                                                ▼
-                                   [ AuthenticatedUser Context ]
-                             { uid, email, full_name, role, student_id }
-                                                │
-                    ┌───────────────────────────┴───────────────────────────┐
-                    ▼                                                       ▼
-         [ Student Workflow ]                                    [ Admin Workflow ]
-       - Home (Personal KPIs)                                  - Operations Dashboard
-       - Submit Complaint                                      - Prioritized Queue (P0->P3)
-       - My Complaints (Own records only)                       - Atomic "Assign to Myself"
-       - In-App Notifications                                  - Mandatory Resolution Notes
-                    │                                          - Resolved Cases Archive
-                    └───────────────────────────┬───────────────────────────┘
-                                                │
-                                                ▼
-                                  [ Server-Side RBAC Guard ]
-                        - Enforces: actor.role == "admin" for Admin APIs
-                        - Enforces: actor.uid == complaint.reporter_uid
-                        - Sanitizes duplicate notifications for Students
-                                                │
-                                                ▼
-                                   [ Master NLP Pipeline ]
-                               (100% Local Python Execution)
-                        ├─ Preprocessing & Lemmatization
-                        ├─ Word + Char FeatureUnion Category ML
-                        ├─ Balanced Urgency ML + Safety Rule Elevation
-                        ├─ spaCy NER + Problem Pattern Extraction
-                        ├─ MiniLM Dense Semantic Embeddings (384 dims)
-                        └─ Extractive Domain-Routed Summarization
-                                                │
-                                                ▼
-                                  [ Cloud Firestore Backend ]
-                         - users/{uid}
-                         - complaints/{id}
-                         - complaints/{id}/events/{id} (Audit Subcollection)
-                         - notifications/{id}
+## Models and corpus
+
+The pipeline runs locally; it does not send complaint text to a hosted language-model API.
+
+| Component | Implementation |
+| --- | --- |
+| Category | Word and character TF-IDF `FeatureUnion` with Logistic Regression |
+| Urgency | TF-IDF with Logistic Regression |
+| Safety elevation | Deterministic keyword rules |
+| Extraction | `en_core_web_sm` plus campus regex patterns |
+| Duplicate detection | `all-MiniLM-L6-v2` embeddings plus category/location signals |
+| Summary | Deterministic operational template |
+
+The main labeled corpus is [`data/complaints.csv`](data/complaints.csv). Duplicate evaluation pairs are in [`data/duplicate_eval_pairs.csv`](data/duplicate_eval_pairs.csv), and manually written holdout examples are in [`data/unseen_test_cases.csv`](data/unseen_test_cases.csv). Training provenance, dataset hashes, versions, split sizes, and evaluation metrics are recorded in [`models/training_metadata.json`](models/training_metadata.json).
+
+## Processing-run storage
+
+Firestore is the shared production source of truth. Each submission creates:
+
+```text
+complaints/{ticket_id}
+processing_runs/{run_id}
 ```
 
----
+The processing-run document has this shape:
 
-## 🛡️ Security Model & Role-Based Access Control (RBAC)
-
-### 1. Server-Side Enforcement (Primary Defense)
-Because SENTINEL runs as a Python server application using `firebase-admin`, all backend calls bypass Firestore Security Rules automatically. Therefore:
-- **Primary Authorization**: Enforced directly inside Python repository methods ([database/firestore_repository.py](file:///c:/NLP%20Project/database/firestore_repository.py)).
-- `get_student_complaints(uid, actor)`: Strictly asserts `actor.uid == uid or actor.role == "admin"`. Students cannot access another student's complaints.
-- `get_unresolved_complaints(actor)`: Strictly requires `actor.role == "admin"`.
-- `update_complaint_status(cid, status, actor, note)`: Strictly requires `actor.role == "admin"`.
-- `assign_complaint(cid, actor)`: Strictly requires `actor.role == "admin"`.
-- `firestore.rules`: Maintained as defense-in-depth for any future direct web clients. Never contains `allow read, write: if true;`.
-
-### 2. Zero-Trust Identity & Admin Provisioning
-- **Public Signup**: Creates user in Firebase Auth and profile in `users/{uid}` strictly with `role = "student"`. Public visitors cannot select an admin role.
-- **Admin Provisioning Tool**: Administrators are provisioned strictly via server CLI:
-  ```bash
-  python scripts/set_admin_role.py --email admin@manipal.edu
-  ```
-  This sets the Firebase Custom User Claim `{"admin": True}` and updates `users/{uid}.role = "admin"`.
-- **Institutional Domain Filtering**: Configurable in `config.py` via `ALLOWED_STUDENT_EMAIL_DOMAINS = ["manipal.edu", "learner.manipal.edu"]`.
-
-### 3. Student Duplicate Privacy Preservation
-When duplicate detection identifies an existing active ticket:
-- **Student UI**: Displays ONLY: *"Similar complaint already reported in campus records"* or *"A related active incident may already exist."* Zero other student metadata (name, student ID, email, or raw complaint text) is exposed.
-- **Admin UI**: Displays full operational duplicate intelligence (similarity score, matched complaint text, and ticket ID).
-
----
-
-## ⚡ Near-Real-Time Synchronization
-
-SENTINEL implements near-real-time synchronization using Streamlit `@st.fragment(run_every="2s")`:
-- **Student My Complaints**: Auto-refreshes complaint status badges and administrator resolution notes every 2 seconds.
-- **Student Notifications**: In-app feed polls unread alerts every 2 seconds.
-- **Admin Queue**: Unresolved complaints appear automatically within ~1–2 seconds of student submission.
-- **Admin KPIs**: Incident count cards update live without full-page reloads.
-
----
-
-## 🧠 NLP Models & Empirical Evaluation
-
-| Component | Architecture / Model | Origin / Type | External Cloud API |
-| :--- | :--- | :--- | :--- |
-| **Category Classification** | Word+Char `FeatureUnion` + Logistic Regression | **Trained locally by us** | None (Local) |
-| **Urgency Classification** | TF-IDF + Logistic Regression (Balanced Critical) | **Trained locally by us** | None (Local) |
-| **Safety Urgency Override** | Emergency Keyword Layer (*fire, gas leak, wire, shock*) | **Custom Deterministic Policy** | None (Local) |
-| **Entity & Location Extraction** | spaCy `en_core_web_sm` + Regex Matchers | **Pretrained + Custom Rules** | None (Local) |
-| **Semantic Vector Embeddings** | Sentence-Transformers (`all-MiniLM-L6-v2`) | **Pretrained Open-Source** | None (Local) |
-| **Duplicate Detection** | Multi-Signal Composite Cosine Similarity | **Custom Multi-Signal Logic** | None (Local) |
-| **Summarization** | Extractive Domain-Routed Synthesis | **Custom Modular Logic** | None (Local) |
-
-### Empirical Performance Summary:
-1. **Category Classification**: Word+Char `FeatureUnion` achieved **Macro F1: 0.3254** and **Accuracy: 31.36%** on completely unseen template groups (random chance across 11 classes = 9.09%).
-2. **Urgency Classification**: Expanded dataset with 35 new diverse Critical campus emergencies (103 Critical samples total). Pure ML Critical recall reached **21.4%** (up from 0.0%), augmented to **100%** on emergency triggers via the deterministic safety override.
-3. **Duplicate Detection Threshold**:
-   - Evaluated on 60 labeled pairs (31 duplicates, 29 non-duplicates):
-     - **Threshold 0.60**: Precision: **100.0%**, Recall: **83.9%**, F1: **0.9123**, FP: **0**, FN: **5**.
-     - **Threshold 0.65**: Precision: **100.0%**, Recall: **77.4%**, F1: **0.8727**, FP: **0**, FN: **7**.
-   - Threshold **0.60** maintains zero false positives while improving recall (+6.5%), making it the confirmed defensible default.
-
----
-
-## 📁 Repository Structure
-
-```
-NLP Project/
-├── assets/
-│   ├── manipal_logo.png           # University branding logo
-│   └── style.css                  # Custom enterprise design system
-├── config.py                      # Central configuration, thresholds, allowed domains
-├── data/
-│   ├── complaints.csv             # Labeled dataset with template_group_id (585 samples)
-│   ├── duplicate_eval_pairs.csv   # 60 labeled duplicate evaluation pairs
-│   └── unseen_test_cases.csv      # 26 hand-written holdout test cases
-├── database/
-│   ├── auth_context.py            # AuthenticatedUser frozen context dataclass
-│   ├── base_repository.py         # Abstract base repository defining data contracts
-│   ├── database.py                # Central repository factory (no silent fallback)
-│   ├── firestore_repository.py    # Cloud Firestore repository with server-side RBAC
-│   └── sqlite_repository.py       # Isolated SQLite repository for automated tests
-├── models/
-│   ├── category_classifier.pkl    # Trained Category FeatureUnion Pipeline
-│   ├── urgency_classifier.pkl     # Trained Urgency Pipeline
-│   └── training_metadata.json     # Audit trail of model parameters & metrics
-├── nlp/
-│   ├── classification.py          # Category inference module
-│   ├── duplicate_detection.py     # SentenceTransformer embeddings & composite scoring
-│   ├── entity_extraction.py       # spaCy NER & campus location extractors
-│   ├── pipeline.py                # Master NLP pipeline with duplicate privacy filter
-│   ├── preprocessing.py           # Text cleaning, lemmatization & spaCy loader
-│   ├── summarization.py           # Domain-routed extractive summarization
-│   └── urgency.py                 # ML urgency prediction + safety rule elevation
-├── pages/
-│   ├── admin_queue.py             # Admin prioritized queue with atomic assignment
-│   ├── dashboard.py               # Campus operations analytics & live KPIs
-│   ├── home.py                    # Student home with personal KPIs & quick submit
-│   ├── login.py                   # Secure login, registration & password reset
-│   ├── notifications.py           # Student in-app notifications feed
-│   ├── resolved_cases.py          # Closed complaint archive with resolution notes
-│   ├── student_complaints.py      # Student "My Complaints" with live status sync
-│   └── submit_complaint.py        # Detailed submission with chips, tips & AI audit
-├── scripts/
-│   ├── migrate_sqlite_to_firestore.py  # Standalone SQLite -> Firestore migration utility
-│   ├── reset_demo_db.py           # Safe local SQLite reset utility
-│   └── set_admin_role.py          # CLI tool to grant admin custom claim
-├── tests/
-│   ├── smoke_test.py              # 13-point end-to-end smoke test suite
-│   ├── test_auth.py               # Authentication & domain validation tests
-│   └── test_rbac.py               # Server-side RBAC and data isolation tests
-├── training/
-│   ├── dataset_generator.py       # Group-aware balanced dataset generator (255 groups)
-│   ├── evaluate.py                # Evaluation suite (Category, Urgency, Duplicates, Holdout)
-│   ├── train_category.py          # Category classifier training with FeatureUnion
-│   └── train_urgency.py           # Urgency classifier training & model comparison
-├── utils/
-│   ├── auth.py                    # Firebase Auth REST client & session manager
-│   ├── helpers.py                 # Department mapping helpers
-│   └── ui.py                      # Dynamic role-based sidebar & persistent collapse
-├── app.py                         # Streamlit application entry point & router
-├── firestore.rules                # Defense-in-depth Firestore security rules
-├── requirements.txt               # Pinned Python dependencies
-└── README.md                      # Comprehensive documentation
+```text
+run_id
+ticket_id
+reporter_uid
+reporter_name
+title
+submitted_location
+overall_status        processing | completed | failed | needs_review
+current_stage
+stages                map keyed by the ten stage names
+retry_count
+attempt_history
+safe_error
+diagnostic_code
+created_at
+updated_at
+completed_at
 ```
 
----
+Each value in `stages` can contain:
 
-## 🚀 Setup & Execution Guide
-
-### 1. Install Dependencies
-```bash
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
+```text
+status
+started_at
+completed_at
+duration_ms
+result
+confidence
+model_or_rule
+evidence
+safe_error
+diagnostic_code
 ```
 
-### 2. Configure Firebase Credentials
-1. **Service Account Key**: Place your downloaded Firebase private key in the project root as `serviceAccountKey.json`.
-2. **Streamlit Secrets**: Create `.streamlit/secrets.toml` (template provided in `.streamlit/secrets.toml.example`):
-   ```toml
-   [firebase]
-   api_key = "YOUR_FIREBASE_WEB_API_KEY"
-   auth_domain = "your-project-id.firebaseapp.com"
-   project_id = "your-project-id"
-   storage_bucket = "your-project-id.firebasestorage.app"
-   messaging_sender_id = "YOUR_SENDER_ID"
-   app_id = "YOUR_APP_ID"
-   service_account_path = "serviceAccountKey.json"
-   ```
-   *(Both files are strictly ignored in `.gitignore` to prevent secret leakage).*
+Dense MiniLM vectors, authentication data, stack traces, raw matched-ticket text, and unnecessary copies of the submitted complaint are deliberately excluded from processing traces. The dense vector remains only on the complaint record where duplicate detection needs it.
 
-### 3. Provision an Administrator Account
-```bash
+SQLite implements the same repository contract for explicit offline development. It stores runs in the `processing_runs` table and serializes stages and attempt history as JSON.
+
+## Access boundaries
+
+- Administrators can list complete processing runs, inspect stage evidence and diagnostics, retry failed processing, and correct category, urgency, location, or department with an immutable audit entry.
+- Students can see only their own ticket and sanitized progress returned by the Streamlit server.
+- Student trace responses remove `evidence`, `safe_error`, and `diagnostic_code`.
+- Duplicate responses shown to students do not contain another ticket's ID or complaint text.
+- Direct client writes to `processing_runs` are denied by [`firestore.rules`](firestore.rules). The Firebase Admin SDK performs authorized server-side writes.
+
+Every privileged repository method receives an `AuthenticatedUser` and checks ownership or administrator status server-side.
+
+## Failure retention and retry
+
+Falcon Mail creates the minimal complaint record before model execution. If a model, dependency, trace stage, or eligible database operation fails afterward:
+
+1. The original ticket ID and description are retained.
+2. The ticket becomes `Needs Review`.
+3. Category and urgency remain empty instead of receiving invented fallback predictions.
+4. The student receives a neutral confirmation that an administrator will review the ticket.
+5. Administrators see the failed stage and a stable diagnostic code.
+
+An administrator retry reuses the same ticket ID and processing-run ID. The previous stages, status, diagnostics, and timestamps are appended to `attempt_history`; `retry_count` is incremented; and the real pipeline starts again. A successful retry returns the existing ticket to `Open` with completed analysis.
+
+## Project structure
+
+```text
+data/                       labeled corpus and evaluation records
+database/
+  base_repository.py        shared persistence contract
+  firestore_repository.py   production Firestore implementation
+  sqlite_repository.py      explicit offline implementation
+models/                     trained classifiers and training metadata
+nlp/
+  pipeline.py               orchestration, retention, and retry
+  tracing.py                real stage timing and privacy filtering
+  classification.py         category inference
+  urgency.py                ML urgency and separate safety elevation
+  entity_extraction.py      entity and campus-location extraction
+  duplicate_detection.py    MiniLM embeddings and duplicate scoring
+  summarization.py          operational summary generation
+pages/                      Streamlit student and administrator screens
+app.py                      application entry point
+firestore.rules             defense-in-depth client rules
+```
+
+## Setup
+
+Use a short local path such as `C:\dev\Falcon-mail` on Windows. Python 3.12 is the conservative choice for the NLP dependency stack.
+
+```powershell
+uv python install 3.12
+uv venv --python 3.12 .venv
+.venv\Scripts\Activate.ps1
+uv pip install --link-mode copy -r requirements.txt
+uv pip install --link-mode copy "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"
+```
+
+`--link-mode copy` avoids Windows cloud-folder and hardlink error 396.
+
+### Firebase configuration
+
+1. Put the Firebase Admin service-account JSON at `serviceAccountKey.json` in the project root.
+2. Create `.streamlit/secrets.toml` from `.streamlit/secrets.toml.example` and enter the Firebase web-app values shown in the Firebase console.
+3. Keep both files private; they are excluded by `.gitignore`.
+4. Provision administrators from the server:
+
+```powershell
 python scripts/set_admin_role.py --email admin@manipal.edu
 ```
-> [!NOTE]
-> For evaluation and immediate testing on the configured cloud project, a pre-provisioned administrator account is active:
-> - **Email**: `admin@manipal.edu`
-> - **Password**: `AdminPassword123!`
-> New student accounts can be registered directly through the application login portal.
 
+Never place passwords or private keys in documentation or source control.
 
-### 4. Run Automated Test Suites
-```bash
-# Run unit tests (Auth & RBAC)
-python -m unittest discover tests
+### Start Falcon Mail
 
-# Run end-to-end smoke tests (13/13 verified with isolated test DB)
-python tests/smoke_test.py
-```
+Production Firestore mode is the default:
 
-### 5. Launch the Application
-```bash
+```powershell
 streamlit run app.py
 ```
 
----
+Explicit local SQLite mode:
 
-## 👥 Authors
-SENTINEL Project Team – University NLP & ML Engineering Laboratory
-Manipal Academy of Higher Education Dubai Campus
+```powershell
+$env:SENTINEL_STORAGE_BACKEND = "sqlite"
+streamlit run app.py
+```
+
+`SENTINEL_STORAGE_BACKEND` and the historical `sentinel.db` filename remain internal compatibility names so existing environments continue to work. The product name, interface, and documentation are **Falcon Mail**.
+
+## Manual verification walkthrough
+
+Restart Streamlit before the walkthrough so model and repository singletons begin cleanly.
+
+1. Register or sign in as a student.
+2. Submit an ordinary ticket such as: `The Wi-Fi in the library keeps disconnecting since this morning.`
+3. Submit a safety ticket such as: `There is smoke and fire coming from the electrical room in Block B.` Confirm the final urgency is `Critical` and the decision source is the safety rule.
+4. Submit the ordinary ticket again. Confirm it receives a privacy-safe repeated-incident notice.
+5. Temporarily make one model unavailable, submit another ticket, and confirm the ticket remains visible as `Needs Review` with no invented category or urgency.
+6. Sign in as an administrator and inspect each processing run. Confirm the stage order matches this README, timings are real, and no dense embedding or matched complaint text appears in the trace.
+7. Retry the failed ticket. Confirm the same ticket and run IDs are reused, `retry_count` increases, and the previous attempt appears in `attempt_history`.
+8. Correct one prediction and confirm the old value, new value, administrator, reason, and timestamp are preserved.
+9. Assign and resolve a ticket with a resolution note, then confirm the student timeline updates.
+
+Falcon Mail intentionally relies on this manual application walkthrough rather than adding automated test infrastructure.
+
+## Authors
+
+Falcon Mail project team — Manipal Academy of Higher Education, Dubai Campus.
