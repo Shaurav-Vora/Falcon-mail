@@ -15,9 +15,20 @@ from utils.auth import get_current_user
 from utils.ui import render_global_header
 
 
-@st.fragment(run_every="2s")
+@st.fragment
 def render_dashboard_live_kpis(user, repo):
-    """Near-real-time synchronization fragment for campus KPIs."""
+    """Render stable campus KPIs and refresh them on demand."""
+    refresh_column, status_column = st.columns([0.25, 0.75], vertical_alignment="center")
+    with refresh_column:
+        st.button(
+            "Refresh dashboard",
+            icon=":material/refresh:",
+            key="dashboard_refresh",
+            use_container_width=True,
+        )
+    with status_column:
+        st.caption("Showing the latest stored ticket totals and distributions.")
+
     try:
         stats = repo.get_dashboard_stats(actor=user)
         recent_complaints = repo.get_recent_complaints(actor=user, limit=50)
@@ -109,7 +120,7 @@ def render_dashboard_live_kpis(user, repo):
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
     if not recent_complaints:
-        st.info("No complaint data currently recorded. New submissions will appear here automatically.")
+        st.info("No complaint data currently recorded. Refresh after a new submission.")
         return
 
     df = pd.DataFrame(recent_complaints)
