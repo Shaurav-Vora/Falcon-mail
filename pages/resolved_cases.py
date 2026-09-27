@@ -20,21 +20,13 @@ def render_resolved_cases_page():
         return
 
     render_global_header("Resolved")
-    st.markdown(
-        """
-        <div style="margin-bottom: 1.25rem;">
-            <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">Resolved & Closed Incident Archive</h2>
-            <p style="color: #64748b; font-size: 0.9rem;">Historical log of closed campus complaints with resolution notes and full audit timelines.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.caption("Review completed tickets, resolution notes, and their audit timelines.")
 
     try:
         repo = get_repository()
         resolved_cases = repo.get_resolved_cases(actor=user, limit=100)
-    except Exception as e:
-        st.error(f"Error loading resolved cases: {e}")
+    except Exception:
+        st.error("Falcon Mail could not load resolved tickets. Check the storage connection.")
         return
 
     if not resolved_cases:
@@ -46,36 +38,35 @@ def render_resolved_cases_page():
     for c in resolved_cases:
         cid = c.get("complaint_id", "N/A")
         status = c.get("status", "Resolved")
-        urgency = c.get("urgency", "Medium")
+        urgency = str(c.get("urgency") or "Pending")
         resolved_time = str(c.get("resolved_at") or c.get("updated_at") or "")[:16].replace("T", " ")
-        assignee = c.get("assigned_admin_name", "Staff")
+        assignee = str(c.get("assigned_admin_name") or "Staff")
 
-        with st.container():
-            st.markdown(
-                f"""
-                <div class="card-container" style="margin-bottom: 0.75rem; border-left: 4px solid {'#10b981' if status == 'Resolved' else '#64748b'};">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <span style="font-family: monospace; font-weight: 700; color: #64748b; font-size: 0.85rem;">#{cid}</span>
-                            <span style="color: #94a3b8; font-size: 0.8rem; margin-left: 0.5rem;">Closed {resolved_time}</span>
-                            <h4 style="margin: 0.2rem 0; color: #0f172a; font-size: 1.05rem;">{c.get('title', 'Untitled')}</h4>
-                        </div>
-                        <span class="badge status-{status.lower()}">{status}</span>
-                    </div>
-                    <p style="color: #475569; font-size: 0.9rem; margin: 0.35rem 0;">{c.get('description', '')}</p>
-                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.85rem; color: #166534; margin: 0.5rem 0;">
-                        <strong>Resolution Note by {assignee}:</strong> {c.get('resolution_note', 'No note recorded.')}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+        with st.container(border=True):
+            heading, state = st.columns([0.72, 0.28])
+            with heading:
+                st.caption(f"Ticket #{cid} · Closed {resolved_time or 'time unavailable'}")
+                st.markdown(f"#### {c.get('title') or 'Resolved ticket'}")
+            with state:
+                st.write(f"**{status}** · {urgency}")
+            st.write(str(c.get("description") or "No description available."))
+            st.success(f"Resolution note from {assignee}")
+            st.write(str(c.get("resolution_note") or "No resolution note recorded."))
 
             with st.expander(f"Audit Trail for #{cid}"):
-                events = repo.get_complaint_events(cid, actor=user)
+                try:
+                    events = repo.get_complaint_events(cid, actor=user)
+                except Exception:
+                    st.error("Falcon Mail could not load this ticket's audit timeline.")
+                    events = []
                 if events:
                     for ev in events:
                         t = str(ev.get("created_at", ""))[:19].replace("T", " ")
-                        st.markdown(f"- **{t}** [{ev.get('event_type')}] by {ev.get('actor_name')}: {ev.get('note')}")
+                        event_type = str(ev.get("event_type") or "status_update").replace("_", " ").title()
+                        st.caption(f"{t or 'Time unavailable'} · {event_type}")
+                        st.write(
+                            f"{ev.get('actor_name') or 'Staff'}: "
+                            f"{ev.get('note') or 'No note provided.'}"
+                        )
                 else:
                     st.caption("No events recorded.")

@@ -21,11 +21,11 @@ def render_dashboard_live_kpis(user, repo):
     try:
         stats = repo.get_dashboard_stats(actor=user)
         recent_complaints = repo.get_recent_complaints(actor=user, limit=50)
-    except PermissionError as pe:
-        st.error(f"Authorization Error: {pe}")
+    except PermissionError:
+        st.error("Access Denied: Administrator privileges are required to view campus analytics.")
         return
-    except Exception as e:
-        st.error(f"Cloud storage connection error: {e}")
+    except Exception:
+        st.error("Falcon Mail could not load dashboard data. Check the storage connection.")
         return
 
     col_k1, col_k2, col_k3, col_k4 = st.columns(4)
@@ -160,22 +160,13 @@ def render_dashboard_page():
         st.error("Access Denied: Administrator privileges are required to view campus analytics.")
         return
 
-    render_global_header("Operations Dashboard")
-    st.markdown(
-        """
-        <div class="hero-banner" style="padding: 1.25rem 2rem; margin-bottom: 1.5rem;">
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;">CAMPUS OPERATIONS INTELLIGENCE</div>
-            <div class="hero-title" style="font-size: 1.65rem; color: #17233C; margin-bottom: 0.2rem;">Manipal Campus Live <span>Command Center</span></div>
-            <div class="hero-supporting">Near-real-time Firestore synchronization and incident KPIs.</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_global_header("Dashboard")
+    st.caption("A concise view of ticket volume, urgency, and category distribution.")
 
     try:
         repo = get_repository()
-    except Exception as e:
-        st.error(f"Cloud storage connection error: {e}")
+    except Exception:
+        st.error("Falcon Mail could not connect to ticket storage.")
         return
 
     render_dashboard_live_kpis(user, repo)
