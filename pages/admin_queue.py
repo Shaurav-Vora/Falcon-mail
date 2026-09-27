@@ -470,40 +470,54 @@ def _render_ticket_detail(item: Dict[str, Any], user, repo) -> None:
             )
         )
     )
-    workspace_options = ["Pipeline"]
+    st.markdown("### Ticket workspace")
     if processing_finished:
-        workspace_options.extend(["Corrections", "Operations"])
-    workspace = st.segmented_control(
-        "Ticket workspace",
-        workspace_options,
-        default="Pipeline",
-        key=f"ticket_workspace_{ticket_id}",
-        label_visibility="collapsed",
-    ) or "Pipeline"
-
-    if workspace == "Pipeline":
+        pipeline_tab, corrections_tab, operations_tab = st.tabs(
+            ["Pipeline", "Corrections", "Operations"]
+        )
+        with pipeline_tab:
+            _render_pipeline(run)
+            if retryable and st.button(
+                "Retry NLP processing", key=f"retry_{ticket_id}", type="primary"
+            ):
+                try:
+                    with st.spinner("Retrying the genuine NLP pipeline…"):
+                        retry_complaint_processing(ticket_id, actor=user, repo=repo)
+                    st.success("Processing retry completed.")
+                    st.rerun(scope="fragment")
+                except (PermissionError, ValueError) as error:
+                    st.error(str(error))
+                except Exception:
+                    st.error(
+                        "Falcon Mail could not retry processing. The ticket remains available for review."
+                    )
+        with corrections_tab:
+            _render_corrections(complaint, user, repo)
+        with operations_tab:
+            _render_operations(complaint, user, repo)
+    else:
+        st.caption(
+            "Corrections and operations become available after processing finishes."
+        )
         _render_pipeline(run)
-        if retryable and st.button(
-            "Retry NLP processing", key=f"retry_{ticket_id}", type="primary"
-        ):
-            try:
-                with st.spinner("Retrying the genuine NLP pipeline…"):
-                    retry_complaint_processing(ticket_id, actor=user, repo=repo)
-                st.success("Processing retry completed.")
-                st.rerun(scope="fragment")
-            except (PermissionError, ValueError) as error:
-                st.error(str(error))
-            except Exception:
-                st.error("Falcon Mail could not retry processing. The ticket remains available for review.")
-    elif workspace == "Corrections":
-        _render_corrections(complaint, user, repo)
-    elif workspace == "Operations":
-        _render_operations(complaint, user, repo)
 
 
-@st.fragment(run_every="2s")
+@st.fragment
 def render_admin_queue_fragment(user, repo):
-    """Poll stored state and render the administrator master-detail workspace."""
+    """Render a stable administrator master-detail workspace on demand."""
+    refresh_column, status_column = st.columns([0.25, 0.75], vertical_alignment="center")
+    with refresh_column:
+        st.button(
+            "Refresh tickets",
+            icon=":material/refresh:",
+            key="admin_queue_refresh",
+            use_container_width=True,
+        )
+    with status_column:
+        st.caption(
+            "Showing the latest stored ticket and NLP evidence. Refresh after a new submission or update."
+        )
+
     try:
         items = _load_queue(user, repo)
     except PermissionError as error:
@@ -555,7 +569,7 @@ def render_admin_queue_page():
         return
 
     render_global_header("Live tickets")
-    st.caption("Review incoming tickets and inspect each genuine NLP stage as it is stored.")
+    st.caption("Review incoming tickets and inspect each genuine stored NLP stage.")
     st.markdown(
         """
         <style>

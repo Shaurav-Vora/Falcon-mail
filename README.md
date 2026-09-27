@@ -240,7 +240,7 @@ Restart Streamlit before the walkthrough so model and repository singletons begi
 2. Enter an ordinary issue such as `The Wi-Fi in the library keeps disconnecting since this morning.` Select **Review ticket**, confirm the text and location, then send it.
 3. Submit `There is smoke and fire coming from the electrical room in Block B.` Confirm the result is `Critical` and the administrator trace names the safety rule.
 4. Submit a substantially identical version of the ordinary ticket. Confirm the student sees only a privacy-safe repeated-incident notice.
-5. Sign in as an administrator. Confirm the ticket remains selected while the inbox refreshes and its stored stages advance in the documented order.
+5. Sign in as an administrator. Select **Refresh tickets** after a submission or update, confirm the selected ticket remains stable, and inspect its stored stages in the documented order.
 6. Inspect completed stages. Confirm outputs, confidence where available, duration, model/rule and concise evidence are present, while dense embeddings and matched complaint text are absent.
 7. Correct one predicted field with a reason. Confirm the ticket changes and the override audit data retains old value, new value, administrator, reason and timestamp.
 8. Assign the ticket to yourself, move it to **In progress**, then resolve it with a note. Sign back in as the student and confirm the status timeline and note update.
@@ -257,7 +257,7 @@ The interface pass used the configured application where available and isolated 
 | --- | --- |
 | Student authentication and real submissions | The configured application reached login successfully; the student submission/history screens and ordinary and safety-ticket results were exercised during project setup. |
 | Review, duplicate notice and safety elevation | The review step did not execute NLP early; duplicate messaging remained privacy-safe; smoke/fire was elevated to `Critical`. |
-| Live administrator trace | Selection survived two-second refreshes. Completed, running, pending, skipped and failed states displayed stored evidence without simulated progress. |
+| Live administrator trace | The explicit refresh action retained the selected ticket. Completed, running, pending, skipped and failed states displayed stored evidence without simulated progress or periodic full-inbox repainting. |
 | Correction, assignment and failure retry | Correction controls required a reason; assignment succeeded; failed processing remained visible and retried into the same selected ticket. |
 | Authorization | Student previews received `Access Denied` for administrator evidence pages. |
 | Corpus and Models | Prepared fixtures displayed distributions, CC BY 4.0 provenance, per-class tables and matrices. Missing/malformed artifacts produced commands rather than exceptions. Current legacy metadata displayed only recorded values and named its missing evidence. |
