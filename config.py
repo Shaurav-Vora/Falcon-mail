@@ -4,16 +4,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
-DATABASE_DIR = os.path.join(BASE_DIR, "database")
 
 # Ensure required directories exist
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
-os.makedirs(DATABASE_DIR, exist_ok=True)
-
-# Storage Backend Configuration
-# "firestore" (default cloud source of truth) | "sqlite" (isolated local dev & tests only)
-SENTINEL_STORAGE_BACKEND = os.environ.get("SENTINEL_STORAGE_BACKEND", "firestore")
 
 # Institutional Email Restrictions (configurable list of allowed student email domains)
 ALLOWED_STUDENT_EMAIL_DOMAINS = ["manipal.edu", "learner.manipal.edu", "student.manipal.edu"]
@@ -22,14 +16,10 @@ ALLOWED_STUDENT_EMAIL_DOMAINS = ["manipal.edu", "learner.manipal.edu", "student.
 FIREBASE_SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "serviceAccountKey.json")
 FIREBASE_SECRETS_PATH = os.path.join(BASE_DIR, ".streamlit", "secrets.toml")
 
-# Database Path (for isolated SQLite tests and offline development)
-DB_PATH = os.path.join(DATABASE_DIR, "sentinel.db")
-
 # Reproducibility Central Seed
 RANDOM_SEED = 42
 
 # Dataset Path
-COMPLAINTS_CSV_PATH = os.path.join(DATA_DIR, "complaints.csv")
 UNSEEN_TEST_CSV_PATH = os.path.join(DATA_DIR, "unseen_test_cases.csv")
 CORPUS_V2_PATH = os.path.join(DATA_DIR, "processed", "corpus_v2.csv")
 CORPUS_V2_REVIEW_PATH = os.path.join(DATA_DIR, "processed", "corpus_v2_review.csv")

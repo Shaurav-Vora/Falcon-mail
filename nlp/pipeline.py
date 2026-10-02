@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import DEFAULT_DUPLICATE_THRESHOLD
+from config import CATEGORY_DEPARTMENT_MAP, DEFAULT_DUPLICATE_THRESHOLD
 from database.auth_context import AuthenticatedUser
 from database.base_repository import BaseComplaintRepository
 from database.database import get_repository
@@ -18,7 +18,6 @@ from nlp.preprocessing import preprocess_text
 from nlp.summarization import generate_summary
 from nlp.tracing import NullPipelineTracer, RepositoryPipelineTracer
 from nlp.urgency import apply_safety_rules, predict_ml_urgency
-from utils.helpers import get_recommended_department
 
 
 MODEL_VERSIONS = {
@@ -305,7 +304,7 @@ def process_complaint(
 
         current_stage = "routing"
         tracer.start_stage(current_stage)
-        rec_dept = get_recommended_department(category)
+        rec_dept = CATEGORY_DEPARTMENT_MAP.get(category, "General Services / Helpdesk")
         tracer.complete_stage(
             current_stage,
             result=rec_dept,

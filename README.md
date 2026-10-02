@@ -1,279 +1,141 @@
 # Falcon Mail
 
-Falcon Mail is a student-friendly online ticketing system for campus complaints. A student submits one ticket through the web application; the local NLP pipeline categorizes it, estimates urgency, applies safety rules, extracts useful details, checks for repeated incidents, summarizes it, and routes it to the responsible department.
+Falcon Mail is a campus ticketing project for students. A student submits a problem through the web app, and an NLP pipeline automatically categorizes it, estimates its urgency, extracts its location, checks for similar incidents, summarizes it, and routes it to the right department.
 
-Administrators can inspect the genuine stored pipeline trace. Progress is not simulated.
+Administrators can see the saved result of every pipeline stage. The trace is real data from the processing run, not an animation.
 
-## What the pipeline does
+## NLP pipeline
 
-Every submitted ticket moves through these stages in order:
+1. **Preprocess** the complaint with spaCy.
+2. **Classify the category** with a TF-IDF + calibrated LinearSVC model.
+3. **Classify urgency** with a second TF-IDF + calibrated LinearSVC model.
+4. **Apply safety rules** so words such as `fire` and `smoke` can elevate a ticket to Critical.
+5. **Extract details** using spaCy and campus-specific location patterns.
+6. **Detect duplicates** using `all-MiniLM-L6-v2` embeddings and ticket context.
+7. **Create a summary** using an operational template.
+8. **Route and save** the ticket in Firebase Cloud Firestore.
 
-| Stage | Purpose |
-| --- | --- |
-| `received` | Validate the request and retain the initial ticket. |
-| `preprocessing` | Normalize and lemmatize text with spaCy. |
-| `category` | Predict one of the Falcon Mail complaint categories. |
-| `urgency` | Produce the statistical ML urgency prediction. |
-| `safety_rules` | Elevate fire, smoke, injury, and other safety incidents deterministically. |
-| `extraction` | Resolve location, room, building, dates, times, and supported entities. |
-| `duplicates` | Create a MiniLM embedding and compare eligible active tickets. |
-| `summary` | Generate a short operational summary. |
-| `routing` | Map the category to the responsible department. |
-| `persistence` | Save the final analysis and ticket state. |
+The application supports one source: tickets raised directly in the web portal.
 
-A stage can be `pending`, `running`, `completed`, `failed`, or `skipped`. Stored stage records include start and completion timestamps, duration, concise result, confidence when available, model or rule source, and administrator-only evidence.
+## Corpus
 
-## Current models and corpus
+The main reviewed corpus is [`data/processed/corpus_v2.csv`](data/processed/corpus_v2.csv). It contains 917 approved complaints across 441 incident groups. Related versions of the same incident stay in the same train, validation, or test split to reduce data leakage.
 
-The pipeline runs locally; it does not send complaint text to a hosted language-model API.
+The data folders are:
 
-| Component | Implementation |
-| --- | --- |
-| Category | Word and character TF-IDF `FeatureUnion` with calibrated LinearSVC |
-| Urgency | TF-IDF with calibrated LinearSVC |
-| Safety elevation | Deterministic keyword rules |
-| Extraction | `en_core_web_sm` plus campus regex patterns |
-| Duplicate detection | `all-MiniLM-L6-v2` embeddings plus category/location signals |
-| Summary | Deterministic operational template |
+- `data/raw/falcon_mail_v1/` — the original project dataset kept as an immutable source.
+- `data/raw/university_students_complaints/` — imported public student-complaint data.
+- `data/processed/corpus_v2.csv` — the clean training corpus.
+- `data/processed/corpus_v2_review.csv` — row-level review record.
+- `data/metadata/corpus_v2_summary.json` — sources, counts, review decisions, and limitations.
+- `data/unseen_test_cases.csv` — 26 manually written generalization examples.
+- `data/duplicate_eval_pairs.csv` — labeled pairs for the duplicate threshold.
 
-The classifiers now use [`data/processed/corpus_v2.csv`](data/processed/corpus_v2.csv): 917 approved records across 441 incident/template groups. Candidate models train on 640 records, are selected on 142 validation records, and are measured on the untouched 135-record test split. Whole groups stay in one split. Duplicate evaluation uses 60 labeled pairs in [`data/duplicate_eval_pairs.csv`](data/duplicate_eval_pairs.csv); [`data/unseen_test_cases.csv`](data/unseen_test_cases.csv) contains 26 manually written generalization examples.
+The Corpus page in the admin account provides a visual summary. The dataset is intentionally modest and imbalanced, so it is suitable for a student project rather than a production deployment.
 
-Training provenance, dataset hashes, versions, split sizes, and recorded evaluation metrics are in [`models/training_metadata.json`](models/training_metadata.json). The administrator Models page reads this file directly and says when an expected measurement is absent.
+Current untouched test-split results:
 
-### Recorded model results
+| Model | Accuracy | Macro F1 |
+| --- | ---: | ---: |
+| Category | 60.74% | 0.5073 |
+| Urgency | 47.41% | 0.3621 |
 
-These values were measured after explicit Corpus v2 retraining. They describe the stored test split, not guaranteed production performance.
-
-| Model | Accuracy | Macro F1 | Weighted F1 | Safety-class recall |
-| --- | ---: | ---: | ---: | --- |
-| Category `category-corpus-v2-20261002` | 60.74% | 50.73% | 57.17% | Safety recall 100.00% |
-| Urgency `urgency-corpus-v2-20261002` | 47.41% | 36.21% | 44.24% | Critical 20.00%; High 83.02% |
-
-The configured MiniLM duplicate threshold is `0.60`. The project configuration records F1 `0.9123`, zero false positives, and recall `83.9%` on the 60 labeled duplicate pairs. Those figures describe that small curated set only.
-
-### Important limitations
-
-- Corpus v2 combines 585 synthetic examples with 332 externally sourced, publisher-labelled records. The Models page reports those sources separately.
-- On the test split, category accuracy is 78.57% for external records and 48.10% for synthetic records. Urgency accuracy is 76.79% and 26.58% respectively, showing that source-specific language and labels still differ substantially.
-- Category recall is 0% for Cleanliness and Other on this small test split. ML-only Critical urgency recall is 20%; deterministic emergency rules remain necessary.
-- Category and urgency scores are modest. Predictions should assist routing, not replace administrator review.
-- Deterministic safety rules can elevate known emergency phrases after ML urgency prediction, but keyword coverage is not a guarantee that every emergency will be detected.
-- MiniLM similarity is evidence for possible duplication, not proof that two reports describe the same incident.
-
-### Corpus v2 status
-
-Corpus v2 is now prepared. It contains 917 records: 585 synthetic Falcon Mail examples and 332 records from the publisher-described `alaminxpro/university-students-complaints` dataset under CC BY 4.0. The external source has broad labels, so preparation preserves those labels and records a separate Falcon Mail review decision rather than treating the publisher taxonomy as interchangeable ground truth.
-
-The main files are:
-
-- `data/processed/corpus_v2.csv` — approved normalized records used by both classifier trainers.
-- `data/processed/corpus_v2_review.csv` — original labels, suggestions, review outcomes and notes.
-- `data/metadata/corpus_v2_summary.json` — source, category, urgency, split and audit counts.
-- `data/metadata/DATA_SOURCES.md` — provenance, attribution, limitations and source locations.
-- `data/metadata/label_mapping.json` — the category and urgency adjudication policy.
-- `data/raw/` — immutable source snapshots.
-
-To rebuild the artifacts deterministically:
-
-```powershell
-python training/fetch_external_corpus.py
-python training/prepare_corpus_v2.py --build-review-queue
-python training/prepare_corpus_v2.py --finalize
-```
-
-Finalization applies the documented review rulebook, excludes any unmapped label, and assigns whole incident/template groups to a 70/15/15 train/validation/test split with seed 42. Gender, semester, student department, and timestamp remain in the immutable source only and are not model features. The publisher's `Urgent` label becomes Falcon Mail `High`; `Critical` remains reserved for explicit safety emergencies.
-
-## Processing-run storage
-
-Firestore is the shared production source of truth. Each submission creates:
-
-```text
-complaints/{ticket_id}
-processing_runs/{run_id}
-```
-
-The processing-run document has this shape:
-
-```text
-run_id
-ticket_id
-reporter_uid
-reporter_name
-title
-submitted_location
-overall_status        processing | completed | failed | needs_review
-current_stage
-stages                map keyed by the ten stage names
-retry_count
-attempt_history
-safe_error
-diagnostic_code
-created_at
-updated_at
-completed_at
-```
-
-Each value in `stages` can contain:
-
-```text
-status
-started_at
-completed_at
-duration_ms
-result
-confidence
-model_or_rule
-evidence
-safe_error
-diagnostic_code
-```
-
-Dense MiniLM vectors, authentication data, stack traces, raw matched-ticket text, and unnecessary copies of the submitted complaint are deliberately excluded from processing traces. The dense vector remains only on the complaint record where duplicate detection needs it.
-
-SQLite implements the same repository contract for explicit offline development. It stores runs in the `processing_runs` table and serializes stages and attempt history as JSON.
-
-## Access boundaries
-
-- Administrators can list complete processing runs, inspect stage evidence and diagnostics, retry failed processing, and correct category, urgency, location, or department with an immutable audit entry.
-- Students can see only their own ticket and sanitized progress returned by the Streamlit server.
-- Student trace responses remove `evidence`, `safe_error`, and `diagnostic_code`.
-- Duplicate responses shown to students do not contain another ticket's ID or complaint text.
-- Direct client writes to `processing_runs` are denied by [`firestore.rules`](firestore.rules). The Firebase Admin SDK performs authorized server-side writes.
-
-Every privileged repository method receives an `AuthenticatedUser` and checks ownership or administrator status server-side.
-
-## Failure retention and retry
-
-Falcon Mail creates the minimal complaint record before model execution. If a model, dependency, trace stage, or eligible database operation fails afterward:
-
-1. The original ticket ID and description are retained.
-2. The ticket becomes `Needs Review`.
-3. Category and urgency remain empty instead of receiving invented fallback predictions.
-4. The student receives a neutral confirmation that an administrator will review the ticket.
-5. Administrators see the failed stage and a stable diagnostic code.
-
-An administrator retry reuses the same ticket ID and processing-run ID. The previous stages, status, diagnostics, and timestamps are appended to `attempt_history`; `retry_count` is incremented; and the real pipeline starts again. A successful retry returns the existing ticket to `Open` with completed analysis.
+On the 26 handwritten examples, category accuracy is 69.2% and urgency accuracy is 50.0%. Critical safety cases are also protected by explicit safety rules.
 
 ## Project structure
 
 ```text
-data/                       labeled corpus and evaluation records
-database/
-  base_repository.py        shared persistence contract
-  firestore_repository.py   production Firestore implementation
-  sqlite_repository.py      explicit offline implementation
-models/                     trained classifiers and training metadata
-nlp/
-  pipeline.py               orchestration, retention, and retry
-  tracing.py                real stage timing and privacy filtering
-  classification.py         category inference
-  urgency.py                ML urgency and separate safety elevation
-  entity_extraction.py      entity and campus-location extraction
-  duplicate_detection.py    MiniLM embeddings and duplicate scoring
-  summarization.py          operational summary generation
-pages/                      Streamlit student and administrator screens
-app.py                      application entry point
-firestore.rules             defense-in-depth client rules
+Falcon-mail/
+├── app.py                 # Streamlit entry point
+├── config.py              # paths, categories, rules, and routing
+├── assets/                # logo and app styling
+├── data/                  # raw, reviewed, and evaluation data
+├── database/              # Firebase repository and data contracts
+├── models/                # trained category and urgency models
+├── nlp/                   # the NLP pipeline and its stages
+├── pages/                 # student and administrator screens
+├── scripts/               # administrator setup helper
+├── training/              # corpus preparation, training, and evaluation
+└── utils/                 # authentication and shared UI code
 ```
 
-## Setup
+## Setup on Windows
 
-Use a short local path such as `C:\dev\Falcon-mail` on Windows. Python 3.12 is the conservative choice for the NLP dependency stack.
+Python 3.14 is the currently tested environment.
 
 ```powershell
-uv python install 3.12
-uv venv --python 3.12 .venv
+cd C:\dev\Falcon-mail
+uv python install 3.14
+uv venv --python 3.14 .venv
 .venv\Scripts\Activate.ps1
-uv pip install --link-mode copy -r requirements.txt
-uv pip install --link-mode copy "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"
+$env:UV_LINK_MODE = "copy"
+uv pip install --python .venv\Scripts\python.exe -r requirements.txt
+uv run --python .venv\Scripts\python.exe python -m spacy download en_core_web_sm
 ```
 
-`--link-mode copy` avoids Windows cloud-folder and hardlink error 396.
+`UV_LINK_MODE=copy` avoids Windows/OneDrive hard-link error 396.
 
-### Firebase configuration
+## Firebase setup
 
-1. Put the Firebase Admin service-account JSON at `serviceAccountKey.json` in the project root.
-2. Create `.streamlit/secrets.toml` from `.streamlit/secrets.toml.example` and enter the Firebase web-app values shown in the Firebase console.
-3. Keep both files private; they are excluded by `.gitignore`.
-4. Register the intended administrator once through the normal registration screen.
-5. Provision that existing account from a trusted server terminal:
+Falcon Mail uses Firebase Authentication and Cloud Firestore.
+
+1. Register a Firebase web app and copy its configuration values.
+2. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and fill in the web-app values.
+3. In Firebase Console, open **Project settings → Service accounts → Firebase Admin SDK** and generate a private key.
+4. Save the downloaded file as `serviceAccountKey.json` in the project root.
+5. Enable Email/Password authentication and create a Cloud Firestore database.
+
+The Firebase web configuration is safe to use in a client, but never commit `serviceAccountKey.json` or `.streamlit/secrets.toml`.
+
+To give an existing Firebase user administrator access:
 
 ```powershell
-python scripts/set_admin_role.py --email admin@manipal.edu
+python scripts/set_admin_role.py student@example.com
 ```
 
-You can alternatively target an exact Firebase UID:
+Sign out and back in after changing the role.
+
+## Run the application
 
 ```powershell
-python scripts/set_admin_role.py --uid FIREBASE_USER_UID
-```
-
-6. Sign out and sign in again so Firebase issues a token containing the new custom claim.
-
-Never place passwords or private keys in documentation or source control.
-
-### Start Falcon Mail
-
-Production Firestore mode is the default:
-
-```powershell
+.venv\Scripts\Activate.ps1
 streamlit run app.py
 ```
 
-Explicit local SQLite mode:
+Open the local address printed by Streamlit, normally `http://localhost:8501`.
+
+## Manual testing
+
+Create a student account and try these tickets:
+
+| Purpose | Example complaint | Expected result |
+| --- | --- | --- |
+| IT | `The internet keeps dropping every few minutes in the engineering lab.` | IT, routed to IT Support & Services |
+| Safety | `There is smoke and fire coming from the electrical room in Block B.` | Safety, Critical |
+| Duplicate | Submit a close variation of the fire ticket | Related active incident warning |
+| Extraction | `The projector in Room 206, Block A is flickering.` | Room and block extracted |
+
+Then sign in as an administrator and check:
+
+- **Live tickets** — select a ticket and inspect each saved NLP stage.
+- **Dashboard** — view category, urgency, status, and department totals.
+- **Corpus** — inspect dataset sources and class balance.
+- **Models** — view model methods and measured results.
+- **Resolved** — review completed cases and correction history.
+
+## Retraining
+
+The committed model files are ready to use. To rebuild them from the reviewed corpus:
 
 ```powershell
-$env:SENTINEL_STORAGE_BACKEND = "sqlite"
-streamlit run app.py
-```
-
-`SENTINEL_STORAGE_BACKEND` and the historical `sentinel.db` filename remain internal compatibility names so existing environments continue to work. The product name, interface, and documentation are **Falcon Mail**.
-
-### Rebuild the current models
-
-Model training is explicit; starting the web application never retrains models automatically.
-
-```powershell
+python training/prepare_corpus_v2.py
 python training/train_category.py
 python training/train_urgency.py
 python training/evaluate.py
 ```
 
-The trainers consume the stored `train`, `validation`, and `test` columns in `data/processed/corpus_v2.csv`; they do not create a new random split. Commit the two `.pkl` files and `models/training_metadata.json` together so the artifacts and their evidence cannot drift apart.
+Review `data/processed/corpus_v2_review.csv` before retraining if the source data changes.
 
-## Manual verification walkthrough
+## Important limitation
 
-Restart Streamlit before the walkthrough so model and repository singletons begin cleanly. Use non-production test accounts and tickets. Do not intentionally break a shared production model file; reproduce the failure-retention step only in an isolated local copy.
-
-1. Register and sign in as a student. Confirm the account cannot choose an administrator role.
-2. Enter an ordinary issue such as `The Wi-Fi in the library keeps disconnecting since this morning.` Select **Review ticket**, confirm the text and location, then send it.
-3. Submit `There is smoke and fire coming from the electrical room in Block B.` Confirm the result is `Critical` and the administrator trace names the safety rule.
-4. Submit a substantially identical version of the ordinary ticket. Confirm the student sees only a privacy-safe repeated-incident notice.
-5. Sign in as an administrator. Select **Refresh tickets** after a submission or update, confirm the selected ticket remains stable, and inspect its stored stages in the documented order.
-6. Inspect completed stages. Confirm outputs, confidence where available, duration, model/rule and concise evidence are present, while dense embeddings and matched complaint text are absent.
-7. Correct one predicted field with a reason. Confirm the ticket changes and the override audit data retains old value, new value, administrator, reason and timestamp.
-8. Assign the ticket to yourself, move it to **In progress**, then resolve it with a note. Sign back in as the student and confirm the status timeline and note update.
-9. In an isolated local copy, make a model unavailable and submit a ticket. Confirm the ticket remains as **Needs review**, then retry it and confirm the same ticket/run IDs and preserved attempt history.
-10. While signed in as a student, attempt to open administrator Corpus, Models and processing-run data. Confirm access is denied and detailed evidence is not returned.
-11. As an administrator, inspect Corpus and Models. Confirm source, license and citation information when Corpus v2 artifacts exist; otherwise confirm the exact preparation command appears. Compare displayed metrics with `models/training_metadata.json`.
-12. Resize the browser to approximately 430 pixels wide. Confirm the student form remains usable and the administrator inbox/detail layout stacks without hiding actions.
-
-### Verification record for this implementation
-
-The interface pass used the configured application where available and isolated native Streamlit previews for states that should not be induced in shared Firebase data.
-
-| Checklist area | Observed result |
-| --- | --- |
-| Student authentication and real submissions | The configured application reached login successfully; the student submission/history screens and ordinary and safety-ticket results were exercised during project setup. |
-| Review, duplicate notice and safety elevation | The review step did not execute NLP early; duplicate messaging remained privacy-safe; smoke/fire was elevated to `Critical`. |
-| Live administrator trace | The explicit refresh action retained the selected ticket. Completed, running, pending, skipped and failed states displayed stored evidence without simulated progress or periodic full-inbox repainting. |
-| Correction, assignment and failure retry | Correction controls required a reason; assignment succeeded; failed processing remained visible and retried into the same selected ticket. |
-| Authorization | Student previews received `Access Denied` for administrator evidence pages. |
-| Corpus and Models | Prepared fixtures displayed distributions, CC BY 4.0 provenance, per-class tables and matrices. Missing/malformed artifacts produced commands rather than exceptions. Current legacy metadata displayed only recorded values and named its missing evidence. |
-| Responsive layout | Student and administrator flows were reviewed at desktop width and approximately 430 pixels. |
-
-The final resolution-to-student timeline should be repeated against the actual Firebase project because notifications and shared persistence depend on that external configuration. Falcon Mail intentionally relies on this manual walkthrough rather than adding automated test infrastructure.
-
-## Authors
-
-Falcon Mail project team — Manipal Academy of Higher Education, Dubai Campus.
+Falcon Mail is an academic prototype. Predictions support administrators; they should not replace human review. Safety keywords intentionally take priority over the statistical urgency model, and uncertain tickets can be corrected by an administrator so future corpus versions can incorporate those decisions.

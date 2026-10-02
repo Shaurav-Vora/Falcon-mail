@@ -1,5 +1,5 @@
 """
-SENTINEL - Administrator Role Provisioning Utility
+Falcon Mail - Administrator Role Provisioning Utility
 Grants administrator privileges to a Firebase user by setting the custom user claim:
     {"admin": True}
 and updating their Firestore profile in users/{uid}.
@@ -27,7 +27,7 @@ from firebase_admin import credentials, firestore
 import config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("sentinel.set_admin")
+logger = logging.getLogger("falcon_mail.set_admin")
 
 
 def init_firebase_admin():

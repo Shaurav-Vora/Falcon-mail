@@ -1,25 +1,15 @@
-"""
-Falcon Mail - Main Application Entrypoint & Authentication Router
-Manipal Academy of Higher Education Dubai Campus
-
-SECURITY ARCHITECTURE:
-1. Unauthenticated sessions are strictly gated at the Login/Registration Portal.
-2. Authenticated sessions route into role-specific interfaces (Student vs Administrator).
-3. Student navigation has zero access to campus-wide analytics or triage queues.
-"""
+"""Falcon Mail Streamlit application."""
 
 import os
 import sys
 import streamlit as st
 
-# Ensure project root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from pages.login import render_login_page
 from utils.auth import get_current_user
 from utils.ui import inject_custom_css, render_navigation
 
-# Lazy import page views
 from pages.submit_complaint import render_submit_complaint_page
 from pages.student_complaints import render_student_complaints_page
 from pages.notifications import render_notifications_page
@@ -40,16 +30,13 @@ st.set_page_config(
 def main():
     inject_custom_css()
 
-    # 1. Authentication Check
     current_user = get_current_user()
     if not current_user:
         render_login_page()
         return
 
-    # 2. Render role-appropriate navigation.
     active_page = render_navigation()
 
-    # 3. Secure Role-Based Router
     if current_user.is_student:
         if active_page == "Raise a ticket":
             render_submit_complaint_page()

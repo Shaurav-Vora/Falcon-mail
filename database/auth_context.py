@@ -1,5 +1,5 @@
 """
-SENTINEL - Authentication & Authorization Context
+Falcon Mail - Authentication & Authorization Context
 Defines the AuthenticatedUser dataclass representing an authenticated session actor.
 All privileged repository and service functions receive an AuthenticatedUser instance
 to enforce server-side authorization and data isolation.
