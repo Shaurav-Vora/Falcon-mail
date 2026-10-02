@@ -31,6 +31,11 @@ RANDOM_SEED = 42
 # Dataset Path
 COMPLAINTS_CSV_PATH = os.path.join(DATA_DIR, "complaints.csv")
 UNSEEN_TEST_CSV_PATH = os.path.join(DATA_DIR, "unseen_test_cases.csv")
+CORPUS_V2_PATH = os.path.join(DATA_DIR, "processed", "corpus_v2.csv")
+CORPUS_V2_REVIEW_PATH = os.path.join(DATA_DIR, "processed", "corpus_v2_review.csv")
+CORPUS_V2_SUMMARY_PATH = os.path.join(DATA_DIR, "metadata", "corpus_v2_summary.json")
+FALCON_RAW_DIR = os.path.join(DATA_DIR, "raw", "falcon_mail_v1")
+EXTERNAL_RAW_DIR = os.path.join(DATA_DIR, "raw", "university_students_complaints")
 
 # Trained Models Paths (Models trained by us on our labeled complaint dataset)
 CATEGORY_MODEL_PATH = os.path.join(MODELS_DIR, "category_classifier.pkl")

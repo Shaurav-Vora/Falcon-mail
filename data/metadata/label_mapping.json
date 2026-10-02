@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "category_rules": {
+    "Academic": "Academic",
+    "Administrative": "Administration",
+    "Finance": "Administration",
+    "Technical": {
+      "transport_or_parking": "Transport",
+      "otherwise": "IT"
+    },
+    "Infrastructure": {
+      "precedence": [
+        "Transport",
+        "IT",
+        "Cleanliness",
+        "Electrical",
+        "Plumbing",
+        "Facilities",
+        "Maintenance"
+      ],
+      "notes": "Uses primary department and explicit complaint-language evidence. Publisher aspects are audit context only because they often include unrelated secondary tags. Remaining physical infrastructure maps to Maintenance."
+    }
+  },
+  "urgency_rules": {
+    "Low": "Low",
+    "Medium": "Medium",
+    "High": "High",
+    "Urgent": "High",
+    "critical_override": "Only Falcon Mail safety-emergency keywords elevate a record to Critical."
+  },
+  "excluded_features": [
+    "Gender",
+    "Semester",
+    "Student_Dept",
+    "Timestamp"
+  ],
+  "review_policy": "Every decision is retained in corpus_v2_review.csv with original labels and a review note. Unmapped labels are excluded rather than coerced."
+}

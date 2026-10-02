@@ -1,0 +1,75 @@
+{
+  "corpus_version": "2.0",
+  "generated_at": "2026-10-02T11:28:47.118003+00:00",
+  "sha256": "28f5019cb7027f2146e0f37ac3f3c117512f5add80894e5642c880a26b4ca9b5",
+  "total_rows": 917,
+  "approved_count": 917,
+  "excluded_count": 0,
+  "pending_count": 0,
+  "group_count": 441,
+  "source_counts": {
+    "falcon_mail_v1": 585,
+    "university_students_complaints": 332
+  },
+  "source_type_counts": {
+    "external": 332,
+    "synthetic": 585
+  },
+  "category_distribution": {
+    "Academic": 108,
+    "Administration": 104,
+    "Cleanliness": 51,
+    "Electrical": 97,
+    "Facilities": 69,
+    "IT": 128,
+    "Maintenance": 95,
+    "Other": 40,
+    "Plumbing": 63,
+    "Safety": 87,
+    "Transport": 75
+  },
+  "urgency_distribution": {
+    "Critical": 103,
+    "High": 346,
+    "Low": 208,
+    "Medium": 260
+  },
+  "split_counts": {
+    "test": 135,
+    "train": 640,
+    "validation": 142
+  },
+  "review_counts": {
+    "approved": 917
+  },
+  "sources": [
+    {
+      "name": "Falcon Mail v1",
+      "count": 585,
+      "license": "Project-owned synthetic data",
+      "review_status": "approved",
+      "citation": "data/raw/falcon_mail_v1/complaints.csv"
+    },
+    {
+      "name": "University Students Complaints Dataset",
+      "count": 332,
+      "license": "CC BY 4.0",
+      "review_status": "approved through documented rulebook",
+      "citation": "https://huggingface.co/datasets/alaminxpro/university-students-complaints",
+      "revision": "3a21d7a28cca2dad1ced731246772810798215f7"
+    }
+  ],
+  "audit": {
+    "external_original_rows": 332,
+    "external_unique_groups": 186,
+    "external_exact_duplicate_texts": 5,
+    "publisher_groups_with_mixed_severity": 1,
+    "personal_fields_excluded_from_features": [
+      "Gender",
+      "Semester",
+      "Student_Dept",
+      "Timestamp"
+    ],
+    "split_policy": "70/15/15 deterministic shuffle of incident groups with seed 42"
+  }
+}

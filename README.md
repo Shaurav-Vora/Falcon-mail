@@ -61,18 +61,26 @@ The configured MiniLM duplicate threshold is `0.60`. The project configuration r
 
 ### Corpus v2 status
 
-The approved Corpus v2 design adds the reviewed `alaminxpro/university-students-complaints` dataset (332 publisher-described records, CC BY 4.0) while preserving source labels, attribution, review decisions, group-safe splits, and separate source metrics. Its preparation scripts and generated `data/processed/corpus_v2.csv` and `data/metadata/corpus_v2_summary.json` are not present in this branch yet. Until they are generated, the administrator Corpus page deliberately shows a preparation notice.
+Corpus v2 is now prepared. It contains 917 records: 585 synthetic Falcon Mail examples and 332 records from the publisher-described `alaminxpro/university-students-complaints` dataset under CC BY 4.0. The external source has broad labels, so preparation preserves those labels and records a separate Falcon Mail review decision rather than treating the publisher taxonomy as interchangeable ground truth.
 
-After the separate Corpus v2 implementation lands, its workflow is:
+The main files are:
+
+- `data/processed/corpus_v2.csv` — approved normalized records used by the next retraining task.
+- `data/processed/corpus_v2_review.csv` — original labels, suggestions, review outcomes and notes.
+- `data/metadata/corpus_v2_summary.json` — source, category, urgency, split and audit counts.
+- `data/metadata/DATA_SOURCES.md` — provenance, attribution, limitations and source locations.
+- `data/metadata/label_mapping.json` — the category and urgency adjudication policy.
+- `data/raw/` — immutable source snapshots.
+
+To rebuild the artifacts deterministically:
 
 ```powershell
 python training/fetch_external_corpus.py
 python training/prepare_corpus_v2.py --build-review-queue
-# Review every pending external row; approve or exclude it explicitly.
 python training/prepare_corpus_v2.py --finalize
 ```
 
-Do not silently map uncertain external labels. Gender, semester, and student department must remain excluded from model features.
+Finalization applies the documented review rulebook, excludes any unmapped label, and assigns whole incident/template groups to a 70/15/15 train/validation/test split with seed 42. Gender, semester, student department, and timestamp remain in the immutable source only and are not model features. The publisher's `Urgent` label becomes Falcon Mail `High`; `Critical` remains reserved for explicit safety emergencies.
 
 ## Processing-run storage
 
