@@ -99,13 +99,53 @@ def extract_information(text: str, user_provided_location: str | None = None) ->
         
     date_entity = ", ".join(spacy_entities.get("DATE", [])) if "DATE" in spacy_entities else None
     time_entity = ", ".join(spacy_entities.get("TIME", [])) if "TIME" in spacy_entities else None
+
+    # spaCy occasionally combines a clock time and a relative date into one
+    # entity (for example, "10:30 AM today" as TIME). Keep the two fields
+    # useful to administrators by extracting those explicit forms separately.
+    explicit_time = re.search(
+        r'\b(?:[01]?\d|2[0-3]):[0-5]\d\s*(?:a\.?m\.?|p\.?m\.?)?\b'
+        r'|\b(?:1[0-2]|0?[1-9])\s*(?:a\.?m\.?|p\.?m\.?)\b'
+        r'|\b(?:noon|midnight)\b',
+        text,
+        re.IGNORECASE,
+    )
+    explicit_date = re.search(
+        r'\b(?:today|tomorrow|yesterday|tonight)'
+        r'(?:\s+(?:morning|afternoon|evening|night))?\b'
+        r'|\b(?:this|next|last)\s+'
+        r'(?:morning|afternoon|evening|night|week|month|'
+        r'monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b',
+        text,
+        re.IGNORECASE,
+    )
+    if explicit_time:
+        time_entity = explicit_time.group(0)
+    if explicit_date:
+        date_entity = explicit_date.group(0)
     person_entity = ", ".join(spacy_entities.get("PERSON", [])) if "PERSON" in spacy_entities else None
     org_entity = ", ".join(spacy_entities.get("ORG", [])) if "ORG" in spacy_entities else None
     
     # 2. Custom Regex & Matcher rules for Campus Entities
-    room_pattern = r'\b(?:Room|Lab|Computer Lab|Engineering Lab|Physics Lab|Chemistry Lab|Lecture Hall|Hall|Seminar Hall|Room\s*#?)\s*(?:[A-Z0-9\-]+|\d+)\b'
-    building_pattern = r'\b(?:Block|Building)\s*[A-Z0-9\-]+\b'
+    # A room/building identifier must contain a number or be one standalone
+    # letter. This prevents ordinary phrases such as "room in", "room is",
+    # and "Building near" from being stored as campus identifiers.
+    identifier_pattern = r'(?:[A-Za-z](?:-?\d{1,4})?|\d{1,4}(?:-?[A-Za-z])?)'
+    room_pattern = (
+        r'\b(?:Computer Lab|Engineering Lab|Physics Lab|Chemistry Lab|'
+        r'Lecture Hall|Seminar Hall|Room|Lab|Hall)\b\s*'
+        r'(?:(?:number\b|no\.)\s*)?#?\s*'
+        + identifier_pattern
+        + r'\b'
+    )
+    building_pattern = (
+        r'\b(?:Block|Building)\b\s*'
+        r'(?:(?:number\b|no\.)\s*)?#?\s*'
+        + identifier_pattern
+        + r'\b'
+    )
     location_keywords = [
+        "electrical room", "server room", "control room", "common room",
         "cafeteria", "food court", "library", "auditorium", "gymnasium", 
         "sports complex", "canteen", "parking area", "parking lot", 
         "hostel", "dormitory", "main gate", "courtyard", "restroom", "washroom"
@@ -117,20 +157,25 @@ def extract_information(text: str, user_provided_location: str | None = None) ->
     room = room_match.group(0) if room_match else None
     building = building_match.group(0) if building_match else None
     
-    # General campus location search
+    # General campus location search. Prefer the longest named area so that,
+    # for example, "electrical room" wins over the generic "room" concept.
+    text_lower = text.lower()
+    named_location = next(
+        (loc_kw.title() for loc_kw in location_keywords if re.search(rf'\b{re.escape(loc_kw)}\b', text_lower)),
+        None,
+    )
+
     extracted_loc = None
     if room and building:
         extracted_loc = f"{room}, {building}"
     elif room:
         extracted_loc = room
+    elif named_location and building:
+        extracted_loc = f"{named_location}, {building}"
     elif building:
         extracted_loc = building
-    else:
-        text_lower = text.lower()
-        for loc_kw in location_keywords:
-            if loc_kw in text_lower:
-                extracted_loc = loc_kw.title()
-                break
+    elif named_location:
+        extracted_loc = named_location
 
     # Prioritize user-provided location when explicitly given (Issue 13 / Correction 16)
     if user_provided_location and user_provided_location.strip():
