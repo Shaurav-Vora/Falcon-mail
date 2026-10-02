@@ -29,32 +29,33 @@ The pipeline runs locally; it does not send complaint text to a hosted language-
 
 | Component | Implementation |
 | --- | --- |
-| Category | Word and character TF-IDF `FeatureUnion` with Logistic Regression |
-| Urgency | TF-IDF with Logistic Regression |
+| Category | Word and character TF-IDF `FeatureUnion` with calibrated LinearSVC |
+| Urgency | TF-IDF with calibrated LinearSVC |
 | Safety elevation | Deterministic keyword rules |
 | Extraction | `en_core_web_sm` plus campus regex patterns |
 | Duplicate detection | `all-MiniLM-L6-v2` embeddings plus category/location signals |
 | Summary | Deterministic operational template |
 
-The currently published training corpus is [`data/complaints.csv`](data/complaints.csv): 585 synthetic, labeled campus complaints arranged into 255 template groups. The model metadata records a group-aware 467/118 train/test split and reports no template-group leakage. Duplicate evaluation uses 60 labeled pairs in [`data/duplicate_eval_pairs.csv`](data/duplicate_eval_pairs.csv); [`data/unseen_test_cases.csv`](data/unseen_test_cases.csv) contains 26 manually written holdout examples.
+The classifiers now use [`data/processed/corpus_v2.csv`](data/processed/corpus_v2.csv): 917 approved records across 441 incident/template groups. Candidate models train on 640 records, are selected on 142 validation records, and are measured on the untouched 135-record test split. Whole groups stay in one split. Duplicate evaluation uses 60 labeled pairs in [`data/duplicate_eval_pairs.csv`](data/duplicate_eval_pairs.csv); [`data/unseen_test_cases.csv`](data/unseen_test_cases.csv) contains 26 manually written generalization examples.
 
 Training provenance, dataset hashes, versions, split sizes, and recorded evaluation metrics are in [`models/training_metadata.json`](models/training_metadata.json). The administrator Models page reads this file directly and says when an expected measurement is absent.
 
 ### Recorded model results
 
-These are the values currently stored in `models/training_metadata.json`; they were not re-measured during the interface work.
+These values were measured after explicit Corpus v2 retraining. They describe the stored test split, not guaranteed production performance.
 
 | Model | Accuracy | Macro F1 | Weighted F1 | Safety-class recall |
 | --- | ---: | ---: | ---: | --- |
-| Category `category-2026-09-12-v1` | 31.36% | 32.54% | 31.63% | Not applicable |
-| Urgency `urgency-2026-09-12-v1` | 41.53% | 36.79% | 41.15% | Critical 21.43%; High 30.00% |
+| Category `category-corpus-v2-20261002` | 60.74% | 50.73% | 57.17% | Safety recall 100.00% |
+| Urgency `urgency-corpus-v2-20261002` | 47.41% | 36.21% | 44.24% | Critical 20.00%; High 83.02% |
 
 The configured MiniLM duplicate threshold is `0.60`. The project configuration records F1 `0.9123`, zero false positives, and recall `83.9%` on the 60 labeled duplicate pairs. Those figures describe that small curated set only.
 
 ### Important limitations
 
-- The current 585-record corpus is synthetic. Performance on naturally written student tickets has not been measured separately.
-- Current metadata does not contain per-class category/urgency tables, confusion matrices, or separate synthetic/external scores. The Models page labels these gaps instead of estimating them.
+- Corpus v2 combines 585 synthetic examples with 332 externally sourced, publisher-labelled records. The Models page reports those sources separately.
+- On the test split, category accuracy is 78.57% for external records and 48.10% for synthetic records. Urgency accuracy is 76.79% and 26.58% respectively, showing that source-specific language and labels still differ substantially.
+- Category recall is 0% for Cleanliness and Other on this small test split. ML-only Critical urgency recall is 20%; deterministic emergency rules remain necessary.
 - Category and urgency scores are modest. Predictions should assist routing, not replace administrator review.
 - Deterministic safety rules can elevate known emergency phrases after ML urgency prediction, but keyword coverage is not a guarantee that every emergency will be detected.
 - MiniLM similarity is evidence for possible duplication, not proof that two reports describe the same incident.
@@ -65,7 +66,7 @@ Corpus v2 is now prepared. It contains 917 records: 585 synthetic Falcon Mail ex
 
 The main files are:
 
-- `data/processed/corpus_v2.csv` — approved normalized records used by the next retraining task.
+- `data/processed/corpus_v2.csv` — approved normalized records used by both classifier trainers.
 - `data/processed/corpus_v2_review.csv` — original labels, suggestions, review outcomes and notes.
 - `data/metadata/corpus_v2_summary.json` — source, category, urgency, split and audit counts.
 - `data/metadata/DATA_SOURCES.md` — provenance, attribution, limitations and source locations.
@@ -238,7 +239,7 @@ python training/train_urgency.py
 python training/evaluate.py
 ```
 
-Run these commands only after confirming which corpus path the trainers use. In this branch they train from `data/complaints.csv`; the separate Corpus v2 work must first update them to consume the reviewed split column. Commit the two `.pkl` files and `models/training_metadata.json` together so the artifacts and their evidence cannot drift apart.
+The trainers consume the stored `train`, `validation`, and `test` columns in `data/processed/corpus_v2.csv`; they do not create a new random split. Commit the two `.pkl` files and `models/training_metadata.json` together so the artifacts and their evidence cannot drift apart.
 
 ## Manual verification walkthrough
 

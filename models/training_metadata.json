@@ -1,80 +1,438 @@
 {
   "category_model": {
-    "model_version": "category-2026-09-12-v1",
-    "algorithm": "Word+Char FeatureUnion + Logistic Regression",
+    "model_version": "category-corpus-v2-20261002",
+    "algorithm": "Word+Char FeatureUnion + Calibrated LinearSVC",
+    "selection_split": "validation",
     "models_compared": {
-      "Word TF-IDF + LR": {
-        "acc": 0.2966,
-        "macro_f1": 0.3126,
-        "wt_f1": 0.2957
+      "Word TF-IDF + Logistic Regression": {
+        "accuracy": 0.4437,
+        "macro_f1": 0.3999,
+        "weighted_f1": 0.4268
       },
-      "Word+Char FeatureUnion + LR": {
-        "acc": 0.3136,
-        "macro_f1": 0.3254,
-        "wt_f1": 0.3163
+      "Word+Char FeatureUnion + Logistic Regression": {
+        "accuracy": 0.4859,
+        "macro_f1": 0.4386,
+        "weighted_f1": 0.4767
       },
-      "Word+Char FeatureUnion + SVC": {
-        "acc": 0.2542,
-        "macro_f1": 0.2757,
-        "wt_f1": 0.2508
+      "Word+Char FeatureUnion + Calibrated LinearSVC": {
+        "accuracy": 0.4789,
+        "macro_f1": 0.4653,
+        "weighted_f1": 0.4767
       }
     },
-    "dataset_hash": "12bdca1f13093bb51f0d89c531dd29faec3fe627285ec2fd4527cc2738186241",
-    "dataset_size": 585,
-    "train_size": 467,
-    "test_size": 118,
-    "train_template_groups": 204,
-    "test_template_groups": 51,
+    "corpus_version": "2.0",
+    "dataset_hash": "28f5019cb7027f2146e0f37ac3f3c117512f5add80894e5642c880a26b4ca9b5",
+    "dataset_size": 917,
+    "source_counts": {
+      "falcon_mail_v1": 585,
+      "university_students_complaints": 332
+    },
+    "train_size": 640,
+    "validation_size": 142,
+    "test_size": 135,
+    "train_groups": 309,
+    "validation_groups": 66,
+    "test_groups": 66,
     "group_leakage_detected": false,
     "random_seed": 42,
-    "python_version": "3.14.3",
+    "python_version": "3.14.6",
     "sklearn_version": "1.9.1",
-    "timestamp": "2026-09-12T15:14:31.534293",
+    "training_timestamp": "2026-10-02T11:39:41.547103+00:00",
     "metrics": {
-      "accuracy": 0.3136,
-      "macro_f1": 0.3254,
-      "weighted_f1": 0.3163
-    }
+      "accuracy": 0.6074,
+      "macro_f1": 0.5073,
+      "weighted_f1": 0.5717
+    },
+    "per_class_metrics": {
+      "Academic": {
+        "precision": 0.6087,
+        "recall": 1.0,
+        "f1-score": 0.7568,
+        "support": 14
+      },
+      "Administration": {
+        "precision": 0.7059,
+        "recall": 0.5455,
+        "f1-score": 0.6154,
+        "support": 22
+      },
+      "Cleanliness": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 5
+      },
+      "Electrical": {
+        "precision": 0.4211,
+        "recall": 1.0,
+        "f1-score": 0.5926,
+        "support": 8
+      },
+      "Facilities": {
+        "precision": 1.0,
+        "recall": 0.3636,
+        "f1-score": 0.5333,
+        "support": 11
+      },
+      "IT": {
+        "precision": 0.8235,
+        "recall": 0.6667,
+        "f1-score": 0.7368,
+        "support": 21
+      },
+      "Maintenance": {
+        "precision": 0.3846,
+        "recall": 0.3333,
+        "f1-score": 0.3571,
+        "support": 15
+      },
+      "Other": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 8
+      },
+      "Plumbing": {
+        "precision": 0.5455,
+        "recall": 0.6667,
+        "f1-score": 0.6,
+        "support": 9
+      },
+      "Safety": {
+        "precision": 0.4286,
+        "recall": 1.0,
+        "f1-score": 0.6,
+        "support": 6
+      },
+      "Transport": {
+        "precision": 0.7647,
+        "recall": 0.8125,
+        "f1-score": 0.7879,
+        "support": 16
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "Academic",
+        "Administration",
+        "Cleanliness",
+        "Electrical",
+        "Facilities",
+        "IT",
+        "Maintenance",
+        "Other",
+        "Plumbing",
+        "Safety",
+        "Transport"
+      ],
+      "values": [
+        [
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          12,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          3,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          2,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          2,
+          4,
+          0,
+          1,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          3,
+          0,
+          14,
+          3,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          5,
+          0,
+          1,
+          5,
+          0,
+          0,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          13
+        ]
+      ]
+    },
+    "source_metrics": {
+      "external": {
+        "records": 56,
+        "accuracy": 0.7857,
+        "macro_f1": 0.6176,
+        "weighted_f1": 0.7926
+      },
+      "synthetic": {
+        "records": 79,
+        "accuracy": 0.481,
+        "macro_f1": 0.4069,
+        "weighted_f1": 0.4402
+      }
+    },
+    "evaluated_at": "2026-10-02T11:45:56.979738+00:00"
   },
   "urgency_model": {
-    "model_version": "urgency-2026-09-12-v1",
-    "algorithm": "TF-IDF + Logistic Regression",
-    "selection_reason": "Logistic Regression achieved superior safety-weighted score (0.3434) with Macro F1: 0.3679, Critical Recall: 21.4%, and High Recall: 30.0%.",
+    "model_version": "urgency-corpus-v2-20261002",
+    "algorithm": "TF-IDF + Calibrated LinearSVC",
+    "selection_split": "validation",
+    "selection_reason": "Calibrated LinearSVC had the highest validation safety score (0.4717), combining macro F1, weighted F1, Critical recall, and High recall.",
     "models_compared": {
       "Logistic Regression": {
-        "accuracy": 0.4153,
-        "macro_f1": 0.3679,
-        "weighted_f1": 0.4115,
-        "critical_recall": 0.2143,
-        "high_recall": 0.3,
-        "safety_score": 0.3434
+        "accuracy": 0.493,
+        "macro_f1": 0.466,
+        "weighted_f1": 0.481,
+        "critical_recall": 0.3,
+        "high_recall": 0.7778,
+        "safety_score": 0.4685
+      },
+      "Calibrated LinearSVC": {
+        "accuracy": 0.4859,
+        "macro_f1": 0.4581,
+        "weighted_f1": 0.4688,
+        "critical_recall": 0.35,
+        "high_recall": 0.7778,
+        "safety_score": 0.4717
       },
       "Random Forest": {
-        "accuracy": 0.3729,
-        "macro_f1": 0.2494,
-        "weighted_f1": 0.3027,
-        "critical_recall": 0.0,
-        "high_recall": 0.1667,
-        "safety_score": 0.2072
+        "accuracy": 0.3944,
+        "macro_f1": 0.3301,
+        "weighted_f1": 0.3666,
+        "critical_recall": 0.05,
+        "high_recall": 0.7222,
+        "safety_score": 0.3242
       }
     },
-    "dataset_hash": "12bdca1f13093bb51f0d89c531dd29faec3fe627285ec2fd4527cc2738186241",
-    "dataset_size": 585,
-    "train_size": 467,
-    "test_size": 118,
-    "train_template_groups": 204,
-    "test_template_groups": 51,
+    "corpus_version": "2.0",
+    "dataset_hash": "28f5019cb7027f2146e0f37ac3f3c117512f5add80894e5642c880a26b4ca9b5",
+    "dataset_size": 917,
+    "source_counts": {
+      "falcon_mail_v1": 585,
+      "university_students_complaints": 332
+    },
+    "train_size": 640,
+    "validation_size": 142,
+    "test_size": 135,
+    "train_groups": 309,
+    "validation_groups": 66,
+    "test_groups": 66,
     "group_leakage_detected": false,
     "random_seed": 42,
-    "python_version": "3.14.3",
+    "python_version": "3.14.6",
     "sklearn_version": "1.9.1",
-    "timestamp": "2026-09-12T15:13:52.780826",
+    "training_timestamp": "2026-10-02T11:40:06.640532+00:00",
     "metrics": {
-      "accuracy": 0.4153,
-      "macro_f1": 0.3679,
-      "weighted_f1": 0.4115,
-      "critical_recall": 0.2143,
-      "high_recall": 0.3
-    }
-  }
+      "accuracy": 0.4741,
+      "macro_f1": 0.3621,
+      "weighted_f1": 0.4424,
+      "critical_recall": 0.2,
+      "high_recall": 0.8302
+    },
+    "per_class_metrics": {
+      "Critical": {
+        "precision": 0.3333,
+        "recall": 0.2,
+        "f1-score": 0.25,
+        "support": 10
+      },
+      "High": {
+        "precision": 0.5714,
+        "recall": 0.8302,
+        "f1-score": 0.6769,
+        "support": 53
+      },
+      "Low": {
+        "precision": 0.5517,
+        "recall": 0.3721,
+        "f1-score": 0.4444,
+        "support": 43
+      },
+      "Medium": {
+        "precision": 0.087,
+        "recall": 0.069,
+        "f1-score": 0.0769,
+        "support": 29
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "Critical",
+        "High",
+        "Low",
+        "Medium"
+      ],
+      "values": [
+        [
+          2,
+          4,
+          2,
+          2
+        ],
+        [
+          2,
+          44,
+          2,
+          5
+        ],
+        [
+          2,
+          11,
+          16,
+          14
+        ],
+        [
+          0,
+          18,
+          9,
+          2
+        ]
+      ]
+    },
+    "source_metrics": {
+      "external": {
+        "records": 56,
+        "accuracy": 0.7679,
+        "macro_f1": 0.4877,
+        "weighted_f1": 0.7171,
+        "critical_recall": null,
+        "high_recall": 0.9756
+      },
+      "synthetic": {
+        "records": 79,
+        "accuracy": 0.2658,
+        "macro_f1": 0.2305,
+        "weighted_f1": 0.2856,
+        "critical_recall": 0.2,
+        "high_recall": 0.3333
+      }
+    },
+    "evaluated_at": "2026-10-02T11:45:57.037398+00:00"
+  },
+  "corpus_version": "2.0",
+  "source_counts": {
+    "falcon_mail_v1": 585,
+    "university_students_complaints": 332
+  },
+  "limitations": [
+    "The external dataset is small and publisher-labelled; its scores are reported separately.",
+    "Critical training examples currently come from the synthetic Falcon Mail source.",
+    "Category recall is zero for Cleanliness and Other on the current 135-record test split.",
+    "External severity wording strongly influences urgency predictions; routine outages may be over-prioritized.",
+    "Urgency labels describe operational priority and do not replace staff safety judgement."
+  ]
 }
