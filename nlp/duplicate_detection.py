@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 
@@ -8,6 +9,63 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import SENTENCE_TRANSFORMER_MODEL, DEFAULT_DUPLICATE_THRESHOLD
 
 _embedder = None
+
+CATEGORY_DISAGREEMENT_MIN_SIMILARITY = 0.70
+
+NON_INCIDENT_UPDATE_PATTERNS = [
+    r'\b(?:working|operating|functioning)\s+(?:normally\s+)?again\b',
+    r'\b(?:is|are|was|were|has been|have been)\s+(?:now\s+)?'
+    r'(?:fixed|resolved|restored|repaired)\b',
+    r'\bno longer\s+(?:broken|down|offline|leaking|blocked|stuck)\b',
+    r'\bearlier report\s+(?:was|is)?\s*incorrect\b',
+    r'\bfalse report\b',
+    r'\bno\s+(?:smoke|active fire|gas leak|water leak)\s+'
+    r'(?:is\s+)?(?:present|remaining|now|anymore)\b',
+]
+
+RECURRENCE_PATTERN = re.compile(
+    r'\b(?:but|however|yet)\b.*\b'
+    r'(?:again|still|continues?|returned|recurred|down|offline|broken|leaking|not working)\b',
+    re.IGNORECASE,
+)
+
+STRUCTURED_LOCATION_PATTERN = re.compile(
+    r'\b(?P<kind>room|lab|hall|block|building)\s*'
+    r'(?:(?:number\b|no\.)\s*)?#?\s*'
+    r'(?P<identifier>[A-Za-z](?:-?\d{1,4})?|\d{1,4}(?:-?[A-Za-z])?)\b',
+    re.IGNORECASE,
+)
+
+
+def _is_non_incident_update(text: str) -> bool:
+    """Identify clear resolution/retraction text that should not open a duplicate."""
+    if RECURRENCE_PATTERN.search(text):
+        return False
+    return any(re.search(pattern, text, re.IGNORECASE) for pattern in NON_INCIDENT_UPDATE_PATTERNS)
+
+
+def _structured_location_ids(location: str | None) -> dict[str, set[str]]:
+    """Return comparable room/block identifiers without treating named areas as IDs."""
+    identifiers: dict[str, set[str]] = {}
+    if not location or location.strip().lower() in {"not specified", "campus"}:
+        return identifiers
+
+    for match in STRUCTURED_LOCATION_PATTERN.finditer(location):
+        kind = match.group("kind").lower()
+        if kind == "building":
+            kind = "block"
+        identifiers.setdefault(kind, set()).add(match.group("identifier").lower())
+    return identifiers
+
+
+def _has_location_conflict(location_a: str | None, location_b: str | None) -> bool:
+    """Reject only explicit conflicts of the same identifier type."""
+    ids_a = _structured_location_ids(location_a)
+    ids_b = _structured_location_ids(location_b)
+    for kind in ids_a.keys() & ids_b.keys():
+        if ids_a[kind].isdisjoint(ids_b[kind]):
+            return True
+    return False
 
 def get_sentence_transformer():
     """Lazy load SentenceTransformer embedding model (all-MiniLM-L6-v2)."""
@@ -60,7 +118,7 @@ def check_duplicate_complaint(
             "same_location": bool
         }
     """
-    if not existing_complaints:
+    if not existing_complaints or _is_non_incident_update(new_text):
         return {
             "is_duplicate": False,
             "duplicate_type": "none",
@@ -69,7 +127,12 @@ def check_duplicate_complaint(
             "similarity": 0.0,
             "composite_score": 0.0,
             "same_category": False,
-            "same_location": False
+            "same_location": False,
+            "decision_reason": (
+                "resolution_or_retraction"
+                if existing_complaints
+                else "no_candidates"
+            ),
         }
         
     new_vector = generate_embedding(new_text)
@@ -79,6 +142,7 @@ def check_duplicate_complaint(
     best_match = None
     best_same_cat = False
     best_same_loc = False
+    rejection_reason = None
     
     for item in existing_complaints:
         existing_vector = item.get("embedding") if item.get("embedding") is not None else item.get("dense_embedding")
@@ -101,6 +165,19 @@ def check_duplicate_complaint(
         item_loc = item.get("location")
         if new_location and item_loc and new_location.lower() != "not specified" and item_loc.lower() != "not specified":
             same_loc = (new_location.lower() in item_loc.lower() or item_loc.lower() in new_location.lower())
+
+        if _has_location_conflict(new_location, item_loc):
+            rejection_reason = "location_conflict"
+            continue
+
+        if (
+            new_category
+            and item.get("category")
+            and not same_cat
+            and sim < CATEGORY_DISAGREEMENT_MIN_SIMILARITY
+        ):
+            rejection_reason = "category_disagreement_low_similarity"
+            continue
             
         # Composite score calculation (semantic is primary, bonuses applied only if baseline similarity >= 0.55)
         bonus = 0.0
@@ -125,12 +202,15 @@ def check_duplicate_complaint(
         if status.lower() == "resolved":
             dup_type = "related_historical"
             is_dup = False  # Not an active duplicate blocking resolution
+            decision_reason = "related_historical"
         else:
             dup_type = "active_duplicate"
             is_dup = True
+            decision_reason = "score_at_or_above_threshold"
     else:
         dup_type = "none"
         is_dup = False
+        decision_reason = rejection_reason or "below_threshold"
         
     return {
         "is_duplicate": is_dup,
@@ -144,7 +224,8 @@ def check_duplicate_complaint(
         "similarity": round(best_similarity, 4),
         "composite_score": round(best_composite, 4),
         "same_category": best_same_cat,
-        "same_location": best_same_loc
+        "same_location": best_same_loc,
+        "decision_reason": decision_reason,
     }
 
 if __name__ == "__main__":
